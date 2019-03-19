@@ -8,8 +8,8 @@ cf `examples.ml` for examples
 
 cf *Revisiting Occurence Typing* draft  
 
-- 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
-- 214: What does equivalent mean?
+- Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
+- Line 214: What does equivalent mean?
 - EX 00: `x` is not a subexpression of the expression in the match, so how can we know anything about `x` in the first case?
 
 ### Adding records
@@ -24,8 +24,16 @@ cf *Revisiting Occurence Typing* draft
   --> We must enrich paths so that an occurence can refer to a field
   (even if fields are declared and explicitely typed beforehand)
 
+- EX 03:  
+  Can we test existence of a field ? (if *x.something* exists, then do that, else do that)  
+  The existence of a field can be captured by our environmenet since `{} != {something:Any}`
+
 ### Adding polymorphism
+
+- Line 500: "polymorphic types as infinite intersection".  
+  Computation of type operations undecidable ??? TODO: Test on a concrete example to understand the problem.
 
 ## Type inference
 
-- For records, we must be able to infer that an expression need to have a new field.    Case 2 of EX 02: x (and y) must have a field quantity
+- For records, we must be able to infer that an expression need to have a new field.  
+  Case 2 of EX 02: x (and y) must have a field quantity

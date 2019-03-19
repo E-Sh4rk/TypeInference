@@ -36,3 +36,24 @@ let foo x : (record_p2 -> string) & (record_c2 -> float) =
     match x.data with
     | y & string -> x.data
     | y & float -> x.data *. (float_of_int x.quantity)
+
+(* EX 03 *)
+
+type record_p = {id:int}
+type record_c = {id:int ; optional:int}
+
+let foo x : (record_p -> int) =
+    match x.optional with
+    | None -> x.id
+    | y & int -> y
+
+(* ----- POLYMORPHISM ----- *)
+
+(* EX 04 *)
+
+let foo x : (string -> int) & (not string -> not string) =
+    match x with
+    | y & string -> String.length y
+    | y -> y
+
+forall 'a. (string -> int) & (('a \ string) -> ('a \ string))
