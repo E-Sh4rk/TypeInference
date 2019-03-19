@@ -55,8 +55,8 @@
     \end{align*}
 
     \begin{align*}
-        p_1^v(t) &= \min\{u | t \leq u+v\}\\
-        p_2^u(t) &= \min\{v | t \leq u+v\}\\
+        p_1^v(t) &= ?\\
+        p_2^u(t) &= ?\\
         field(t) &= \min\{u | t \leq \{field:u\}\}
     \end{align*}
 
@@ -67,5 +67,17 @@
         t_{\Gamma,e,t}(\omega\cdot p_2) &=  p_2^{\text{typeof}_{\Gamma}(\omega\cdot p_1)}(t_{\Gamma,e,t}(\omega))
     \end{align*}
 
+    Problem: $p_1^v$ and $p_2^u$. Even if computable, non interesting result: we need to know exactly fields in the right operand
+    if we want a more interesting results!
+
+    \subsection{Records (2nd try)}
+
+    \begin{grammar}
+        \let\syntleft\relax
+        \let\syntright\relax
+        <e> ::= <e>.field \alt \{\} \alt \{<e> with field=<e>\}
+    \end{grammar}
+
+    $ \omega \in \{0,1,a_{field},c_{field}^1,c_{field}^2\} $
 
 \end{document}

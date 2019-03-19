@@ -9,15 +9,15 @@ cf `examples.ml` for examples
 cf *Revisiting Occurence Typing* draft  
 
 - Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
-- Line 214: What does equivalent mean?
-- EX 00: `x` is not a subexpression of the expression in the match, so how can we know anything about `x` in the first case?
+- Line 214: What does the equivalent symbol mean? --> Syntactic equivalence
+- EX 00: `x` is not a subexpression of the expression in the match, so we can't know anything about `x` in the first case. We should handle of this kind of alias.
 
 ### Adding records
 
 - EX 01:  
   - `record_p2 \ {name}` equivalent to `record_p2 \ record_p1`
-  - In the pattern matching: we have to remember that `y` has the same type as `x`  
-  (in order to know that `y.name` have the same type as `x.name`)
+  - In the pattern matching: we should remember that `y` is an alias for `x`  
+  in order to deduce that `x.name` exist and has type string in the first case.
 
 - EX 02:  
   In the first case, we must capture the information that x.data has type string.  
@@ -25,8 +25,8 @@ cf *Revisiting Occurence Typing* draft
   (even if fields are declared and explicitely typed beforehand)
 
 - EX 03:  
-  Can we test existence of a field ? (if *x.something* exists, then do that, else do that)  
-  The existence of a field can be captured by our environmenet since `{} != {something:Any}`
+  Can we test existence of a field ? (if *x.something* exists, then do that, else do that). YES. 
+  The existence of a field can be captured by our environment since `{} != {something:Any}`
 
 ### Adding polymorphism
 
