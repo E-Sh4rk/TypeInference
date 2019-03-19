@@ -16,7 +16,9 @@
 \usepackage{titling}%                  pour le titre
 \usepackage{enumitem}%                 pour les listes numérotées
 \usepackage{hyperref}%                 gestion des hyperliens
+\usepackage{syntax}
 \usepackage{minted}
+\usepackage[parfill]{parskip}
 \usemintedstyle{vs}
 
 \hypersetup{pdfstartview=XYZ}%         zoom par défaut
@@ -35,8 +37,35 @@
 	\maketitle
 
     \section{Typing}
-    
+
     \subsection{Records}
+
+    \begin{grammar}
+        \let\syntleft\relax
+        \let\syntright\relax
+        <e> ::= <e>.field \alt \{field=<e>\} \alt <e>+<e>
+    \end{grammar}
+
+    $ \omega \in \{0,1,c_{field},a_{field},p_1,p_2\} $
+
+    \begin{align*} 
+        e.field \downarrow a_{field}\cdot\omega & = e \downarrow \omega\\
+        \{field=e\} \downarrow c_{field}\cdot\omega & = e \downarrow \omega\\
+        e_1 + e_2 \downarrow p_i \cdot \omega & = e_i \downarrow \omega
+    \end{align*}
+
+    \begin{align*}
+        p_1^v(t) &= \min\{u | t \leq u+v\}\\
+        p_2^u(t) &= \min\{v | t \leq u+v\}\\
+        field(t) &= \min\{u | t \leq \{field:u\}\}
+    \end{align*}
+
+    \begin{align*}
+        t_{\Gamma,e,t}(\omega\cdot c_{field}) &= field(t_{\Gamma,e,t}(\omega) \land \{field:Any\})\\
+        t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
+        t_{\Gamma,e,t}(\omega\cdot p_1) &=  p_1^{\text{typeof}_{\Gamma}(\omega\cdot p_2)}(t_{\Gamma,e,t}(\omega))\\
+        t_{\Gamma,e,t}(\omega\cdot p_2) &=  p_2^{\text{typeof}_{\Gamma}(\omega\cdot p_1)}(t_{\Gamma,e,t}(\omega))
+    \end{align*}
 
 
 \end{document}
