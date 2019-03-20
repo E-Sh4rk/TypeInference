@@ -25,8 +25,12 @@ cf *Revisiting Occurence Typing* draft
   (even if fields are declared and explicitely typed beforehand)
 
 - EX 03:  
-  Can we test existence of a field ? (if *x.something* exists, then do that, else do that). YES. 
+  Can we test existence of a field ? (if *x.something* exists, then do that, else do that). YES.  
   The existence of a field can be captured by our environment since `{} != {something:Any}`
+
+- `not {}`: non-record.  
+  `not {field:Any}` : non-record or records without `field`.  
+  Even with negation and open records, can't simulate closed records (it would need an infinite intersection) EXCEPT if the domain of fields is finite.
 
 ### Adding polymorphism
 

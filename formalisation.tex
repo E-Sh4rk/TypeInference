@@ -57,11 +57,11 @@
     \begin{align*}
         p_1^v(t) &= ?\\
         p_2^u(t) &= ?\\
-        field(t) &= \min\{u | t \leq \{field:u\}\}
+        \text{proj}_{field}(t) &= \min\{u | t \leq \{field:u\}\}
     \end{align*}
 
     \begin{align*}
-        t_{\Gamma,e,t}(\omega\cdot c_{field}) &= field(t_{\Gamma,e,t}(\omega) \land \{field:Any\})\\
+        t_{\Gamma,e,t}(\omega\cdot c_{field}) &= \text{proj}_{field}(t_{\Gamma,e,t}(\omega) \land \{field:Any\})\\
         t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
         t_{\Gamma,e,t}(\omega\cdot p_1) &=  p_1^{\text{typeof}_{\Gamma}(\omega\cdot p_2)}(t_{\Gamma,e,t}(\omega))\\
         t_{\Gamma,e,t}(\omega\cdot p_2) &=  p_2^{\text{typeof}_{\Gamma}(\omega\cdot p_1)}(t_{\Gamma,e,t}(\omega))
@@ -78,6 +78,23 @@
         <e> ::= <e>.field \alt \{\} \alt \{<e> with field=<e>\}
     \end{grammar}
 
-    $ \omega \in \{0,1,a_{field},c_{field}^1,c_{field}^2\} $
+    $ \omega \in \{0,1,a_{field},u_{field}^1,u_{field}^2\} $
+
+    \begin{align*}
+        \text{proj}_{field}(\bigvee\limits_{i \in I}
+        (\bigwedge\limits_{p \in Pi} \{f_p:t_p\} \bigwedge\limits_{n \in Ni} \neg \{f_n:t_n\}))
+        &= \bigvee\limits_{i \in I}
+        (\bigwedge\limits_{\substack{p \in Pi \\ f_p = field}} t_p \bigwedge\limits_{\substack{n \in Ni \\ f_n = field}} \neg t_n)\\
+        \text{forget}_{field}(\bigvee\limits_{i \in I}
+        (\bigwedge\limits_{p \in Pi} \{f_p:t_p\} \bigwedge\limits_{n \in Ni} \neg \{f_n:t_n\}))
+        &= \bigvee\limits_{i \in I}
+        (\bigwedge\limits_{\substack{p \in Pi \\ f_p \neq field}} \{f_p:t_p\} \bigwedge\limits_{n \in Ni} \neg \{f_n:t_n\})\\
+    \end{align*}
+
+    \begin{align*}
+        t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &=  \text{forget}_{field}(t)\\
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &=  \text{proj}_{field}(t)
+    \end{align*}
 
 \end{document}
