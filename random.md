@@ -34,8 +34,9 @@ cf *Revisiting Occurence Typing* draft
 
 ### Adding polymorphism
 
-- Line 500: "polymorphic types as infinite intersection".  
-  Computation of type operations undecidable ??? TODO: Test on a concrete example to understand the problem.
+- Could add type variables in our type algebra, but how to decide emptiness?
+- Could represent polymorphic types as infinite intersections, but how in practice? Maybe we can focus only on a finite subset.
+- Use preestablished rules to simplify and get rid of polymorphic variables?
 
 ## Type inference
 
