@@ -93,13 +93,9 @@
 
     \begin{align*}
         t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
-        t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &=  \text{forget}_{field}(t)\\
-        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &=  \text{proj}_{field}(t)\\
-        t_{\Gamma,e,t}(\omega\cdot r_{field}) &=
-        \begin{cases}
-            \text{forget}_{field}(t) \text{ if } \exists i \in I. \forall p \in P_i. f_p \neq field\\
-            \bot \text{ else}
-        \end{cases}
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &= \text{forget}_{field}(t \land \{field=\text{typeof}_{\Gamma}(\omega \cdot u_{field}^2)\})\\
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &= \text{proj}_{field}(t \land \{\})\\
+        t_{\Gamma,e,t}(\omega\cdot r_{field}) &= \text{forget}_{field}(t \land \{\} \land \neg \{field=Any\})
     \end{align*}
 
 \end{document}
