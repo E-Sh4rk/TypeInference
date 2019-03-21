@@ -9,8 +9,12 @@ cf `examples.ml` for examples
 cf *Revisiting Occurence Typing* draft  
 
 - Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
+
 - Line 214: What does the equivalent symbol mean? --> Syntactic equivalence
+
 - EX 00: `x` is not a subexpression of the expression in the match, so we can't know anything about `x` in the first case. We should handle of this kind of alias.
+
+- Thèse d'Alain Frisch p103: "Inférence de types". Filtres, schémas, utilisé pour typer les expressions. Est-ce ce qui est utilisé par CDuce?
 
 ### Adding records
 
@@ -32,11 +36,16 @@ cf *Revisiting Occurence Typing* draft
   `not {field:Any}` : non-record or records without `field`.  
   Even with negation and open records, can't simulate closed records (it would need an infinite intersection) EXCEPT if the domain of fields is finite.
 
+- DNF form of records? See *formalisation.tex*.
+
 ### Adding polymorphism
 
-- Could add type variables in our type algebra, but how to decide emptiness?
-- Could represent polymorphic types as infinite intersections, but how in practice? Maybe we can focus only on a finite subset.
-- Use preestablished rules to simplify and get rid of polymorphic variables?
+- We could add type variables in our type algebra, but then how to decide emptiness?
+
+- We could represent polymorphic types as infinite intersections, but how in practice? Maybe we can have a finite representation by focusing only on an interesting finite subset, and representing the rest in a symbolic way.
+
+- We could use preestablished rules to simplify and get rid of polymorphic variables.
+We would need rules for ■, ○, and subtyping.
 
 ## Type inference
 

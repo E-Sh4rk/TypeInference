@@ -75,10 +75,10 @@
     \begin{grammar}
         \let\syntleft\relax
         \let\syntright\relax
-        <e> ::= <e>.field \alt \{\} \alt \{<e> with field=<e>\}
+        <e> ::= <e>.field \alt \{\} \alt \{<e> with field=<e>\} \alt \{<e> with field=\O\}
     \end{grammar}
 
-    $ \omega \in \{0,1,a_{field},u_{field}^1,u_{field}^2\} $
+    $ \omega \in \{0,1,a_{field},u_{field}^1,u_{field}^2,r_{field}\} $
 
     \begin{align*}
         \text{proj}_{field}(\bigvee\limits_{i \in I}
@@ -88,13 +88,18 @@
         \text{forget}_{field}(\bigvee\limits_{i \in I}
         (\bigwedge\limits_{p \in Pi} \{f_p:t_p\} \bigwedge\limits_{n \in Ni} \neg \{f_n:t_n\}))
         &= \bigvee\limits_{i \in I}
-        (\bigwedge\limits_{\substack{p \in Pi \\ f_p \neq field}} \{f_p:t_p\} \bigwedge\limits_{n \in Ni} \neg \{f_n:t_n\})\\
+        (\bigwedge\limits_{\substack{p \in Pi \\ f_p \neq field}} \{f_p:t_p\} \bigwedge\limits_{\substack{n \in Ni \\ f_n \neq field}} \neg \{f_n:t_n\})\\
     \end{align*}
 
     \begin{align*}
         t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
         t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &=  \text{forget}_{field}(t)\\
-        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &=  \text{proj}_{field}(t)
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &=  \text{proj}_{field}(t)\\
+        t_{\Gamma,e,t}(\omega\cdot r_{field}) &=
+        \begin{cases}
+            \text{forget}_{field}(t) \text{ if } \exists i \in I. \forall p \in P_i. f_p \neq field\\
+            \bot \text{ else}
+        \end{cases}
     \end{align*}
 
 \end{document}
