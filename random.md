@@ -40,13 +40,6 @@ cf *Revisiting Occurence Typing* draft
 
 ### Adding polymorphism
 
-- We could add type variables in our type algebra, but then how to decide emptiness?
-
-- We could represent polymorphic types as infinite intersections, but how in practice? Maybe we can have a finite representation by focusing only on an interesting finite subset, and representing the rest in a symbolic way.
-
-- We could use preestablished rules to simplify and get rid of polymorphic variables.
-We would need rules for ■, ○, and subtyping.
-
 ## Type inference
 
 - For records, we must be able to infer that an expression need to have a new field.  

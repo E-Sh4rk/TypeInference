@@ -38,7 +38,7 @@
 
     \section{Typing}
 
-    \subsection{Records}
+    \subsection{Open Records}
 
     \begin{grammar}
         \let\syntleft\relax
@@ -70,7 +70,7 @@
     Problem: $p_1^v$ and $p_2^u$. Even if computable, non interesting result: we need to know exactly fields in the right operand
     if we want a more interesting results!
 
-    \subsection{Records (2nd try)}
+    \subsection{Open Records (2nd try)}
 
     \begin{grammar}
         \let\syntleft\relax
@@ -93,9 +93,24 @@
 
     \begin{align*}
         t_{\Gamma,e,t}(\omega\cdot a_{field}) &= \{ field: t_{\Gamma,e,t}(\omega) \}\\
-        t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &= \text{forget}_{field}(t \land \{field=\text{typeof}_{\Gamma}(\omega \cdot u_{field}^2)\})\\
-        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &= \text{proj}_{field}(t \land \{\})\\
-        t_{\Gamma,e,t}(\omega\cdot r_{field}) &= \text{forget}_{field}(t \land \{\} \land \neg \{field=Any\})
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^1) &= \text{forget}_{field}(t_{\Gamma,e,t}(\omega) \land \{field=\text{typeof}_{\Gamma}(\omega \cdot u_{field}^2)\})\\
+        t_{\Gamma,e,t}(\omega\cdot u_{field}^2) &= \text{proj}_{field}(t_{\Gamma,e,t}(\omega) \land \{\})\\
+        t_{\Gamma,e,t}(\omega\cdot r_{field}) &= \text{forget}_{field}(t_{\Gamma,e,t}(\omega) \land \{\} \land \neg \{field=Any\})
+    \end{align*}
+
+    \subsection{Open/Closed Records with CDuce notation}
+
+    \begin{grammar}
+        \let\syntleft\relax
+        \let\syntright\relax
+        <e> ::= <e>.label \alt \{\} \alt \{..\} \alt \{<e> with label=<e>\} \alt <e>\textbackslash label
+    \end{grammar}
+
+    \begin{align*}
+        t_{\Gamma,e,t}(\omega\cdot a_{label}) &= \{ label: t_{\Gamma,e,t}(\omega) \ .. \}\\
+        t_{\Gamma,e,t}(\omega\cdot u_{label}^1) &= t_{\Gamma,e,t}(\omega) \land \{label=\text{typeof}_{\Gamma}(\omega \cdot u_{label}^2) \ .. \} + \{ label =? Any \}\\
+        t_{\Gamma,e,t}(\omega\cdot u_{label}^2) &= \Pi_{label}(t_{\Gamma,e,t}(\omega) \land \{label=\text{typeof}_{\Gamma}(\omega \cdot u_{label}^2) \ .. \})\\
+        t_{\Gamma,e,t}(\omega\cdot r_{label}) &= t_{\Gamma,e,t}(\omega) \land \{\} \land \neg \{label=Any \ .. \} + \{ label =? Any \}
     \end{align*}
 
 \end{document}
