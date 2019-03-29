@@ -4,17 +4,23 @@ cf `examples.ml` for examples
 
 ## Typing
 
-### Base
-
-cf *Revisiting Occurence Typing* draft  
+### *Revisiting Occurence Typing* draft  
 
 - Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
 
-- Line 214: What does the equivalent symbol mean? --> Syntactic equivalence
+- Line 214: What does the equivalent symbol mean? (syntactic equivalence)
 
 - EX 00: `x` is not a subexpression of the expression in the match, so we can't know anything about `x` in the first case. We should handle of this kind of alias.
 
-- Thèse d'Alain Frisch p103: "Inférence de types". Filtres, schémas, utilisé pour typer les expressions. Est-ce ce qui est utilisé par CDuce?
+- Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.
+
+### Adding polymorphism
+
+## Type inference
+
+-------------
+
+## Deprecated
 
 ### Adding records
 
@@ -37,10 +43,3 @@ cf *Revisiting Occurence Typing* draft
   Even with negation and open records, can't simulate closed records (it would need an infinite intersection) EXCEPT if the domain of fields is finite.
 
 - DNF form of records? See *formalisation.tex*.
-
-### Adding polymorphism
-
-## Type inference
-
-- For records, we must be able to infer that an expression need to have a new field.  
-  Case 2 of EX 02: x (and y) must have a field quantity

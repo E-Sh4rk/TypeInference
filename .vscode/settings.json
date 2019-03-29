@@ -1,5 +1,4 @@
 {
-    "latex-workshop.latex.clean.enabled": true,
     "latex-workshop.latex.tools": [
         {
             "name": "latexmk",
