@@ -14,6 +14,8 @@ cf `examples.ml` for examples
 
 - Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore)
 
+- Line 231: should use the 'circle' operator to type App?
+
 - Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.
 
 ### Adding polymorphism
