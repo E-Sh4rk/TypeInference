@@ -19,8 +19,11 @@ cf `examples.ml` for examples
 - "Path expressions" --> "Selector expressions" ?
 
 - Line 597: Limitation of Let binding:
-  - Seems quite limited even in the paper "Tobin-Hochstadt and Felleisen" (no pattern matching in let bindings)
-  - We could support it by updating the equivalence relation of line 214
+We could support it by remembering the definitions of variables introduced by a let and expanding (=inlining) them in the left expressions of ITE (just for the typing, not during the execution).
+More precisely:
+  - When introducing a new variable x with a let statement, we type the corresponding expression e and add this type in the environment for the expression e (no need to add it for x). We also remember that x is defined by the (more complex) expression e with a mapping m. When we want to type x later, if x is mapped to an expression e in m, we can look at the type of e in the environment.
+  - We should alpha-rename all variables so that a variable is never erased (or use De Bruijn indexes).
+  - When using a let-defined variable x in the left part of an ite expression, we replace x by its definition. Then we do as usual.
 
 - Line 601: Limitation of condition nestling:  
 If we have a good type inference engine, we could put the nested condition in a lambda abstraction taking y as parameter, and apply it to the wanted expression for y. In this way, we will be able to refine the type of the subexpressions of y if the inferred type for the lambda abstraction is good enough.
