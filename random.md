@@ -10,13 +10,20 @@ cf `examples.ml` for examples
 
 - Line 214: What does the equivalent symbol mean? (syntactic equivalence)
 
-- EX 00: `x` is not a subexpression of the expression in the match, so we can't know anything about `x` in the first case. We should handle of this kind of alias.
-
 - Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore)
 
 - Line 231: should use the 'circle' operator to type App?
 
 - Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.
+
+- "Path expressions" --> "Selector expressions" ?
+
+- Line 597: Limitation of Let binding:
+  - Seems quite limited even in the paper "Tobin-Hochstadt and Felleisen" (no pattern matching in let bindings)
+  - We could support it by updating the equivalence relation of line 214
+
+- Line 601: Limitation of condition nestling:  
+If we have a good type inference engine, we could put the nested condition in a lambda abstraction taking y as parameter, and apply it to the wanted expression for y. In this way, we will be able to refine the type of the subexpressions of y if the inferred type for the lambda abstraction is good enough.
 
 ### Adding polymorphism
 
