@@ -16,6 +16,8 @@ cf `examples.ml` for examples
 
 - Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.
 
+- Line 300: For w.l and w.r, instead of cap ... (Any x Any), we could use cap ... typeof w. Indeed we could do that for every rule. It seems stronger (TODO: find examples).
+
 - "Path expressions" --> "Selector expressions" ?
 
 - Line 597: Limitation of Let binding:
