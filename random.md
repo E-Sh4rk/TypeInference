@@ -10,15 +10,17 @@ cf `examples.ml` for examples
 
 - Line 214: What does the equivalent symbol mean? (syntactic equivalence)
 
-- Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore)
+- ( Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore) ) (Other pending changes could discard this remark)
 
-- Line 230: Add the following rule: If there is a bottom in the env, then any expr can be typed bottom
+- Line 230: Add the following rule: If there is a bottom in the env, then any expr can be typed bottom.
+  See example `let_pairs` in the implementation.
 
 - Line 231: should use the 'circle' operator to type App?
 
-- Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.
-
-- Line 300: For w.l and w.r, instead of cap ... (Any x Any), we could use cap ... typeof w. Indeed we could do that for every rule. It seems stronger (TODO: find examples).
+- Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.  
+More generally, use Env everywhere instead of t! More precise results, and it will also simplify some cases (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
+Exemple where it is useful:  
+Env: `x:int|bool f:(string->int)&(int->string)`, e: `f x`, t: `string|int`
 
 - "Path expressions" --> "Selector expressions" ?
 
