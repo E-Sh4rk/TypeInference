@@ -17,10 +17,10 @@ cf `examples.ml` for examples
 
 - Line 231: should use the 'circle' operator to type App?
 
-- Line 234: Call to back-typeof: should call it on t & t_0 (instead of just t). It's "free" and can give a more precise result.  
-More generally, use Env everywhere instead of t! More precise results, and it will also simplify some cases (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
-Exemple where it is useful:  
-Env: `x:int|bool f:(string->int)&(int->string)`, e: `f x`, t: `string|int`
+- Line 234: Use Env everywhere instead of t! More precise results, and it will also simplify some case (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
+  See example `two_steps` in the implementation.
+
+- Line 260: 'square' operator could be stronger! See example `two_steps` in the implementation.
 
 - "Path expressions" --> "Selector expressions" ?
 
