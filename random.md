@@ -32,6 +32,11 @@ If we have a good type inference engine, we could put the nested condition in a 
 
 ### Adding polymorphism
 
+- Section 5.1:
+  - Add the classic reduction rule for let?
+  - Why just variable could be mapped to non-trivial schemes? Generalization seems to be applicable for any expression. Maybe we should integrate the generalization constrcut in the let construct?
+  - In my current implementation, let are inlined. Would it still work with polymorphism?
+
 ## Type inference
 
 -------------
