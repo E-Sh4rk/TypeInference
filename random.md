@@ -13,18 +13,19 @@ cf `examples.ml` for examples
 - ( Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore) ) (Other pending changes could discard this remark)
 
 - Line 230: Add the following rule: If there is a bottom in the env, then any expr can be typed bottom.
-  See example `let_pairs` in the implementation.
+See example `let_pairs` in the implementation.
 
 - Line 231: should use the 'circle' operator to type App?
 
-- Line 234: Use Env everywhere instead of t! More precise results, and it will also simplify some case (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
-  See example `two_steps` in the implementation.
+- Line 234: Use Env everywhere instead of t!  
+More precise results, and it will also simplify some case (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
+See example `two_steps` in the implementation.
 
 - Line 260: 'square' operator could be stronger! See example `two_steps` in the implementation.
 
 - "Path expressions" --> "Selector expressions" ?
 
-- Line 597: Limitation of Let binding:
+- Line 597: Limitation of Let binding:  
 We could support it by inlining the definiton of the variable (just for the typing, not during the execution). It may seem bad for the complexity, but indeed we will not have to type the expression more than once since its type will be remembered in the environment.
 
 - Line 601: Limitation of condition nestling:  
