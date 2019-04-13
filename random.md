@@ -6,23 +6,6 @@ cf `examples.ml` for examples
 
 ### *Revisiting Occurence Typing* draft  
 
-- Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
-
-- Line 214: What does the equivalent symbol mean? (syntactic equivalence)
-
-- ( Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore) ) (Other pending changes could discard this remark)
-
-- Line 230: Add the following rule: If there is a bottom in the env, then any expr can be typed bottom.
-See example `let_pairs` in the implementation.
-
-- Line 231: should use the 'circle' operator to type App?
-
-- Line 234: Use Env everywhere instead of t!  
-More precise results, and it will also simplify some case (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
-See example `two_steps` in the implementation.
-
-- Line 260: 'square' operator could be stronger! See example `two_steps` in the implementation.
-
 - "Path expressions" --> "Selector expressions" ?
 
 - Line 597: Limitation of Let binding:  
@@ -30,6 +13,12 @@ We could support it by inlining the definiton of the variable (just for the typi
 
 - Line 601: Limitation of condition nestling:  
 If we have a good type inference engine, we could put the nested condition in a lambda abstraction taking y as parameter, and apply it to the wanted expression for y. In this way, we will be able to refine the type of the subexpressions of y if the inferred type for the lambda abstraction is good enough.
+
+- Improvement of the Left App case? (see Victor's solution)
+
+- Automatic case disjunction when application has a right argument of the form (t1 | t2)? See `test.ml`.
+
+- Record: must remove the field l before merging for the u_l and r_l cases?
 
 ### Adding polymorphism
 
@@ -65,3 +54,22 @@ If we have a good type inference engine, we could put the nested condition in a 
   Even with negation and open records, can't simulate closed records (it would need an infinite intersection) EXCEPT if the domain of fields is finite.
 
 - DNF form of records? See *formalisation.tex*.
+
+### *Revisiting Occurence Typing* draft
+
+- Line 201: t^-\_{env,e,t}(omega) = t^+_{env,e,not t}(omega)   ->    Redundant notation?
+
+- Line 214: What does the equivalent symbol mean? (syntactic equivalence)
+
+- ( Line 214: add typeof(e') to the intersection and use t instead of Env ? (less redundant, and the definition of Env is not needed anymore) ) (Other pending changes could discard this remark)
+
+- Line 230: Add the following rule: If there is a bottom in the env, then any expr can be typed bottom.
+See example `let_pairs` in the implementation.
+
+- Line 231: should use the 'circle' operator to type App?
+
+- Line 234: Use Env everywhere instead of t!  
+More precise results, and it will also simplify some case (for instance, get rid of the `cap ... (Any x Any)` for pairs).  
+See example `two_steps` in the implementation.
+
+- Line 260: 'square' operator could be stronger! See example `two_steps` in the implementation.
