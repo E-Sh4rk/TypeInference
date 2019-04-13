@@ -20,6 +20,8 @@ If we have a good type inference engine, we could put the nested condition in a 
 
 - Record: must remove the field l before merging for the u_l and r_l cases?
 
+- Record: In the definiton of record\l operator, should require that t <= {l=Any ..}
+
 ### Adding polymorphism
 
 - Section 5.1:
