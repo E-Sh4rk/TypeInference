@@ -18,10 +18,6 @@ If we have a good type inference engine, we could put the nested condition in a 
 
 - Automatic case disjunction when application has a right argument of the form (t1 | t2)? See `test.ml`.
 
-- Record: must remove the field l before merging for the u_l and r_l cases?
-
-- Record: In the definiton of record\l operator, should require that t <= {l=Any ..}
-
 ### Adding polymorphism
 
 - Section 5.1:
@@ -75,3 +71,7 @@ More precise results, and it will also simplify some case (for instance, get rid
 See example `two_steps` in the implementation.
 
 - Line 260: 'square' operator could be stronger! See example `two_steps` in the implementation.
+
+- Record: must remove the field l before merging for the u_l and r_l cases?
+
+- Record: In the definiton of record\l operator, should require that t <= {l=Any ..}
