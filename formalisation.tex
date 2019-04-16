@@ -19,6 +19,7 @@
 \usepackage{syntax}
 \usepackage{minted}
 \usepackage[parfill]{parskip}
+\usepackage{amsmath}
 \usemintedstyle{vs}
 
 \hypersetup{pdfstartview=XYZ}%         zoom par défaut
@@ -31,6 +32,25 @@
 \pagenumbering{gobble}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\DeclareFontFamily{U}{mathb}{}
+\DeclareFontShape{U}{mathb}{m}{n}{
+  <-5.5> mathb5
+  <5.5-6.5> mathb6
+  <6.5-7.5> mathb7
+  <7.5-8.5> mathb8
+  <8.5-9.5> mathb9
+  <9.5-11.5> mathb10
+  <11.5-> mathb12
+}{}
+\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
+\DeclareMathSymbol{\sqdot}{\mathbin}{mathb}{"0D}
+\newcommand{\worra}[2]{#1\mathop{\,\sqdot\,} #2}
+\newcommand{\apply}[2]{#1\circ#2}
+\newcommand{\dom}[1]{\textsf{dom}(#1)}
+\newcommand{\alt}{~|~}
+\newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
+\newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
 
 \begin{document}
 
@@ -112,5 +132,68 @@
         t_{\Gamma,e,t}(\omega\cdot u_{label}^2) &= \Pi_{label}(t_{\Gamma,e,t}(\omega) \land \{label=\text{typeof}_{\Gamma}(\omega \cdot u_{label}^2) \ .. \})\\
         t_{\Gamma,e,t}(\omega\cdot r_{label}) &= t_{\Gamma,e,t}(\omega) \land \{\} \land \neg \{label=Any \ .. \} + \{ label =? Any \}
     \end{align*}
+
+    \section{Proofs}
+
+    \[ \worra t s = \min \{ u \leq \dom t \alt \apply t {(\dom t \setminus u)} \leq \neg s \} \]
+
+    \[ t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right) \]
+
+    \begin{eqnarray*}
+        \dom{t}    & = & \bigwedge_{i\in I}\bigvee_{p\in P_i}s_p\\[4mm]
+        \apply t s & = & \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt s\not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\hspace*{1cm}\makebox[0cm][l]{(for $s\leq\dom{t}$)}\\[4mm]
+        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)
+    \end{eqnarray*}
+
+    \subsection{Correctness of worra}
+    
+    Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
+    Let $s$ a be any type.
+
+    Let's prove that $\apply t {(\dom t \setminus (\worra t s))} \leq \neg s$ with the algorithmic definition for $\worra {} {}$.\\
+    Equivalently, we want $(\apply t {(\dom t \setminus (\worra t s))}) \land s = \varnothing$.\\
+    %For $s=\Empty$, this is trivial.\\
+    %For $s=\Any$, we have $\worra t s = \dom t$ and thus this equality is also verified.
+
+    Let $u$ be a type such that $u \leq \dom t$ and $(\apply t u) \land s \neq \varnothing$ (if such a type does not exist, we are done).\\
+    Let's show that $u \land (\worra t s) \neq \varnothing$.\\
+    For that, we should prove the following:\\
+    \[ \exists i \in I. \exists u' \leq u. \left\{\begin{aligned}
+        &\exists p \in P_i.\ s \land t_p \neq \varnothing \text{ and } u' \land s_p \neq \varnothing \\
+        &u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing
+    \end{aligned} \right. \]
+
+    From $(\apply t u) \land s \neq \varnothing$, we can take (using the algorithmic definition of $\circ$) $i \in I$ and $Q \subsetneq P_i$ such that:\\
+    \[ u \not\leq\bigvee_{q\in Q}s_q \text{ and } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing \]
+
+    First, let's focus on the second point.\\
+    For any $p \in P_i$ such that $s \land t_p = \varnothing$, we have $p \in Q$ (otherwise we would have $p \in P_i \setminus Q$ and thus $s \land t_p \neq \varnothing$).\\
+    Moreover, as $u \not\leq\bigvee_{q\in Q}s_q$, we have $u \not\leq\bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$.\\
+    Equivalently, we have $u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \neq \varnothing$.\\
+    Let's take $u' = u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$.\\
+    By definition, we have $u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing$.\\
+
+    
+    Now, let's focus on the first point. Let's show that we have:\\
+    \[ u' \not\leq\bigvee_{q\in Q}s_q \]
+    We have:\\
+    \begin{align*}
+        \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\leq \bigvee_{q \in Q}s_q
+    \end{align*}
+    Thus:\\
+    \begin{align*}
+        \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\geq \neg \bigvee_{q \in Q}s_q\\
+        u' = u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\geq u \land \neg \bigvee_{q \in Q}s_q \neq \varnothing\\
+    \end{align*}
+
+    So we have $ u' \not\leq\bigvee_{q\in Q}s_q $. We also know, from $u \leq \dom t$, that $u' \leq u \leq \bigvee_{p\in P_i}s_p$.\\
+
+    We deduce:\\
+    \[ u' \land \bigvee_{p\in P_i \setminus Q}s_p \neq \varnothing \]
+
+    Moreover, as $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$, we know that all $p \in P_i \setminus Q$ verify $s \land t_p \neq \varnothing$.\\
+    Thus, we have $u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing$, which ends the proof.
+    
+    \qed
 
 \end{document}
