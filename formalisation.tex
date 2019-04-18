@@ -2,31 +2,35 @@
 \documentclass[a4paper]{article}%      autres choix : book, report
 \usepackage[utf8]{inputenc}%           gestion des accents (source)
 \usepackage[T1]{fontenc}%              gestion des accents (PDF)
-\usepackage[francais]{babel}%          gestion du français
-\usepackage{textcomp}%                 caractères additionnels
+\usepackage[francais]{babel}%          gestion du francais
+\usepackage{textcomp}%                 caracteres additionnels
 \usepackage{mathtools,amssymb,amsthm}% packages de l'AMS + mathtools
-\usepackage{lmodern}%                  police de caractère
+\usepackage{lmodern}%                  police de caractere
 \usepackage[top=2cm,left=2cm,right=2cm,bottom=2cm]{geometry}%     gestion des marges
 \usepackage{graphicx}%                 gestion des images
-\usepackage{array}%                    gestion améliorée des tableaux
+\usepackage{array}%                    gestion amelioree des tableaux
 \usepackage{calc}%                     syntaxe naturelle pour les calculs
 \usepackage{titlesec}%                 pour les sections
-\usepackage{titletoc}%                 pour la table des matières
-\usepackage{fancyhdr}%                 pour les en-têtes
+\usepackage{titletoc}%                 pour la table des matieres
+\usepackage{fancyhdr}%                 pour les en-tetes
 \usepackage{titling}%                  pour le titre
-\usepackage{enumitem}%                 pour les listes numérotées
+\usepackage{enumitem}%                 pour les listes numerotees
 \usepackage{hyperref}%                 gestion des hyperliens
 \usepackage{syntax}
 \usepackage{minted}
 \usepackage[parfill]{parskip}
 \usepackage{amsmath}
+\usepackage{fourier}
+\usepackage{heuristica}
+\usepackage[overload]{empheq}
+\usepackage{cleveref} 
 \usemintedstyle{vs}
 
-\hypersetup{pdfstartview=XYZ}%         zoom par défaut
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
 
 \setlength{\droptitle}{-5em}   % This is your set screw
 \title{\vspace{1.5cm}Type inference - M2 Internship}
-\author{Mickaël LAURENT}
+\author{Mickael LAURENT}
 \date{\vspace{-5ex}}
 
 \pagenumbering{gobble}
@@ -135,6 +139,8 @@
 
     \section{Proofs}
 
+    \subsection{Recall: some definitons}
+
     \[ \worra t s = \min \{ u \leq \dom t \alt \apply t {(\dom t \setminus u)} \leq \neg s \} \]
 
     \[ t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right) \]
@@ -144,6 +150,7 @@
         \apply t s & = & \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt s\not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\hspace*{1cm}\makebox[0cm][l]{(for $s\leq\dom{t}$)}\\[4mm]
         \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)
     \end{eqnarray*}
+    \pagebreak
 
     \subsection{Correctness of worra}
     
@@ -152,48 +159,79 @@
 
     Let's prove that $\apply t {(\dom t \setminus (\worra t s))} \leq \neg s$ with the algorithmic definition for $\worra {} {}$.\\
     Equivalently, we want $(\apply t {(\dom t \setminus (\worra t s))}) \land s = \varnothing$.\\
-    %For $s=\Empty$, this is trivial.\\
-    %For $s=\Any$, we have $\worra t s = \dom t$ and thus this equality is also verified.
 
     Let $u$ be a type such that $u \leq \dom t$ and $(\apply t u) \land s \neq \varnothing$ (if such a type does not exist, we are done).\\
-    Let's show that $u \land (\worra t s) \neq \varnothing$.\\
+    Let's show that $u \land (\worra t s) \neq \varnothing$ (we can easily deduce the wanted property from that, by the absurd).\\
     For that, we should prove the following:\\
-    \[ \exists i \in I. \exists u' \leq u. \left\{\begin{aligned}
-        &\exists p \in P_i.\ s \land t_p \neq \varnothing \text{ and } u' \land s_p \neq \varnothing \\
-        &u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing
-    \end{aligned} \right. \]
 
-    From $(\apply t u) \land s \neq \varnothing$, we can take (using the algorithmic definition of $\circ$) $i \in I$ and $Q \subsetneq P_i$ such that:\\
-    \[ u \not\leq\bigvee_{q\in Q}s_q \text{ and } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing \]
+    \begin{subequations}
+        \begin{align}[left ={\exists i \in I. \exists u' \leq u. \empheqlbrace}]
+          &u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing\label{eq1a}\\
+          &u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing\label{eq1b}
+        \end{align}
+    \end{subequations}
 
-    First, let's focus on the second point.\\
-    For any $p \in P_i$ such that $s \land t_p = \varnothing$, we have $p \in Q$ (otherwise we would have $p \in P_i \setminus Q$ and thus $s \land t_p \neq \varnothing$).\\
+  From $(\apply t u) \land s \neq \varnothing$, we can take (using the algorithmic definition of $\circ$) $i \in I$ and $Q \subsetneq P_i$ such that:\\
+  \[ u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing \]
+
+    First, let's focus on \cref{eq1b}.\\
+    For any $p \in P_i$ such that $s \land t_p = \varnothing$, we have $p \in Q$ (by the absurd, because $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$).\\
+    We can deduce that:
+    \[ \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \leq \bigvee_{q \in Q}s_q \]
     Moreover, as $u \not\leq\bigvee_{q\in Q}s_q$, we have $u \not\leq\bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$.\\
-    Equivalently, we have $u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \neq \varnothing$.\\
-    Let's take $u' = u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$.\\
+    So let's take $u' = u \setminus \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$ ($\neq \varnothing$).\\
     By definition, we have $u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing$.\\
-
-    
-    Now, let's focus on the first point. Let's show that we have:\\
-    \[ u' \not\leq\bigvee_{q\in Q}s_q \]
-    We have:\\
-    \begin{align*}
-        \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\leq \bigvee_{q \in Q}s_q
-    \end{align*}
-    Thus:\\
-    \begin{align*}
-        \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\geq \neg \bigvee_{q \in Q}s_q\\
-        u' = u \land \neg \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p &\geq u \land \neg \bigvee_{q \in Q}s_q \neq \varnothing\\
-    \end{align*}
-
+ 
+    Now, let's focus on \cref{eq1a}.\\
+    Recall that we have:
+    \[ \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \leq \bigvee_{q \in Q}s_q 
+    \text{\ \ \ and\ \ \ } u \not\leq\bigvee_{q\in Q}s_q \]
+    Thus:
+    \[ u' \setminus \left(\bigvee_{q \in Q}s_q\right) = \left(u \setminus \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p\right) \setminus \left(\bigvee_{q \in Q}s_q\right) = u \setminus \left(\bigvee_{q \in Q}s_q\right) \neq \varnothing \]
     So we have $ u' \not\leq\bigvee_{q\in Q}s_q $. We also know, from $u \leq \dom t$, that $u' \leq u \leq \bigvee_{p\in P_i}s_p$.\\
 
-    We deduce:\\
+    We deduce that:
     \[ u' \land \bigvee_{p\in P_i \setminus Q}s_p \neq \varnothing \]
 
     Moreover, as $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$, we know that all $p \in P_i \setminus Q$ verify $s \land t_p \neq \varnothing$.\\
     Thus, we have $u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing$, which ends the proof.
     
     \qed
+
+    \pagebreak
+
+    \subsection{Optimality of worra}
+
+    Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
+    Let $s$ a be any type.
+
+    Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
+
+    Let $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$.\\
+    We just have to show that $a = \dom t \land (s_p \setminus \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}}s_{p'}) \leq u$.
+
+    By the absurd, let's suppose that $a \not\leq u$ and show that $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$.\\
+    Equivalently, we have $a \land \neg u \neq \varnothing$.
+
+    Let's take $Q = \min \{ Q \subset (P_i \setminus \{p\}) \alt s \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} \neq \varnothing \}$ with $\min$ refering to the set inclusion order.\\
+    Note that this $\min$ is not really well defined as there may be many minimal $Q$ satisfying this condition, but in this case we can take the one we want.
+    We know that such $Q$ exists because $s \land t_p \neq \varnothing$.
+
+    We want to prove that:
+    \[
+        (\dom t \setminus u) \geq a \land \neg u \not\leq \bigvee_{q\in Q}s_q
+    \]
+
+    Let's rewrite it. We want:
+    \[ a \land \neg u \land (\bigwedge_{q\in Q} \neg s_q) \neq \varnothing \]
+
+    We know that $a \land \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}} s_{p'} = \varnothing$ and $a \leq s_p$ (definition of $a$).\\
+    Let's suppose by the absurd that $a \land (\bigvee_{q\in Q} s_q) \neq \varnothing$.\\
+    $\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\} \land (P_i \setminus Q) = \varnothing$ so $\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\} \setminus Q = \varnothing$\\
+    and so $Q'=\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\} \subset Q$.\\
+    Thus, we have $Q' \subsetneq Q$ because $a \land (\bigvee_{q\in Q} s_q) \neq \varnothing$ and $a \land \bigvee_{p'\in Q'} s_{p'} = \varnothing$.\\
+    As $Q'$ is such that $s \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} \neq \varnothing$, we have a contradiction with the minimalityy of $Q$.
+
+    Hence, $a \leq \bigwedge_{q\in Q} \neg s_q$. As we also know that $a \land \neg u \neq \varnothing$, we can deduce the wanted inequality.
 
 \end{document}
