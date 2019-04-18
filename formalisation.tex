@@ -208,7 +208,7 @@
     Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
 
     \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)\]
-    For any $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$, we define $a_{i,p}=\dom t \land (s_p \setminus \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}}s_{p'}) \leq u$.\\
+    For any $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$, we define $a_{i,p}=\dom t \land (s_p \setminus \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}}s_{p'})$.\\
     Note that \[\worra t s = \bigvee_{\substack{i \in I\\ \{p \in P_i \alt s \land t_p \neq \varnothing\}}} a_{i,p} \]
 
     Let $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$.\\
@@ -222,21 +222,38 @@
     As by definition $s \land \bigwedge_{p'\in P_i\setminus Q}t_{p'} \neq \varnothing$, all we have to prove in order to deduce $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$ is:\\
     \[ \dom t \setminus u \not\leq \bigvee_{q\in Q}s_q \]
 
-    As $ \dom t \setminus u \geq a \land \neg u$, it suffices to prove the following:
+    As $ \dom t \setminus u \geq a \setminus u$, it suffices to prove the following:
     \[ a \land \neg u \land (\bigwedge_{q\in Q} \neg s_q) \neq \varnothing \]
 
     Let's suppose by the absurd that $a \land \bigvee_{q\in Q} s_q \neq \varnothing$.\\
+
+    ---------------------------------------------------
+
+    % ---------------------------------
+
+    $t_{p'} \land s = \varnothing \Rightarrow p' \in Q$\\
+    $q \in Q \Rightarrow  s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$\\
+
+    So let $q \in Q$ such that $a \land s_q \neq \varnothing$.\\
+    We have $s_q \land s_p \neq \varnothing$, with $s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$ (by minimality).\\
+
+    % ---------------------------------
+
+    ---------------------------------------------------
+
     Let $Q' = \{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}$.
 
     By definition of $Q$, we have $Q' \land (P_i \setminus Q) = \varnothing$.\\
     Thus, $Q' \setminus Q = \varnothing$ and so $Q' \subset Q$.
 
-    Moreover, we know that $a \land \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}} s_{p'} = \varnothing$ (definition of $a_{i,p}$).\\ % and $a \leq s_p$
+    Moreover, we know that $a \land \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}} s_{p'} = \varnothing$ and $a \leq s_p$ (definition of $a_{i,p}$).\\
     So we have $Q' \neq Q$ because $a \land \bigvee_{q\in Q} s_q \neq \varnothing$ and $a \land \bigvee_{p'\in Q'} s_{p'} = \varnothing$.
 
     It gives $Q' \subsetneq Q$.
 
     As $Q'$ is such that $s \land \bigwedge_{p' \in P_i\setminus Q'} t_{p'} \neq \varnothing$ (???), we have a contradiction with the minimality of $Q$.
+
+    % ---------------------------------
 
     Hence, $a \leq \bigwedge_{q\in Q} \neg s_q$. As we also know that $a \land \neg u \neq \varnothing$, we can deduce the wanted inequality.
 
