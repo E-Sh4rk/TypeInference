@@ -55,6 +55,9 @@
 \newcommand{\alt}{~|~}
 \newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
 \newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
+\newcommand{\Int} {\textsf{Int}}
+\newcommand{\Even} {\textsf{Even}}
+\newcommand{\Odd} {\textsf{Odd}}
 
 \begin{document}
 
@@ -148,11 +151,14 @@
     \begin{eqnarray*}
         \dom{t}    & = & \bigwedge_{i\in I}\bigvee_{p\in P_i}s_p\\[4mm]
         \apply t s & = & \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt s\not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\hspace*{1cm}\makebox[0cm][l]{(for $s\leq\dom{t}$)}\\[4mm]
-        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)
+        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)\\
+        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right) \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)
     \end{eqnarray*}
+    Example of non-optimality of worra (1st version) :
+    \[ \worra {(\Any \rightarrow \Int) \land (\neg \Int \rightarrow \neg \Even) \land (\neg \Int \rightarrow \neg \Odd)} \Int = \Any \text{ instead of } \Int \]
     \pagebreak
 
-    \subsection{Correctness of worra}
+    \subsection{Correctness of worra (1st version)}
     
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ a be any type.
@@ -200,15 +206,17 @@
 
     \pagebreak
 
-    \subsection{Optimality of worra}
+    \subsection{Optimality of worra (2nd version)}
 
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ a be any type.
 
     Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
 
-    \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \setminus \bigvee_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}s_p \right)\]
-    For any $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$, we define $a_{i,p}=\dom t \land (s_p \setminus \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}}s_{p'})$.\\
+    \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right) \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\]
+
+    For any $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$, we define:
+    \[a_{i,p}=\dom t \land \left(s_p \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\].\\
     Note that \[\worra t s = \bigvee_{\substack{i \in I\\ \{p \in P_i \alt s \land t_p \neq \varnothing\}}} a_{i,p} \]
 
     Let $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$.\\
@@ -225,19 +233,26 @@
     As $ \dom t \setminus u \geq a \setminus u$, it suffices to prove the following:
     \[ a \land \neg u \land (\bigwedge_{q\in Q} \neg s_q) \neq \varnothing \]
 
-    Let's suppose by the absurd that $a \land \bigvee_{q\in Q} s_q \neq \varnothing$.\\
+    Let's suppose by the absurd that $a \land \bigvee_{q\in Q} s_q \neq \varnothing$.
 
     ---------------------------------------------------
 
-    % ---------------------------------
+    We know that $a \land \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right) = \varnothing$ and $a \leq s_p$ (definition of $a_{i,p}$).\\
+    By minimality of $Q$, we have $\forall Q' \subsetneq Q, a \land \bigwedge_{p \in P_i\setminus Q'} s_p = \varnothing$.\\
+
+
+    Let $q \in Q$ such that $a \land s_q \neq \varnothing$.\\
+    Let $Q'=Q\setminus\{q\}$.\\
+    We have $a \land s_q \land \bigwedge_{p \in P_i\setminus Q} s_p = a \land \bigwedge_{p \in P_i\setminus Q'} s_p = \varnothing$.\\
+    Also, $\forall q'\in Q', a \land s_{q'} \land \bigwedge_{p \in P_i\setminus Q} s_p = \varnothing$.\\
+
+    ---------------------------------------------------
 
     $t_{p'} \land s = \varnothing \Rightarrow p' \in Q$\\
     $q \in Q \Rightarrow  s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$\\
 
     So let $q \in Q$ such that $a \land s_q \neq \varnothing$.\\
     We have $s_q \land s_p \neq \varnothing$, with $s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$ (by minimality).\\
-
-    % ---------------------------------
 
     ---------------------------------------------------
 
@@ -253,7 +268,7 @@
 
     As $Q'$ is such that $s \land \bigwedge_{p' \in P_i\setminus Q'} t_{p'} \neq \varnothing$ (???), we have a contradiction with the minimality of $Q$.
 
-    % ---------------------------------
+    ---------------------------------------------------
 
     Hence, $a \leq \bigwedge_{q\in Q} \neg s_q$. As we also know that $a \land \neg u \neq \varnothing$, we can deduce the wanted inequality.
 
