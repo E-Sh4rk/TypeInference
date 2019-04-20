@@ -206,19 +206,44 @@
 
     \pagebreak
 
-    \subsection{Optimality of worra (2nd version)}
+    \subsection{Worra alternative definition}
 
-    \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right) \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\]\\
+    \begin{align*}
+        \worra t s & = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right)
+            \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\\
+        & = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}\left(
+            s_p \land \bigvee_{P \subset P_i \setminus \{p\}} \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\right)
+            \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\\
+        & = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}\left(
+            \bigvee_{P \subset P_i \setminus \{p\}} \left(s_p \land \bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\right)
+            \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\\    
+        & = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\subset P_i\alt \exists p \in P. s\wedge t_p\not=\varnothing\}}\left(
+            \bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)
+            \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\\        
+        & = \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\left\{p\subset P_i\left|
+            \substack{\exists p \in P. s\wedge t_p\not=\varnothing\\
+            \text{ and } s \not\leq \bigvee_{p \in P} \neg t_p}
+            \right.\right\}}\left(
+            \bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
+        & = \dom t \wedge\bigvee_{i\in I}\left(\bigvee_{\{p\subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \}}\left(
+            \bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
+        & = \bigvee_{i \in I} \left( \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
+            \dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)
+    \end{align*}
+
+    \pagebreak
+
+    \subsection{Optimality of worra (2nd version)}
 
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ a be any type.
 
     Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
 
-    \[a_{i,P}=\dom t \land \left(\bigwedge_{p\in P_i} s_p\right) \land \left(\bigwedge_{n \in P_i \setminus P} \neg s_n\right)\]
+    \[a_{i,P}=\dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n)\]
 
     We have:
-    \[\worra t s = \bigvee_{i \in I} \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} } a_{i,p} \]\\
+    \[\worra t s = \bigvee_{i \in I} \left(\bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} } a_{i,P}\right) \]\\
 
     Let $i \in I$ and $P \subset P_i$ such that $s \not\leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p \neq \varnothing$) and $a_{i,P} \neq \varnothing$.\\
     We just have to show that $a = a_{i,P} \leq u$.
