@@ -158,7 +158,7 @@
     \[ \worra {(\Any \rightarrow \Int) \land (\neg \Int \rightarrow \neg \Even) \land (\neg \Int \rightarrow \neg \Odd)} \Int = \Any \text{ instead of } \Int \]
     \pagebreak
 
-    \subsection{Correctness of worra (1st version)}
+    \subsection{Correctness of worra (2nd version)}
     
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ a be any type.
@@ -173,7 +173,7 @@
     \begin{subequations}
         \begin{align}[left ={\exists i \in I. \exists u' \leq u. \empheqlbrace}]
           &u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing\label{eq1a}\\
-          &u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing\label{eq1b}
+          &u' \land \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) = \varnothing\label{eq1b}
         \end{align}
     \end{subequations}
 
@@ -181,29 +181,34 @@
   \[ u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing \]
 
     First, let's focus on \cref{eq1b}.\\
-    For any $p \in P_i$ such that $s \land t_p = \varnothing$, we have $p \in Q$ (by the absurd, because $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$).\\
+    For any $P \subset P_i$ such that $s \leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p = \varnothing$),\\
+    we have $P \cap Q \neq \varnothing$ (by the absurd, because $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$).\\
+    Consequently, we have:
+    \[ \forall P \subset P_i.\ s \leq \bigvee_{p \in P} \neg t_p \Rightarrow \bigwedge_{p \in P} s_p \leq \bigvee_{q \in Q}s_q \]
     We can deduce that:
-    \[ \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \leq \bigvee_{q \in Q}s_q \]
-    Moreover, as $u \not\leq\bigvee_{q\in Q}s_q$, we have $u \not\leq\bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$.\\
-    So let's take $u' = u \setminus \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p$ ($\neq \varnothing$).\\
-    By definition, we have $u' \land \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p = \varnothing$.\\
- 
+    \[ \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \leq \bigvee_{q \in Q}s_q \]
+    Moreover, as $u \not\leq \bigvee_{q\in Q}s_q$, we have $u \not\leq \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right)$.\\
+    So let's take $u' = u \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right)\right)$ ($\neq \varnothing$).\\
+    It satisfies \cref{eq1b} by definition.\\
+    
     Now, let's focus on \cref{eq1a}.\\
     Recall that we have:
-    \[ \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p \leq \bigvee_{q \in Q}s_q 
+    \[ \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \leq \bigvee_{q \in Q}s_q
     \text{\ \ \ and\ \ \ } u \not\leq\bigvee_{q\in Q}s_q \]
     Thus:
-    \[ u' \setminus \left(\bigvee_{q \in Q}s_q\right) = \left(u \setminus \bigvee_{\{p \in P_i \alt s \land t_p = \varnothing\}}s_p\right) \setminus \left(\bigvee_{q \in Q}s_q\right) = u \setminus \left(\bigvee_{q \in Q}s_q\right) \neq \varnothing \]
-    So we have $ u' \not\leq\bigvee_{q\in Q}s_q $. We also know, from $u \leq \dom t$, that $u' \leq u \leq \bigvee_{p\in P_i}s_p$.\\
+    \[ u' \setminus \left(\bigvee_{q \in Q}s_q\right) = \left(u \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right)\right)\right) \setminus \left(\bigvee_{q \in Q}s_q\right) = u \setminus \left(\bigvee_{q \in Q}s_q\right) \neq \varnothing \]
+    We get $u' \not\leq \bigvee_{q \in Q}s_q$.
 
-    We deduce that:
-    \[ u' \land \bigvee_{p\in P_i \setminus Q}s_p \neq \varnothing \]
+    Moreover, as $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$, we know that all $p \in P_i \setminus Q$ verifies $s \land t_p \neq \varnothing$.\\
+    By contraposition, $\forall p \in P_i.\ s \land t_p = \varnothing \Rightarrow p \in Q$, and so $\bigvee_{\{p\in P_i\alt s\wedge t_p = \varnothing\}}s_p \leq \bigvee_{q \in Q}s_q$.
 
-    Moreover, as $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$, we know that all $p \in P_i \setminus Q$ verify $s \land t_p \neq \varnothing$.\\
-    Thus, we have $u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing$, which ends the proof.
+    Together with the previous inequality, it gives:
+    \[ u' \not\leq \bigvee_{\{p\in P_i\alt s\wedge t_p = \varnothing\}}s_p \]
+
+    We also know, from $u \leq \dom t$, that $u' \leq u \leq \bigvee_{p\in P_i}s_p$.\\
+    Thus, we can deduce $u' \land \bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p \neq \varnothing$, which ends the proof.
     
     \qed
-
     \pagebreak
 
     \subsection{Worra alternative definition}
@@ -230,10 +235,9 @@
         & = \bigvee_{i \in I} \left( \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
             \dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)
     \end{align*}
-
     \pagebreak
 
-    \subsection{Optimality of worra (2nd version)}
+    \subsection{Optimality of worra (2nd version) (draft)}
 
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ a be any type.
@@ -264,70 +268,6 @@
     As $ \dom t \setminus u \geq a \setminus u$, we can immediatly deduce the wanted inequality.
 
     \qed
-
     \pagebreak
-
-    \subsection{Optimality of worra (2nd version) (backup)}
-
-    Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
-    Let $s$ a be any type.
-
-    Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
-
-    \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right) \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\]
-
-    For any $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$, we define:
-    \[a_{i,p}=\dom t \land \left(s_p \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\].\\
-    Note that \[\worra t s = \bigvee_{\substack{i \in I\\ \{p \in P_i \alt s \land t_p \neq \varnothing\}}} a_{i,p} \]
-
-    Let $i \in I$ and $p \in P_i$ such that $s \land t_p \neq \varnothing$.\\
-    We just have to show that $a = a_{i,p} \leq u$.
-
-    By the absurd, let's suppose that $a \land \neg u \neq \varnothing$ and show that $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$.\\
-
-    Let's take $Q = \min \{ Q \subset (P_i \setminus \{p\}) \alt s \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} \neq \varnothing \}$ with $\min$ refering to the set inclusion order.\\
-    Note that this $\min$ is not really well defined as there may be many minimal $Q$ satisfying this condition, but in this case we can take any of them.     We know that a such $Q$ exists because $s \land t_p \neq \varnothing$.\\
-
-    As by definition $s \land \bigwedge_{p'\in P_i\setminus Q}t_{p'} \neq \varnothing$, all we have to prove in order to deduce $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$ is:\\
-    \[ \dom t \setminus u \not\leq \bigvee_{q\in Q}s_q \]
-
-    As $ \dom t \setminus u \geq a \setminus u$, it suffices to prove the following:
-    \[ a \land \neg u \land (\bigwedge_{q\in Q} \neg s_q) \neq \varnothing \]
-
-    Let's suppose by the absurd that $a \land \bigvee_{q\in Q} s_q \neq \varnothing$.
-
-    ---------------------------------------------------
-
-    We know that $a \land \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right) = \varnothing$ and $a \leq s_p$ (definition of $a_{i,p}$).\\
-    By minimality of $Q$, we have $\forall Q' \subsetneq Q, a \land \bigwedge_{p \in P_i\setminus Q'} s_p = \varnothing$.\\
-
-    We deduce:
-    \[a \land (\bigvee_{q\in Q} s_q) \land \bigwedge_{p \in P_i\setminus Q} s_p = \varnothing\].\\
-
-    ---------------------------------------------------
-
-    $t_{p'} \land s = \varnothing \Rightarrow p' \in Q$\\
-    $q \in Q \Rightarrow  s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$\\
-
-    So let $q \in Q$ such that $a \land s_q \neq \varnothing$.\\
-    We have $s_q \land s_p \neq \varnothing$, with $s \land t_q \land \bigwedge_{p' \in P_i\setminus Q} t_{p'} = \varnothing$ (by minimality).\\
-
-    ---------------------------------------------------
-
-    Let $Q' = \{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}$.
-
-    By definition of $Q$, we have $Q' \land (P_i \setminus Q) = \varnothing$.\\
-    Thus, $Q' \setminus Q = \varnothing$ and so $Q' \subset Q$.
-
-    Moreover, we know that $a \land \bigvee_{\{p'\in P_i\alt s\wedge t_{p'}=\varnothing\}} s_{p'} = \varnothing$ and $a \leq s_p$ (definition of $a_{i,p}$).\\
-    So we have $Q' \neq Q$ because $a \land \bigvee_{q\in Q} s_q \neq \varnothing$ and $a \land \bigvee_{p'\in Q'} s_{p'} = \varnothing$.
-
-    It gives $Q' \subsetneq Q$.
-
-    As $Q'$ is such that $s \land \bigwedge_{p' \in P_i\setminus Q'} t_{p'} \neq \varnothing$ (???), we have a contradiction with the minimality of $Q$.
-
-    ---------------------------------------------------
-
-    Hence, $a \leq \bigwedge_{q\in Q} \neg s_q$. As we also know that $a \land \neg u \neq \varnothing$, we can deduce the wanted inequality.
 
 \end{document}
