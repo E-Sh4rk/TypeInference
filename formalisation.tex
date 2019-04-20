@@ -208,7 +208,37 @@
 
     \subsection{Optimality of worra (2nd version)}
 
-    \[a_{i,P,N}=\dom t \land \left(\left(\bigwedge_{p\in P} s_p\right) \land \left(\bigwedge_{n \in N} \neg s_n\right) \right)\].\\
+    \[\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\left(\bigvee_{\{p\in P_i\alt s\wedge t_p\not=\varnothing\}}s_p\right) \setminus \left(\bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \right)\right)\]\\
+
+    Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
+    Let $s$ a be any type.
+
+    Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
+
+    \[a_{i,P}=\dom t \land \left(\bigwedge_{p\in P_i} s_p\right) \land \left(\bigwedge_{n \in P_i \setminus P} \neg s_n\right)\]
+
+    We have:
+    \[\worra t s = \bigvee_{i \in I} \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} } a_{i,p} \]\\
+
+    Let $i \in I$ and $P \subset P_i$ such that $s \not\leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p \neq \varnothing$) and $a_{i,P} \neq \varnothing$.\\
+    We just have to show that $a = a_{i,P} \leq u$.
+
+    By the absurd, let's suppose that $a \land \neg u \neq \varnothing$ and show that $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$.\\
+
+    Let's take $Q = P_i \setminus P$.\\
+
+    As $P_i \setminus Q = P$, we already have $s \land \bigwedge_{p'\in P_i\setminus Q}t_{p'} \neq \varnothing$.\\
+    The last thing we must prove in order to deduce $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$ is:\\
+    \[ \dom t \setminus u \not\leq \bigvee_{q\in Q}s_q \]
+
+    We know that $a \leq \bigwedge_{q \in Q} \neg s_q$ (definition of $a_{i,P}$), so we have:
+    \[a \land (\bigwedge_{q\in Q} \neg s_q) = a\]
+    Thus: \[(a \setminus u) \land (\bigwedge_{q\in Q} \neg s_q) = (a \land (\bigwedge_{q\in Q} \neg s_q)) \setminus u = a \setminus u \neq \varnothing\]
+    And so: \[ a \setminus u \not\leq \bigvee_{q\in Q}s_q \]
+
+    As $ \dom t \setminus u \geq a \setminus u$, we can immediatly deduce the wanted inequality.
+
+    \qed
 
     \pagebreak
 
