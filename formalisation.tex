@@ -211,6 +211,10 @@
         & = \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subset P_i\\P \neq \varnothing}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right) \setminus
             \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p \right)\right)\\
+        & = \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subset P_i\\P \neq \varnothing}}
+            \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right) \setminus
+            \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}}
+            \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
         & = \bigvee_{i \in I} \left( \dom t \land \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
             \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
         & = \bigvee_{i \in I} \left( \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
@@ -242,8 +246,8 @@
     \[ \dom t \setminus u \not\leq \bigvee_{q\in Q}s_q \]
 
     We know that $a \leq \bigwedge_{q \in Q} \neg s_q$ (definition of $a_{i,P}$), so we have:
-    \[a \land (\bigwedge_{q\in Q} \neg s_q) = a\]
-    Thus: \[(a \setminus u) \land (\bigwedge_{q\in Q} \neg s_q) = (a \land (\bigwedge_{q\in Q} \neg s_q)) \setminus u = a \setminus u \neq \varnothing\]
+    \[a \land \bigwedge_{q\in Q} \neg s_q = a\]
+    Thus: \[(a \setminus u) \land \bigwedge_{q\in Q} \neg s_q = (a \land \bigwedge_{q\in Q} \neg s_q) \setminus u = a \setminus u \neq \varnothing\]
     And so: \[ a \setminus u \not\leq \bigvee_{q\in Q}s_q \]
 
     As $ \dom t \setminus u \geq a \setminus u$, we can immediatly deduce the wanted inequality.
