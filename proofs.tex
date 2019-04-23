@@ -58,6 +58,9 @@
 \newcommand{\Int} {\textsf{Int}}
 \newcommand{\Even} {\textsf{Even}}
 \newcommand{\Odd} {\textsf{Odd}}
+\newcommand{\Bool} {\textsf{Bool}}
+\newcommand{\True} {\textsf{True}}
+\newcommand{\False} {\textsf{False}}
 
 \begin{document}
 
@@ -78,7 +81,7 @@
         \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)
     \end{eqnarray*}
     Example of non-optimality of worra (1st version) :
-    \[ \worra {(\Any \rightarrow \Int) \land (\neg \Int \rightarrow \neg \Even) \land (\neg \Int \rightarrow \neg \Odd)} \Int = \Any \text{ instead of } \Int \]
+    \[ \worra {(\Any \rightarrow \Any) \land (\neg \Bool \rightarrow \neg \True) \land (\neg \Bool \rightarrow \neg \False)} \Bool = \Any \text{ instead of } \Bool \]
     \pagebreak
 
     \subsection{Correctness of worra (2nd version)}
