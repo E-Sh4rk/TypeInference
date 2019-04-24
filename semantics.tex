@@ -1,0 +1,118 @@
+% Header
+\documentclass[a4paper]{article}%      autres choix : book, report
+\usepackage[utf8]{inputenc}%           gestion des accents (source)
+\usepackage[T1]{fontenc}%              gestion des accents (PDF)
+\usepackage[francais]{babel}%          gestion du francais
+\usepackage{textcomp}%                 caracteres additionnels
+\usepackage{mathtools,amssymb,amsthm}% packages de l'AMS + mathtools
+\usepackage{lmodern}%                  police de caractere
+\usepackage[top=2cm,left=2cm,right=2cm,bottom=2cm]{geometry}%     gestion des marges
+\usepackage{graphicx}%                 gestion des images
+\usepackage{array}%                    gestion amelioree des tableaux
+\usepackage{calc}%                     syntaxe naturelle pour les calculs
+\usepackage{titlesec}%                 pour les sections
+\usepackage{titletoc}%                 pour la table des matieres
+\usepackage{fancyhdr}%                 pour les en-tetes
+\usepackage{titling}%                  pour le titre
+\usepackage{enumitem}%                 pour les listes numerotees
+\usepackage{hyperref}%                 gestion des hyperliens
+\usepackage{syntax}
+\usepackage{minted}
+\usepackage[parfill]{parskip}
+\usepackage{amsmath}
+\usepackage{fourier}
+\usepackage{heuristica}
+\usepackage[overload]{empheq}
+\usepackage{cleveref}
+\usepackage{alltt}
+\usepackage{bm}
+\usepackage{nicefrac}
+\usepackage{stmaryrd}
+\usepackage{mathpartir}
+\usepackage{color}
+\usemintedstyle{vs}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Type inference - M2 Internship}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\DeclareFontFamily{U}{mathb}{}
+\DeclareFontShape{U}{mathb}{m}{n}{
+  <-5.5> mathb5
+  <5.5-6.5> mathb6
+  <6.5-7.5> mathb7
+  <7.5-8.5> mathb8
+  <8.5-9.5> mathb9
+  <9.5-11.5> mathb10
+  <11.5-> mathb12
+}{}
+\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
+\DeclareMathSymbol{\sqdot}{\mathbin}{mathb}{"0D}
+\newcommand{\worra}[2]{#1\mathop{\,\sqdot\,} #2}
+\newcommand{\apply}[2]{#1\circ#2}
+\newcommand{\dom}[1]{\textsf{dom}(#1)}
+\newcommand{\alt}{~|~}
+\newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
+\newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
+\newcommand{\Int} {\textsf{Int}}
+\newcommand{\Even} {\textsf{Even}}
+\newcommand{\Odd} {\textsf{Odd}}
+\newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
+
+\newcommand {\Infer} [4] [] {
+  \inferrule*[%
+    left={\ifx\\#1\\#1\else\ifx\\#2\\[\textsc{#1}]\:\else[\textsc{#1}]\fi\fi},%
+    right={$ #4 $}%
+  ]%
+  {#2}{#3}}
+
+\newcommand {\Rule}[1] {[\textsc{#1}]}
+
+\begin{document}
+
+	\maketitle
+
+    \section{Semantics}
+
+    \subsection{Semantics}
+
+    \[
+    \begin{array}{lrcl}
+    \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^tx.e \alt \ite e t e e \alt e e\\
+    \textbf{Occurrences} & o & ::= & c\alt x \alt \lambda^tx.e \alt \ite e t e e \alt o o\\
+    \textbf{Values} & v & ::= & c \alt \lambda^tx.e
+    \end{array}
+    \]
+
+    \[
+    \begin{array}{lrcl}
+    \textbf{Context} & C[] & ::= & e [] \alt [] v \alt \ite {[]} t e e
+    \end{array}
+    \]
+
+    \begin{mathpar}
+        \Infer[Ctx]
+        {e \leadsto e'}
+        {C[e] \leadsto C[e']}
+        {}\\
+        \Infer[App]
+        {}
+        {(\lambda^tx.e) v \leadsto e\{x\mapsto v\}}
+        {}\\
+        \Infer[Ite]
+        {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
+        {\ite v t {e_1} {e_2} \leadsto e_i}
+        {}\\
+    \end{mathpar}
+
+    \subsection{Proofs}
+
+
+\end{document}
