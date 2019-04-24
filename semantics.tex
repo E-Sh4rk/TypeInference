@@ -65,6 +65,11 @@
 \newcommand{\Even} {\textsf{Even}}
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
+\newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
 
 \newcommand {\Infer} [4] [] {
   \inferrule*[%
@@ -112,7 +117,101 @@
         {}\\
     \end{mathpar}
 
-    \subsection{Proofs}
+    \subsection{Recall: Type System}
+
+    \begin{mathpar}
+
+      \Infer[Empty]
+        { }
+        {\Gamma\vdash e:\Empty}
+        {\exists e' \in \dom\Gamma.\ \Gamma(e') \leq \Empty}
+      \\
+      \Infer[Occ]
+          {
+          }
+          { \Gamma \vdash e: \Gamma(e) }
+          { e\in\dom\Gamma}
+      \qquad
+      \Infer[Const]
+          { }
+          {\Gamma\vdash c:\basic{c}}
+          {c\not\in\dom\Gamma}
+       \\
+      \Infer[Abs]
+          {\Gamma,x:s_i\vdash e:t_i}
+          {
+          \Gamma\vdash\lambda^{\wedge_{i\in I}s_i\to t_i}x.e:\textstyle\bigwedge_{i\in I}s_i\to t_i
+          }
+          {\lambda^{\wedge_{i\in I}s_i\to t_i}.e\not\in\dom\Gamma}
+          \\
+      \Infer[App]
+          {
+            \Gamma \vdash e_1: t_1 \\
+            \Gamma\vdash e_2: t_2\\
+            t_1 \leq \Empty \to \Any\\
+            t_2 \in \dom {t_1}
+          }
+          { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+          { {e_1}{e_2}\not\in\dom\Gamma}
+          \\
+      \Infer[If]
+            {\Gamma\vdash e:t_\circ\\
+              \Gamma, \Gamma^+_{\Gamma,e,t}\vdash e_1 : t_1\\
+              \Gamma, \Gamma^-_{\Gamma,e,t}\vdash e_2 : t_2}
+            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+            {\makebox[3cm][l]{$\ite {e} t {e_1}{e_2}\not\in\dom\Gamma$}}
+      \\\end{mathpar}
+
+    \subsection{Theorems}
+
+    \begin{lemma}[Compositionality]
+      If $\Gamma \vdash C[e]:t$, then there exists $t'$ such that $\Gamma \vdash e:t'$ and all $e'$ verifying $\Gamma \vdash e':t'$ also verify $\Gamma \vdash C[e']:t$.
+      \textbf{False.}
+    \end{lemma}
+
+    \begin{lemma}[Substitution lemma]
+      If $\Gamma, (x:t') \vdash e:t$ and $\Gamma \vdash e':t'$ with $t' \neq \Empty$ and $\dom \Gamma$ does not contain $x$, then $\Gamma \vdash e\{x\mapsto e'\}:t$.
+    \end{lemma}
+
+    \begin{theorem}[Subject reduction]
+      If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
+    \end{theorem}
+
+    \section{Proofs}
+
+    We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename our terms.
+
+    %\subsection{Compositionality}
+
+    \subsection{Substitution lemma}
+
+    Let $\Gamma,x,t,t',e,e'$ as in the lemma statement.
+    We will denote $\Gamma, (x:t')$ by $\Gamma'$.
+
+    We proceed by induction on the typing derivation of $\Gamma' \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
+    \begin{description}
+      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
+      Thus, we can derive $\Gamma \vdash e\{x\mapsto e'\}:\Empty$ by applying the rule $\Rule {Empty}$.
+      \item[Occ] If $e=x$, then $t=t'$. As $\Gamma \vdash e':t'$, we can conclude immediatly. Else, we have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
+      As $\dom \Gamma$ does not contain $x$, we know that $e$ does not contain $x$ neither, so the property becomes trivial.
+      \item[Const] This case is trivial.
+      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma',y:s_i \vdash e_y:t_i$.
+      By induction, for each $i$, we get  $\Gamma,y:s_i \vdash e_y\{x\mapsto e'\}:t_i$. We conclude by applying $\Rule {Abs}$.
+      \item[App] $e=e_1 e_2$. We have $\Gamma'\vdash e_1:t_1$ and $\Gamma'\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
+      By induction, we get $\Gamma\vdash e_1\{x\mapsto e'\}:t_1$ and $\Gamma\vdash e_2\{x\mapsto e'\}:t_2$. We conclude by applying $\Rule {App}$.
+      \item[If] TODO. May need a stronger version: no restriction on $\dom \Gamma$ but we apply a substitution to the env int he result.
+    \end{description}
+
+    \subsection{Subject reduction}
+
+    Let $\Gamma,e,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
+
+    We proceed by induction on the typing derivation of $\Gamma \vdash e : t$. We proceed by a case analysis on the last derivation rule used:
+
+    \begin{description}
+      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
+      Thus we can apply the same rule to type $\Gamma \vdash e' : \Empty$.
+    \end{description}
 
 
 \end{document}
