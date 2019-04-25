@@ -170,7 +170,7 @@
     \end{lemma}
 
     \begin{lemma}[Substitution lemma]
-      If $\Gamma, (x:t') \vdash e:t$ and $\Gamma \vdash e':t'$ with $t' \neq \Empty$ and $\dom \Gamma$ does not contain $x$, then $\Gamma \vdash e\{x\mapsto e'\}:t$.
+      If $\Gamma, (x:t') \vdash e:t$ and $\Gamma \vdash e':t'$ with $t' \neq \Empty$, then $\Gamma\{x\mapsto e'\} \vdash e\{x\mapsto e'\}:t$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
@@ -179,27 +179,27 @@
 
     \section{Proofs}
 
-    We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename our terms.
+    We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename the terms.
 
     %\subsection{Compositionality}
 
     \subsection{Substitution lemma}
 
     Let $\Gamma,x,t,t',e,e'$ as in the lemma statement.
-    We will denote $\Gamma, (x:t')$ by $\Gamma'$.
+    We will denote $\Gamma, (x:t')$ by $\Gamma'$ and $\Gamma\{x\mapsto e'\}$ by $\Gamma''$.
 
     We proceed by induction on the typing derivation of $\Gamma' \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
     \begin{description}
-      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
-      Thus, we can derive $\Gamma \vdash e\{x\mapsto e'\}:\Empty$ by applying the rule $\Rule {Empty}$.
+      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$ ($\Gamma(x) \neq \Empty$ by hypothesis).\\
+      Thus, we can derive $\Gamma'' \vdash e\{x\mapsto e'\}:\Empty$ by applying the rule $\Rule {Empty}$.
       \item[Occ] If $e=x$, then $t=t'$. As $\Gamma \vdash e':t'$, we can conclude immediatly. Else, we have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
-      As $\dom \Gamma$ does not contain $x$, we know that $e$ does not contain $x$ neither, so the property becomes trivial.
+      Thus, we have $e\{x\mapsto e'\} \in \Gamma''$ and $\Gamma''(e\{x\mapsto e'\})$, so we can apply the rule $\Rule {Occ}$.
       \item[Const] This case is trivial.
       \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma',y:s_i \vdash e_y:t_i$.
-      By induction, for each $i$, we get  $\Gamma,y:s_i \vdash e_y\{x\mapsto e'\}:t_i$. We conclude by applying $\Rule {Abs}$.
+      By induction, for each $i$, we get  $\Gamma'',y:s_i \vdash e_y\{x\mapsto e'\}:t_i$. We conclude by applying $\Rule {Abs}$.
       \item[App] $e=e_1 e_2$. We have $\Gamma'\vdash e_1:t_1$ and $\Gamma'\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
-      By induction, we get $\Gamma\vdash e_1\{x\mapsto e'\}:t_1$ and $\Gamma\vdash e_2\{x\mapsto e'\}:t_2$. We conclude by applying $\Rule {App}$.
-      \item[If] TODO. May need a stronger version: no restriction on $\dom \Gamma$ but we apply a substitution to the env int he result.
+      By induction, we get $\Gamma''\vdash e_1\{x\mapsto e'\}:t_1$ and $\Gamma''\vdash e_2\{x\mapsto e'\}:t_2$. We conclude by applying $\Rule {App}$.
+      \item[If] TODO.
     \end{description}
 
     \subsection{Subject reduction}
