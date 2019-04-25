@@ -117,6 +117,8 @@
         {}\\
     \end{mathpar}
 
+    TODO: Add definition for $v \in t$.
+
     \subsection{Recall: Type System}
 
     \begin{mathpar}
@@ -142,7 +144,7 @@
           {
           \Gamma\vdash\lambda^{\wedge_{i\in I}s_i\to t_i}x.e:\textstyle\bigwedge_{i\in I}s_i\to t_i
           }
-          {\lambda^{\wedge_{i\in I}s_i\to t_i}.e\not\in\dom\Gamma}
+          {\lambda^{\wedge_{i\in I}s_i\to t_i}x.e\not\in\dom\Gamma}
           \\
       \Infer[App]
           {
@@ -199,7 +201,13 @@
       By induction, for each $i$, we get  $\Gamma'',y:s_i \vdash e_y\{x\mapsto e'\}:t_i$. We conclude by applying $\Rule {Abs}$.
       \item[App] $e=e_1 e_2$. We have $\Gamma'\vdash e_1:t_1$ and $\Gamma'\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
       By induction, we get $\Gamma''\vdash e_1\{x\mapsto e'\}:t_1$ and $\Gamma''\vdash e_2\{x\mapsto e'\}:t_2$. We conclude by applying $\Rule {App}$.
-      \item[If] TODO.
+      \item[If] $e=\ite {e_0} t {e_1}{e_2}$. We have $\Gamma' \vdash e_0:t_0$, $\Gamma',\Gamma^+_{\Gamma',e_0,t}\vdash e_1 : t_1$ and $\Gamma',\Gamma^-_{\Gamma',e_0,t}\vdash e_2 : t_2$.
+      Let's focus on $\Gamma_1=\Gamma',\Gamma^+_{\Gamma',e_0,t}$. By definition of $\Gamma^+$, we know that $x \in \Gamma_1$ and $\Gamma_1(x)=t'_1$ with $t'_1 \leq t'$.
+      By induction, we get:
+      \begin{itemize}
+        \item $\Gamma'' \vdash e_0\{x\mapsto e'\}:t_0$.
+        \item $(\Gamma_1\setminus\{(x:t'_1)\})\{x\mapsto e'\}\vdash e_1\{x\mapsto e'\} : t_1$. TODO: we should relate $e'$ and $t'_1$ before...
+      \end{itemize}
     \end{description}
 
     \subsection{Subject reduction}
