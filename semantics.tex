@@ -173,7 +173,7 @@
     \subsection{Theorems}
 
     \begin{lemma}[Substitution lemma]
-      If $\Gamma, (x:t') \vdash e:t$ and $\Gamma \vdash e':t'$ with $t' \neq \Empty$, then $\Gamma\{x\mapsto e'\} \vdash e\{x\mapsto e'\}:t$.
+      If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$ and $t_x \neq \Empty$, then $\Gamma\{x\mapsto e'\} \vdash e\{x\mapsto e'\}:t'$ with $t'\leq t$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
@@ -188,27 +188,30 @@
 
     \subsection{Substitution lemma}
 
-    Let $\Gamma,x,t,t',e,e'$ as in the lemma statement.
-    We will denote $\Gamma, (x:t')$ by $\Gamma'$ and $\Gamma\{x\mapsto e'\}$ by $\Gamma''$.
+    Let $\Gamma,e,x,e',t,t',t_x,t_{e'}$ as in the lemma statement.
+    We will denote $\Gamma, (x:t_x)$ by $\Gamma_x$ and the substitution $\{x\mapsto e'\}$ by $\rho$.
 
-    We proceed by induction on the typing derivation of $\Gamma' \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
+    We proceed by induction on the typing derivation of $\Gamma_x \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
     \begin{description}
       \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$ ($\Gamma(x) \neq \Empty$ by hypothesis).\\
-      Thus, we can derive $\Gamma'' \vdash e\{x\mapsto e'\}:\Empty$ by applying the rule $\Rule {Empty}$.
-      \item[Occ] If $e=x$, then $t=t'$. As $\Gamma \vdash e':t'$, we can conclude immediatly. Else, we have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
-      Thus, we have $e\{x\mapsto e'\} \in \Gamma''$ and $\Gamma''(e\{x\mapsto e'\})$, so we can apply the rule $\Rule {Occ}$.
+      Thus, we can derive $\Gamma\rho \vdash e\rho:\Empty$ by applying the rule $\Rule {Empty}$.
+      \item[Occ] If $e=x$, then $t=t_x$. As $\Gamma \vdash e':t_{e'} \leq t_x$, we can conclude immediately. Else, we have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
+      Thus, we have $e\rho \in \Gamma\rho$ and $\Gamma\rho(e\rho)=t$, so we can apply the rule $\Rule {Occ}$.
       \item[Const] This case is trivial.
-      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma',y:s_i \vdash e_y:t_i$.
-      By induction, for each $i$, we get  $\Gamma'',y:s_i \vdash e_y\{x\mapsto e'\}:t_i$. We conclude by applying $\Rule {Abs}$.
-      \item[App] $e=e_1 e_2$. We have $\Gamma'\vdash e_1:t_1$ and $\Gamma'\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
-      By induction, we get $\Gamma''\vdash e_1\{x\mapsto e'\}:t_1$ and $\Gamma''\vdash e_2\{x\mapsto e'\}:t_2$. We conclude by applying $\Rule {App}$.
-      \item[If] $e=\ite {e_0} t {e_1}{e_2}$. We have $\Gamma' \vdash e_0:t_0$, $\Gamma',\Gamma^+_{\Gamma',e_0,t}\vdash e_1 : t_1$ and $\Gamma',\Gamma^-_{\Gamma',e_0,t}\vdash e_2 : t_2$.
-      Let's focus on $\Gamma_1=\Gamma',\Gamma^+_{\Gamma',e_0,t}$. By definition of $\Gamma^+$, we know that $x \in \Gamma_1$ and $\Gamma_1(x)=t'_1$ with $t'_1 \leq t'$.
-      By induction, we get:
+      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma_x,y:s_i \vdash e_y:t_i$.
+      By induction, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
+      \item[App] $e=e_1 e_2$. We have $\Gamma_x\vdash e_1:t_1$ and $\Gamma_x\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
+      By induction, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
+      \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma_x\vdash e_0:t_0$, $\Gamma_x,\Gamma^+_{\Gamma_x,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma_x,\Gamma^-_{\Gamma_x,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
+      Let's focus on $\Gamma_1=\Gamma_x,\Gamma^+_{\Gamma_x,e_0,t_{\text{if}}}$. By definition of $\Gamma^+$, we know that $x \in \Gamma_1$ and $\Gamma_1(x)=t'_1$ with $t'_1 \leq t'$.
+      TODO\\
+      Finally, we get by induction:
       \begin{itemize}
-        \item $\Gamma'' \vdash e_0\{x\mapsto e'\}:t_0$.
-        \item $(\Gamma_1\setminus\{(x:t'_1)\})\{x\mapsto e'\}\vdash e_1\{x\mapsto e'\} : t_1$. TODO: we should relate $e'$ and $t'_1$ before...
+        \item $\Gamma\rho\vdash e_0\rho:t_0$.
+        \item $\Gamma'_1\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
+        \item $\Gamma'_2\vdash e_2\rho:t_2'$ with $t_2' \leq t_2$.
       \end{itemize}
+      We conclude by applying the rule $\Rule {If}$.
     \end{description}
 
     \subsection{Subject reduction}
