@@ -62,6 +62,7 @@
 \newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
 \newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
 \newcommand{\Int} {\textsf{Int}}
+\newcommand{\Bool} {\textsf{Bool}}
 \newcommand{\Even} {\textsf{Even}}
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
@@ -117,7 +118,12 @@
         {}\\
     \end{mathpar}
 
-    TODO: Add definition for $v \in t$.
+    \begin{align*}
+      n &\in \Int\\
+      b &\in \Bool\\
+      \lambda^tx.e &\in t\\
+      v \in t \text{ and } t \leq t' \Rightarrow v &\in t'
+    \end{align*}
 
     \subsection{Recall: Type System}
 
@@ -165,11 +171,6 @@
       \\\end{mathpar}
 
     \subsection{Theorems}
-
-    \begin{lemma}[Compositionality]
-      If $\Gamma \vdash C[e]:t$, then there exists $t'$ such that $\Gamma \vdash e:t'$ and all $e'$ verifying $\Gamma \vdash e':t'$ also verify $\Gamma \vdash C[e']:t$.
-      \textbf{False.}
-    \end{lemma}
 
     \begin{lemma}[Substitution lemma]
       If $\Gamma, (x:t') \vdash e:t$ and $\Gamma \vdash e':t'$ with $t' \neq \Empty$, then $\Gamma\{x\mapsto e'\} \vdash e\{x\mapsto e'\}:t$.
