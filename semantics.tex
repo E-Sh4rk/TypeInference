@@ -68,6 +68,8 @@
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
 \newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
 \newcommand{\subst}[2]{\{#1 \mapsto #2\}}
+\newcommand{\tyof}[2]{\textsf{typeof}_{#2}(#1)}
+\newcommand{\typep}[3]{\textsf{Constr}^{#1}_{#3}(#2)}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -211,13 +213,17 @@
       TODO
     \end{lemma}
 
+    \begin{lemma}[Test substitution lemma]
+      TODO
+    \end{lemma}
+
     \begin{lemma}[Substitution lemma]
-      Let $\Gamma$ an environment, $x$ a variable, $e$ and $e'$ two expressions, $t$ and $t_x$ two types.
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an exprssion, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
       If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \subst x {e'} \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{lemma}
 
     \begin{corollary}[Substitution lemma 2]
-      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ and $e'$ two expressions, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an exprssion, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
       If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
@@ -247,12 +253,17 @@
       \item[App] $e=e_1 e_2$. We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
       By induction, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
       \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
-      Let's focus on $\Gamma_1=\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. TODO\\
-      Finally, we get by induction:
       \begin{itemize}
-        \item $\Gamma\rho\vdash e_0\rho:t_0$.
-        \item $\Gamma'_1\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
-        \item $\Gamma'_2\vdash e_2\rho:t_2'$ with $t_2' \leq t_2$.
+        \item By induction, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
+        \item We note $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
+        We have $\Gamma_1'(x)=t_x'\leq t_x$ and, by construction, $\Gamma_1' \vdash e':t_x'$.
+        Thus, we get by induction: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.\\
+        We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
+        We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
+        By the test substitution lemma, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
+        and so $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+        We deduce, by using the inclusion lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
+        \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
       \end{itemize}
       We conclude by applying the rule $\Rule {If}$.
     \end{description}
