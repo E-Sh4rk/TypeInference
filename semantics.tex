@@ -212,12 +212,12 @@
     \end{lemma}
 
     \begin{lemma}[Substitution lemma]
-      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.\\
+      Let $\Gamma$ an environment, $x$ a variable, $e$ and $e'$ two expressions, $t$ and $t_x$ two types.
       If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \subst x {e'} \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{lemma}
 
     \begin{corollary}[Substitution lemma 2]
-      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ and $e'$ two expressions, $t$ a type and $t_x$ a type that is not $\Empty$.\\
       If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
