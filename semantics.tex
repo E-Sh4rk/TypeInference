@@ -180,18 +180,19 @@
   \begin{definition}[Environment equivalence]
     Two environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
     \begin{align*} 
-      &\forall e \in \dom \Gamma. \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
-      \forall e' \in \dom {\Gamma'}. \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
-      \text{and} \hspace{1cm} &\exists e\in \dom \Gamma. \Gamma(e)=\Empty \Leftrightarrow \exists e'\in \dom {\Gamma'}. \Gamma'(e')=\Empty
+      &\forall e \in \dom \Gamma.\ \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
+      \forall e' \in \dom {\Gamma'}.\ \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
+      \text{and} \hspace{1cm} &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Leftrightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty
     \end{align*}
   \end{definition}
 
   \begin{definition}[Environment inclusion]
     Let $\Gamma$ and $\Gamma'$ two environments. We says that $\Gamma' \leq \Gamma$ iff:
-    \begin{align*} 
-      &\dom \Gamma \subseteq \dom {\Gamma'}\\
-      &\forall e \in \dom \Gamma. \Gamma'(e) \leq \Gamma(e)
+    \begin{align*}
+      &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
+      &\forall e \in \dom \Gamma.\ \tyof e {\Gamma'} \leq \Gamma(e)
     \end{align*}
+    Note: this relation is a preorder. $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
   \end{definition}
 
   \begin{definition}[Environment substitution]
@@ -204,10 +205,6 @@
   \end{definition}
 
     \subsection{Theorems}
-
-    \begin{lemma}[Equivalence lemma]
-      TODO
-    \end{lemma}
 
     \begin{lemma}[Inclusion lemma]
       TODO
@@ -277,11 +274,9 @@
     As $x$ does not appear in $\dom \Gamma$, we have $(\Gamma, (x:t_x))\rho = \Gamma, (e':t_x)$.
     We deduce $\Gamma, (e':t_x) \vdash e\rho:t'$ with $t' \leq t$.
 
-    As $t_{e'} \leq t_x$, we have $\Gamma, (e':t_{e'}) \leq \Gamma, (e':t_x)$.
-    Thus, by using the inclusion lemma, we have $\Gamma, (e':t_{e'}) \vdash e\rho:t''$ with $t'' \leq t' \leq t$.
-
-    Finally, it is clear that $\Gamma, (e':t_{e'}) \equiv \Gamma$ (because $\Gamma \vdash e':t_{e'}$),
-    so we can conclude $\Gamma \vdash e\rho:t''$ by using the equivalence lemma.
+    As $\Gamma \vdash e':t_{e'}$ and $t_{e'} \leq t_x$, we have $\tyof {e'} \Gamma \leq t_x$.
+    Moreover, $t_x \neq \Empty$, so we have $\Gamma \leq \Gamma, (e':t_x)$.
+    Thus, by using the inclusion lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
 
     \subsection{Subject reduction}
 
