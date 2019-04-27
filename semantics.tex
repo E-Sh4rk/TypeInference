@@ -67,10 +67,13 @@
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
 \newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
+\newcommand{\subst}[3]{#1\{#2 \mapsto #3\}}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
 
 \newcommand {\Infer} [4] [] {
   \inferrule*[%
@@ -170,11 +173,53 @@
             {\makebox[3cm][l]{$\ite {e} t {e_1}{e_2}\not\in\dom\Gamma$}}
       \\\end{mathpar}
 
+    \subsection{Definitions}
+
+  \begin{definition}[Environment equivalence]
+    Two environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
+    \begin{align*} 
+      &\forall e \in \dom \Gamma. \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
+      \forall e' \in \dom {\Gamma'}. \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
+      \text{and} \hspace{1cm} &\exists e\in \dom \Gamma. \Gamma(e)=\Empty \Leftrightarrow \exists e'\in \dom {\Gamma'}. \Gamma'(e')=\Empty
+    \end{align*}
+  \end{definition}
+
+  \begin{definition}[Environment inclusion]
+    Let $\Gamma$ and $\Gamma'$ two environments. We says that $\Gamma' \leq \Gamma$ iff:
+    \begin{align*} 
+      &\dom \Gamma \subseteq \dom {\Gamma'}\\
+      &\forall e \in \dom \Gamma. \Gamma'(e) \leq \Gamma(e)
+    \end{align*}
+  \end{definition}
+
+  \begin{definition}[Environment substitution]
+    Let $\Gamma$ an environment and $\rho$ a substitution from variables to expressions.
+    The environment $\Gamma\rho$ is defined by:
+    \begin{align*}
+      &\dom {\Gamma\rho} = \dom \Gamma \rho\\
+      &\forall e' \in \dom {\Gamma\rho}, (\Gamma\rho)(e') = \bigwedge_{e'' \text{ s.t. } e''\rho=e'}\Gamma(e'')
+    \end{align*}
+  \end{definition}
+
     \subsection{Theorems}
 
-    \begin{lemma}[Substitution lemma]
-      If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$ and $t_x \neq \Empty$, then $\Gamma\{x\mapsto e'\} \vdash e\{x\mapsto e'\}:t'$ with $t'\leq t$.
+    \begin{lemma}[Equivalence lemma]
+      TODO
     \end{lemma}
+
+    \begin{lemma}[Inclusion lemma]
+      TODO
+    \end{lemma}
+
+    \begin{lemma}[Substitution lemma]
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\subst \Gamma x {e'} \vdash \subst e x {e'}:t'$ with $t'\leq t$.
+    \end{lemma}
+
+    \begin{corollary}[Substitution lemma 2]
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      If $x$ does not appear in $\dom \Gamma$ and $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash \subst e x {e'}:t'$ with $t'\leq t$.
+    \end{corollary}
 
     \begin{theorem}[Subject reduction]
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
@@ -184,9 +229,9 @@
 
     We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename the terms.
 
-    %\subsection{Compositionality}
-
     \subsection{Substitution lemma}
+
+    TODO: Update to match new def
 
     Let $\Gamma,e,x,e',t,t',t_x,t_{e'}$ as in the lemma statement.
     We will denote $\Gamma, (x:t_x)$ by $\Gamma_x$ and the substitution $\{x\mapsto e'\}$ by $\rho$.
