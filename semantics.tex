@@ -268,6 +268,21 @@
       We conclude by applying the rule $\Rule {If}$.
     \end{description}
 
+    \subsection{Substitution lemma 2}
+
+    Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
+    We will denote the substitution $\subst x {e'}$ by $\rho$.
+
+    By the substitution lemma, we get $(\Gamma, (x:t_x))\rho \vdash e\rho:t'$ with $t' \leq t$.
+    As $x$ does not appear in $\dom \Gamma$, we have $(\Gamma, (x:t_x))\rho = \Gamma, (e':t_x)$.
+    We deduce $\Gamma, (e':t_x) \vdash e\rho:t'$ with $t' \leq t$.
+
+    As $t_{e'} \leq t_x$, we have $\Gamma, (e':t_{e'}) \leq \Gamma, (e':t_x)$.
+    Thus, by using the inclusion lemma, we have $\Gamma, (e':t_{e'}) \vdash e\rho:t''$ with $t'' \leq t' \leq t$.
+
+    Finally, it is clear that $\Gamma, (e':t_{e'}) \equiv \Gamma$ (because $\Gamma \vdash e':t_{e'}$),
+    so we can conclude $\Gamma \vdash e\rho:t''$ by using the equivalence lemma.
+
     \subsection{Subject reduction}
 
     Let $\Gamma,e,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
