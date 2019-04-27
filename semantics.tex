@@ -67,7 +67,7 @@
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
 \newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
-\newcommand{\subst}[3]{#1\{#2 \mapsto #3\}}
+\newcommand{\subst}[2]{\{#1 \mapsto #2\}}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -212,13 +212,13 @@
     \end{lemma}
 
     \begin{lemma}[Substitution lemma]
-      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
-      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\subst \Gamma x {e'} \vdash \subst e x {e'}:t'$ with $t'\leq t$.
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.\\
+      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \subst x {e'} \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{lemma}
 
     \begin{corollary}[Substitution lemma 2]
-      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
-      If $x$ does not appear in $\dom \Gamma$ and $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash \subst e x {e'}:t'$ with $t'\leq t$.
+      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
     \begin{theorem}[Subject reduction]
@@ -231,25 +231,23 @@
 
     \subsection{Substitution lemma}
 
-    TODO: Update to match new def
+    Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
+    We will denote the substitution $\subst x {e'}$ by $\rho$.
 
-    Let $\Gamma,e,x,e',t,t',t_x,t_{e'}$ as in the lemma statement.
-    We will denote $\Gamma, (x:t_x)$ by $\Gamma_x$ and the substitution $\{x\mapsto e'\}$ by $\rho$.
-
-    We proceed by induction on the typing derivation of $\Gamma_x \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
+    We proceed by induction on the typing derivation of $\Gamma \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
+    
     \begin{description}
-      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$ ($\Gamma(x) \neq \Empty$ by hypothesis).\\
-      Thus, we can derive $\Gamma\rho \vdash e\rho:\Empty$ by applying the rule $\Rule {Empty}$.
-      \item[Occ] If $e=x$, then $t=t_x$. As $\Gamma \vdash e':t_{e'} \leq t_x$, we can conclude immediately. Else, we have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
-      Thus, we have $e\rho \in \Gamma\rho$ and $\Gamma\rho(e\rho)=t$, so we can apply the rule $\Rule {Occ}$.
+      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
+      It is still true after applying the substitution $\rho$, so we can derive $\Gamma\rho \vdash e\rho:\Empty$ by applying the rule $\Rule {Empty}$.
+      \item[Occ] We have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
+      Thus, we have $e\rho \in \dom {\Gamma\rho}$ and $\Gamma\rho(e\rho)=t\land t'$ (with $t'$ a type), so we can conclude by applying the rule $\Rule {Occ}$.
       \item[Const] This case is trivial.
-      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma_x,y:s_i \vdash e_y:t_i$.
+      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
       By induction, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
-      \item[App] $e=e_1 e_2$. We have $\Gamma_x\vdash e_1:t_1$ and $\Gamma_x\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
+      \item[App] $e=e_1 e_2$. We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
       By induction, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
-      \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma_x\vdash e_0:t_0$, $\Gamma_x,\Gamma^+_{\Gamma_x,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma_x,\Gamma^-_{\Gamma_x,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
-      Let's focus on $\Gamma_1=\Gamma_x,\Gamma^+_{\Gamma_x,e_0,t_{\text{if}}}$. By definition of $\Gamma^+$, we know that $x \in \Gamma_1$ and $\Gamma_1(x)=t'_1$ with $t'_1 \leq t'$.
-      TODO\\
+      \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
+      Let's focus on $\Gamma_1=\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. TODO\\
       Finally, we get by induction:
       \begin{itemize}
         \item $\Gamma\rho\vdash e_0\rho:t_0$.
