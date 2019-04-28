@@ -216,13 +216,13 @@
       \end{align*}
     \end{lemma}
 
-    \begin{lemma}[Test substitution lemma]
-      TODO
-    \end{lemma}
-
     \begin{lemma}[Substitution lemma]
       Let $\Gamma$ an environment, $x$ a variable, $e$ an exprssion, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
-      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \subst x {e'} \vdash e \subst x {e'}:t'$ with $t'\leq t$.
+      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then:
+      \begin{align*}
+        &\Gamma \subst x {e'} \vdash e \subst x {e'}:t' \text{ with } t'\leq t\\
+        &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\subst x {e'},e\subst x {e'},t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+      \end{align*}
     \end{lemma}
 
     \begin{corollary}[Substitution lemma 2]
@@ -280,6 +280,8 @@
 
     \subsection{Substitution lemma}
 
+    TODO: update to match new statement. Induction should be done on $e$.
+
     Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
     We will denote the substitution $\subst x {e'}$ by $\rho$.
 
@@ -303,7 +305,7 @@
         Thus, we get by induction hypothesis: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.\\
         We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
         We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
-        By the test substitution lemma, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
+        By TODO, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
         and so $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
         We deduce, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
         \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
