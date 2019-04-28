@@ -98,7 +98,6 @@
     \[
     \begin{array}{lrcl}
     \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^tx.e \alt \ite e t e e \alt e e\\
-    \textbf{Occurrences} & o & ::= & c\alt x \alt \lambda^tx.e \alt \ite e t e e \alt o o\\
     \textbf{Values} & v & ::= & c \alt \lambda^tx.e
     \end{array}
     \]
@@ -193,7 +192,8 @@
       &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
       &\forall e \in \dom \Gamma.\ \tyof e {\Gamma'} \leq \Gamma(e)
     \end{align*}
-    Note: this relation is a preorder. $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
+    Note: this relation is a preorder (for a proof of the transitivity, see the monotonicity lemma).
+    We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
   \end{definition}
 
   \begin{definition}[Environment substitution]
@@ -208,7 +208,7 @@
     \subsection{Theorems}
 
     \begin{lemma}[Monotonicity]
-      Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$. Let $e$ an environment such that $\Gamma \vdash e:t$.
+      Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
       Then:\\
       \begin{align*}
         &\Gamma' \vdash e:t' \text{ with } t' \leq t\\
@@ -238,7 +238,45 @@
 
     \subsection{Monotonicity}
 
-    TODO
+    We proceed by induction on $e$. We suppose that, for any $e'$ strict subexpression of $e$, for any $\Gamma' \leq \Gamma$,
+    \begin{align*}
+      &\Gamma \vdash e':t' \Rightarrow \Gamma' \vdash e':t'' \text{ with } t'' \leq t'\\
+      &\Gamma \vdash e':t' \Rightarrow \forall p \forall t'' \forall \varpi.\ \Gp p {\Gamma',e',t''} (\varpi) \leq \Gp p {\Gamma,e',t''} (\varpi)
+    \end{align*}
+
+    Let $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
+    If $\exists e' \in \dom {\Gamma'}.\ \Gamma'(e') = \Empty$, then the properties are trivial.
+    So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
+
+    If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
+    So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis on $e$:
+    \begin{description}
+      \item[$c$] Trivial.
+      \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
+      \item[$\lambda^{t'}x.e'$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+      We can conclude directly by noticing that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and applying the induction hypothesis.
+      \item[$e\ e'$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      We can conclude directly by applying the induction hypothesis and noticing that the $\circ$ operator is monotonic.
+      \item[$\ite {e_0} {t'} {e_1} {e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+      Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t'} \leq \Gamma^p_{\Gamma,e_0,t'}$ (it follows from the monotonicity of $\Gp {} {}$).
+      Thus, we can conclude by applying the induction hypothesis again.\\
+    \end{description}
+
+    Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
+
+    Let $p\in \{+,-\}$ and $t'$ a type.
+    We proceed by induction on $\varpi$.
+    
+    The base case is trivial.\\
+    For the case $\varphi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varphi.0} \leq \tyof {\Gamma} {e\downarrow\varphi.0}$.
+    We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varphi) \leq \Gp p {\Gamma,e,t'} (\varphi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
+    The case $\varphi.0$ follows from the previous case and the induction hypothesis.
+
+    \qed
 
     \subsection{Substitution lemma}
 
@@ -273,6 +311,8 @@
       We conclude by applying the rule $\Rule {If}$.
     \end{description}
 
+    \qed
+
     \subsection{Substitution lemma 2}
 
     Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
@@ -285,6 +325,8 @@
     As $\Gamma \vdash e':t_{e'}$ and $t_{e'} \leq t_x$, we have $\tyof {e'} \Gamma \leq t_x$.
     Moreover, $t_x \neq \Empty$, so we have $\Gamma \leq \Gamma, (e':t_x)$.
     Thus, by using the monotonicity lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
+
+    \qed
 
     \subsection{Subject reduction}
 
