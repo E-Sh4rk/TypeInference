@@ -14,9 +14,11 @@ We could support it by inlining the definiton of the variable (just for the typi
 - Line 601: Limitation of condition nestling:  
 If we have a good type inference engine, we could put the nested condition in a lambda abstraction taking y as parameter, and apply it to the wanted expression for y. In this way, we will be able to refine the type of the subexpressions of y if the inferred type for the lambda abstraction is good enough.
 
-- Improvement of the Left App case? (see Victor's solution)
-
 - Automatic case disjunction when application has a right argument of the form (t1 | t2)? See `test.ml`.
+
+- Must state somewhere that all lambda-abstracted variables have different name, otherwise the system is not correct.
+Alternatively, we could remove all expressions containing 'x' of the environment when typing a lambda-abstraction.
+Example: if x + 1 is Even then (fun (Bool -> Int) x -> x + 1) true else x
 
 ### Adding polymorphism
 
@@ -75,3 +77,7 @@ See example `two_steps` in the implementation.
 - Record: must remove the field l before merging for the u_l and r_l cases?
 
 - Record: In the definiton of record\l operator, should require that t <= {l=Any ..}
+
+- Improvement of the worra operator implementation
+
+- Left App case not correct

@@ -236,8 +236,6 @@
 
     \section{Proofs}
 
-    We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename the terms.
-
     \subsection{Monotonicity}
 
     TODO
@@ -291,6 +289,7 @@
     \subsection{Subject reduction}
 
     Let $\Gamma,e,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
+    We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
 
     We proceed by induction on the typing derivation of $\Gamma \vdash e : t$. We proceed by a case analysis on the last derivation rule used:
 
