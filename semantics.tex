@@ -70,6 +70,7 @@
 \newcommand{\subst}[2]{\{#1 \mapsto #2\}}
 \newcommand{\tyof}[2]{\textsf{typeof}_{#2}(#1)}
 \newcommand{\typep}[3]{\textsf{Constr}^{#1}_{#3}(#2)}
+\newcommand{\Gp}[2]{\textsf{Env}^{#1}_{#2}}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -206,8 +207,13 @@
 
     \subsection{Theorems}
 
-    \begin{lemma}[Inclusion lemma]
-      TODO
+    \begin{lemma}[Monotonicity]
+      Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$. Let $e$ an environment such that $\Gamma \vdash e:t$.
+      Then:\\
+      \begin{align*}
+        &\Gamma' \vdash e:t' \text{ with } t' \leq t\\
+        &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+      \end{align*}
     \end{lemma}
 
     \begin{lemma}[Test substitution lemma]
@@ -232,6 +238,10 @@
 
     We will suppose that all variables introduced by lambda abstractions are unique. When it is not the case, we can alpha-rename the terms.
 
+    \subsection{Monotonicity}
+
+    TODO
+
     \subsection{Substitution lemma}
 
     Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
@@ -246,20 +256,20 @@
       Thus, we have $e\rho \in \dom {\Gamma\rho}$ and $\Gamma\rho(e\rho)=t\land t'$ (with $t'$ a type), so we can conclude by applying the rule $\Rule {Occ}$.
       \item[Const] This case is trivial.
       \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
-      By induction, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
+      By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
       \item[App] $e=e_1 e_2$. We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
-      By induction, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
+      By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
       \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
       \begin{itemize}
-        \item By induction, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
+        \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
         \item We note $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
         We have $\Gamma_1'(x)=t_x'\leq t_x$ and, by construction, $\Gamma_1' \vdash e':t_x'$.
-        Thus, we get by induction: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.\\
+        Thus, we get by induction hypothesis: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.\\
         We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
         We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
         By the test substitution lemma, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
         and so $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
-        We deduce, by using the inclusion lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
+        We deduce, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
         \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
       \end{itemize}
       We conclude by applying the rule $\Rule {If}$.
@@ -276,7 +286,7 @@
 
     As $\Gamma \vdash e':t_{e'}$ and $t_{e'} \leq t_x$, we have $\tyof {e'} \Gamma \leq t_x$.
     Moreover, $t_x \neq \Empty$, so we have $\Gamma \leq \Gamma, (e':t_x)$.
-    Thus, by using the inclusion lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
+    Thus, by using the monotonicity lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
 
     \subsection{Subject reduction}
 
