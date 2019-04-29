@@ -201,7 +201,7 @@
     The environment $\Gamma\rho$ is defined by:
     \begin{align*}
       &\dom {\Gamma\rho} = \dom \Gamma \rho\\
-      &\forall e' \in \dom {\Gamma\rho}, (\Gamma\rho)(e') = \bigwedge_{e'' \text{ s.t. } e''\rho=e'}\Gamma(e'')
+      &\forall e' \in \dom {\Gamma\rho}, (\Gamma\rho)(e') = \bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e'}\Gamma(e'')
     \end{align*}
   \end{definition}
 
@@ -280,29 +280,42 @@
 
     \subsection{Substitution lemma}
 
-    TODO: update to match new statement. Induction should be done on $e$.
+    Let $\Gamma,e,t,x,t_x,e',t_{e'}$ as in the lemma statement. We will denote the substitution $\subst x {e'}$ by $\rho$.
 
-    Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
-    We will denote the substitution $\subst x {e'}$ by $\rho$.
+    We proceed by induction on $e$. We suppose that, for any $e_s$ strict subexpression of $e$,
+    \begin{align*}
+      &\Gamma \vdash e_s:t_s \Rightarrow \Gamma \rho \vdash e_s \rho:t' \text{ with } t'\leq t_s\\
+      &\Gamma \vdash e_s:t_s \Rightarrow \forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e_s\rho,t'} (\varpi) \leq \Gp p {\Gamma,e_s,t'} (\varpi)
+    \end{align*}
 
-    We proceed by induction on the typing derivation of $\Gamma \vdash e:t$. We proceed by a case analysis on the last derivation rule used:
+    If $\exists e_\bot \in \dom {\Gamma}.\ \Gamma(e_\bot) = \Empty$, then $(\Gamma\rho)(e_\bot\rho) = \Empty$ and thus the properties are trivial.
+    So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    First, let's show that $\Gamma \rho \vdash e \rho:t'$ with $t'\leq t$.
+
+    If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). Thus, $(\Gamma\rho)(e\rho)=\bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e\rho} \Gamma(e'') \leq \Gamma(e) \leq t$.
+    So we can derive the wanted result using the rule $\Rule {Occ}$. It concludes this case. So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+    
+    We now proceed by a case analysis on $e$:
     
     \begin{description}
-      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
-      It is still true after applying the substitution $\rho$, so we can derive $\Gamma\rho \vdash e\rho:\Empty$ by applying the rule $\Rule {Empty}$.
-      \item[Occ] We have $e \in \dom \Gamma$ and $\Gamma(e) = t$.
-      Thus, we have $e\rho \in \dom {\Gamma\rho}$ and $\Gamma\rho(e\rho)=t\land t'$ (with $t'$ a type), so we can conclude by applying the rule $\Rule {Occ}$.
-      \item[Const] This case is trivial.
-      \item[Abs] $e=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$. We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
+      \item[$c$] Trivial.
+      \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
+      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$]
+      We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+      We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
       By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
-      \item[App] $e=e_1 e_2$. We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
+      \item[$e_1 e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
       By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
-      \item[If] $e=\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$. We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
+      \item[$\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+      We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
       \begin{itemize}
         \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
-        \item We note $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
+        \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
         We have $\Gamma_1'(x)=t_x'\leq t_x$ and, by construction, $\Gamma_1' \vdash e':t_x'$.
-        Thus, we get by induction hypothesis: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.\\
+        Thus, we get by induction hypothesis: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
+
         We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
         We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
         By TODO, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
@@ -312,6 +325,10 @@
       \end{itemize}
       We conclude by applying the rule $\Rule {If}$.
     \end{description}
+
+    Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e\rho,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
+
+    TODO
 
     \qed
 
