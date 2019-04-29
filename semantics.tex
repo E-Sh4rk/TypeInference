@@ -272,21 +272,23 @@
     We proceed by induction on $\varpi$.
     
     The base case is straightforward (as we already proved that $\Gamma' \vdash e:t' \text{ with } t' \leq t$).\\
-    For the case $\varphi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varphi.0} \leq \tyof {\Gamma} {e\downarrow\varphi.0}$.
-    We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varphi) \leq \Gp p {\Gamma,e,t'} (\varphi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
-    The case $\varphi.0$ follows from the previous case and the induction hypothesis.
+    For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varpi.0} \leq \tyof {\Gamma} {e\downarrow\varpi.0}$.
+    We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
+    The case $\varpi.0$ follows from the previous case and the induction hypothesis.
 
     \qed
 
     \subsection{Substitution lemma}
 
-    Let $\Gamma,e,t,x,t_x,e',t_{e'}$ as in the lemma statement. We will denote the substitution $\subst x {e'}$ by $\rho$.
+    Let $x,e'$ as in the lemma statement. We will denote the substitution $\subst x {e'}$ by $\rho$.
 
     We proceed by induction on $e$. We suppose that, for any $e_s$ strict subexpression of $e$,
     \begin{align*}
-      &\Gamma \vdash e_s:t_s \Rightarrow \Gamma \rho \vdash e_s \rho:t' \text{ with } t'\leq t_s\\
-      &\Gamma \vdash e_s:t_s \Rightarrow \forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e_s\rho,t'} (\varpi) \leq \Gp p {\Gamma,e_s,t'} (\varpi)
+      \forall \Gamma \forall t_s.\ &\Gamma \vdash e_s:t_s \Rightarrow \exists t'.\ \Gamma \rho \vdash e_s \rho:t' \text{ with } t'\leq t_s\\
+      \forall \Gamma \forall t_s.\ &\Gamma \vdash e_s:t_s \Rightarrow \forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e_s\rho,t'} (\varpi) \leq \Gp p {\Gamma,e_s,t'} (\varpi)
     \end{align*}
+
+    Let $\Gamma,t,t_x,t_{e'}$ as in the lemma statement.
 
     If $\exists e_\bot \in \dom {\Gamma}.\ \Gamma(e_\bot) = \Empty$, then $(\Gamma\rho)(e_\bot\rho) = \Empty$ and thus the properties are trivial.
     So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
@@ -313,13 +315,26 @@
       \begin{itemize}
         \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
         \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
-        We have $\Gamma_1'(x)=t_x'\leq t_x$ and, by construction, $\Gamma_1' \vdash e':t_x'$.
-        Thus, we get by induction hypothesis: $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
+        
+        We have $\Gamma_1' \leq \Gamma_1$.
+        As $\Gamma_1 \vdash e_1:t_1$, we have by using the monotonicity lemma $\Gamma_1' \vdash e_1:t_1'$ with $t_1'\leq t_1$.
+        Thus, we get by induction hypothesis (the conditions can easily be verified) $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
 
         We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
         We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
-        By TODO, we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$,
-        and so $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+
+        Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
+        For any $e_s$ subexpression of $e_0$, we have:
+        \begin{align*}
+          \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt e_0\rho\downarrow\varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+          &\leq \bigwedge_{\{\varpi\alt (e_0\downarrow\varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
+          &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
+          &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
+        \end{align*}
+
+        So, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
         We deduce, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
         \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
       \end{itemize}
