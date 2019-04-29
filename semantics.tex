@@ -271,7 +271,7 @@
     Let $p\in \{+,-\}$ and $t'$ a type.
     We proceed by induction on $\varpi$.
     
-    The base case is trivial.\\
+    The base case is straightforward (as we already proved that $\Gamma' \vdash e:t' \text{ with } t' \leq t$).\\
     For the case $\varphi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varphi.0} \leq \tyof {\Gamma} {e\downarrow\varphi.0}$.
     We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varphi) \leq \Gp p {\Gamma,e,t'} (\varphi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
     The case $\varphi.0$ follows from the previous case and the induction hypothesis.
@@ -328,7 +328,11 @@
 
     Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e\rho,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
 
-    TODO
+    Let $p\in \{+,-\}$ and $t'$ a type.
+    We proceed by induction on $\varpi$.
+
+    The base case is straightforward (as we already proved that $\Gamma \rho \vdash e \rho:t'$ with $t'\leq t$).\\
+    The inductive cases are also straightfoward using the induction hypothesis (same reasonning as for the proof of monotonicity).
 
     \qed
 
