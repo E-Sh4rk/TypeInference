@@ -190,7 +190,7 @@
     Let $\Gamma$ and $\Gamma'$ two environments. We says that $\Gamma' \leq \Gamma$ iff:
     \begin{align*}
       &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
-      &\forall e \in \dom \Gamma.\ \tyof e {\Gamma'} \leq \Gamma(e)
+      &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
     \end{align*}
     Note: this relation is a preorder (for a proof of the transitivity, see the monotonicity lemma).
     We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
@@ -324,8 +324,7 @@
     As $x$ does not appear in $\dom \Gamma$, we have $(\Gamma, (x:t_x))\rho = \Gamma, (e':t_x)$.
     We deduce $\Gamma, (e':t_x) \vdash e\rho:t'$ with $t' \leq t$.
 
-    As $\Gamma \vdash e':t_{e'}$ and $t_{e'} \leq t_x$, we have $\tyof {e'} \Gamma \leq t_x$.
-    Moreover, $t_x \neq \Empty$, so we have $\Gamma \leq \Gamma, (e':t_x)$.
+    As $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$ and $t_x \neq \Empty$, we have $\Gamma \leq \Gamma, (e':t_x)$.
     Thus, by using the monotonicity lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
 
     \qed
