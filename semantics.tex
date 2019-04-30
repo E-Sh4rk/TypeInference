@@ -370,14 +370,19 @@
 
     \subsection{Subject reduction}
 
-    Let $\Gamma,e,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
+    We proceed by induction on $e$.
+
+    Let $\Gamma,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
     We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
 
-    We proceed by induction on the typing derivation of $\Gamma \vdash e : t$. We proceed by a case analysis on the last derivation rule used:
+    If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial
+    (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
+    Let's suppose it is not the case (thus we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    We proceed by case analysis:
 
     \begin{description}
-      \item[Empty] In this case we know that $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) \leq \Empty$.\\
-      Thus we can apply the same rule to type $\Gamma \vdash e' : \Empty$.
+      \item[$c$] Impossible case (cannot be reduced).
     \end{description}
 
 
