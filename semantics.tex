@@ -231,7 +231,7 @@
     \end{corollary}
 
     \begin{theorem}[Subject reduction]
-      Let $\Gamma$ an environment that has only values and variables in its domain, $e$ and $e'$ two expressions and $t$ a type.
+      Let $\Gamma$ an environment that has only non-reducible expressions (i.e. values, possibly with variables) in its domain, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
     \end{theorem}
 
@@ -258,12 +258,12 @@
     \begin{description}
       \item[$c$] Trivial.
       \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
-      \item[$\lambda^{t'}x.e'$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
       We can conclude directly by noticing that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and applying the induction hypothesis.
-      \item[$e\ e'$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
       We can conclude directly by applying the induction hypothesis and noticing that the $\circ$ operator is monotonic.
-      \item[$\ite {e_0} {t'} {e_1} {e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
-      Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t'} \leq \Gamma^p_{\Gamma,e_0,t'}$ (it follows from the monotonicity of $\Gp {} {}$).
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+      Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
       Thus, we can conclude by applying the induction hypothesis again.\\
     \end{description}
 
@@ -308,7 +308,7 @@
       We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
       We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
       By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
-      \item[$e_1 e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
       We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
       By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
       \item[$\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
@@ -380,10 +380,19 @@
     (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
     Let's suppose it is not the case (thus we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
 
-    We proceed by case analysis:
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (it is an hypothesis we make on $\Gamma$).
+    Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis:
 
     \begin{description}
       \item[$c$] Impossible case (cannot be reduced).
+      \item[$x$] Impossible case (cannot be reduced).
+      \item[$\lambda^{t}x.e$] Impossible case (cannot be reduced).
+      \item[$e_1\ v_2$]
+      \item[$e_1\ e_2$]
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] 
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
     \end{description}
 
 
