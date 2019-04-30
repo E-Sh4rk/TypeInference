@@ -231,6 +231,7 @@
     \end{corollary}
 
     \begin{theorem}[Subject reduction]
+      Let $\Gamma$ an environment that has only values and variables in its domain, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
     \end{theorem}
 
@@ -372,7 +373,7 @@
 
     We proceed by induction on $e$.
 
-    Let $\Gamma,t,e' \text{ s.t. } \Gamma \vdash e : t \text{ and } e \leadsto e'$.
+    Let $\Gamma,t,e'$ as in the theorem statement.
     We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
 
     If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial

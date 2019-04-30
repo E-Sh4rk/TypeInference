@@ -20,11 +20,13 @@ If we have a good type inference engine, we could put the nested condition in a 
 Alternatively, we could remove all expressions containing 'x' of the environment when typing a lambda-abstraction.  
 Example: if x + 1 is Even then (fun (Bool -> Int) x -> x + 1) true else x
 
-- If side effects, we should only keep variables and lambda-abstractions in the environnement (at least we should not keep occurences containing an application).  
+- If side effects, we should only keep variables and values in the environment (or at least we should not keep occurences containing an application).  
 EX: if (fun (Unit->Any) _ -> if random then 0 else false) () is Int then ... else ...
 
-- Interesting example for subject reduction:  
-if (f x) is Int then f x else 0  
+- Subject reduction: environment must contain only values. Examples:  
+if f (id x) is Int then f x else 0  
+with f=fun (Any->Any) x -> x  
+if f x is Int then f x else 0  
 with f=fun (Any->Any) x -> false
 
 ### Adding polymorphism
