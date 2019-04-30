@@ -314,14 +314,13 @@
       We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
       \begin{itemize}
         \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
-        \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\Gamma_1(x))$.
+        \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\bigwedge_{\{e''\in \dom {\Gamma_1}\alt e''\rho=e'\}} \Gamma_1(e''))$.
+        In particular, $\Gamma_1'(e')\leq\Gamma_1(x)=\Gamma_1'(x)$.
         
-        We have $\Gamma_1' \leq \Gamma_1$.
+        Moreover, we have $\Gamma_1' \leq \Gamma_1$ ($e'$ does not contain $x$ and so $e'\rho=e'$).
         As $\Gamma_1 \vdash e_1:t_1$, we have by using the monotonicity lemma $\Gamma_1' \vdash e_1:t_1'$ with $t_1'\leq t_1$.
-        Thus, we get by induction hypothesis (the conditions can easily be verified) $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
 
-        We have $\Gamma_1'\rho=\Gamma_1\rho$ because $e'$ does not contain $x$ (and so $e'\rho=e'$).
-        We have $\Gamma_1\rho = \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
+        Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
 
         Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
         For any $e_s$ subexpression of $e_0$, we have:
@@ -334,7 +333,11 @@
           &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
         \end{align*}
 
-        So, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+        Thus, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho = \Gamma_1\rho$.
+
+        Moreover, we have $\Gamma_1'\rho=\Gamma_1\rho$ (recall that $e'\rho=e'$).
+        It gives $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+
         We deduce, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
         \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
       \end{itemize}
