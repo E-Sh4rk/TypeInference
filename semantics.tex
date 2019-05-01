@@ -231,7 +231,7 @@
     \end{lemma}
 
     \begin{lemma}[Substitution lemma]
-      Let $\Gamma$ an environment, $x$ a variable, $e$ an exprssion, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
       If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then:
       \begin{align*}
         &\Gamma \subst x {e'} \vdash e \subst x {e'}:t' \text{ with } t'\leq t\\
@@ -240,7 +240,7 @@
     \end{lemma}
 
     \begin{corollary}[Substitution lemma 2]
-      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an exprssion, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
       If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
@@ -411,8 +411,19 @@
       From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
       Let's show that $\Gamma \vdash e_x\subst x {v_2}:t'$ for a certain type $t'$ such that $t_2 \rightarrow t' \leq t_1$.
       
-      As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$. For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
-      TODO (derivation of $v_1$...)
+      The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can be either $\Rule{Abs}$ or $\Rule{Occ}$.
+      In both case, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
+
+      As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
+      For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
+      Using the monotonicity lemma, we get, for any $i\in I$, $\Gamma,(x:t_2^i) \vdash e_x : t_i'$ with $t_i' \leq t_i$.
+
+      TODO: Merge all these derivations into $\Gamma, (x:t_2) \vdash e_x: t'$, using a new lemma?
+
+      We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t'$.
+      (the hypotheses are easily verified since $\Gamma$ is trivial).
+
+      TODO
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
