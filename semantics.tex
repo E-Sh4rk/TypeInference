@@ -63,6 +63,10 @@
 \newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
 \newcommand{\Int} {\textsf{Int}}
 \newcommand{\Bool} {\textsf{Bool}}
+\newcommand{\True} {\textsf{True}}
+\newcommand{\False} {\textsf{False}}
+\newcommand{\true} {\textsf{true}}
+\newcommand{\false} {\textsf{false}}
 \newcommand{\Even} {\textsf{Even}}
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
@@ -124,8 +128,9 @@
     \end{mathpar}
 
     \begin{align*}
-      n &\in \Int\\
-      b &\in \Bool\\
+      n &\in \{n\}\\
+      \true &\in \True\\
+      \false &\in \False\\
       \lambda^tx.e &\in t\\
       v \in t \text{ and } t \leq t' \Rightarrow v &\in t'
     \end{align*}
@@ -205,6 +210,15 @@
     \end{align*}
   \end{definition}
 
+  \begin{definition}[Trivial environments]
+    We say that an environment $\Gamma$ is trivial iff:
+    \begin{itemize}
+      \item Its domain only contains values and variables.
+      \item For any value $v \in \dom \Gamma$, if $\Gamma(v)=t$, then there exists $t' \leq t$
+      such that $\Gamma \setminus (v:t) \vdash v : t'$.
+    \end{itemize}
+  \end{definition}
+
     \subsection{Theorems}
 
     \begin{lemma}[Monotonicity]
@@ -231,7 +245,7 @@
     \end{corollary}
 
     \begin{theorem}[Subject reduction]
-      Let $\Gamma$ an environment that has only non-reducible expressions (i.e. values, possibly with variables) in its domain, $e$ and $e'$ two expressions and $t$ a type.
+      Let $\Gamma$ an environment that is trivial, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
     \end{theorem}
 
@@ -380,7 +394,7 @@
     (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
     Let's suppose it is not the case (thus we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
 
-    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (it is an hypothesis we make on $\Gamma$).
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is trivial).
     Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
 
     We now proceed by case analysis on $e$:
@@ -392,10 +406,13 @@
       \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
 
       The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
-      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, and $t_2 \in \dom {t_1}$.
-      (should show that $t_2 \rightarrow t' \leq t_1$)
+      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
 
-      $t_1 \leq t_2 \rightarrow \Any$ and $t_1 \leq t_2 \rightarrow t$
+      From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
+      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t'$ for a certain type $t'$ such that $t_2 \rightarrow t' \leq t_1$.
+      
+      As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$. For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
+      TODO (derivation of $v_1$...)
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
