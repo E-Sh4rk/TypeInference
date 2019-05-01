@@ -115,7 +115,7 @@
         {}\\
         \Infer[App]
         {}
-        {(\lambda^tx.e) v \leadsto e\{x\mapsto v\}}
+        {(\lambda^tx.e) v \leadsto e\subst x v}
         {}\\
         \Infer[Ite]
         {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
@@ -162,7 +162,7 @@
             \Gamma \vdash e_1: t_1 \\
             \Gamma\vdash e_2: t_2\\
             t_1 \leq \Empty \to \Any\\
-            t_2 \in \dom {t_1}
+            t_2 \leq \dom {t_1}
           }
           { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
           { {e_1}{e_2}\not\in\dom\Gamma}
@@ -383,14 +383,26 @@
     If we had $e\in\dom\Gamma$, then $e$ would not be reducible (it is an hypothesis we make on $\Gamma$).
     Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
 
-    We now proceed by case analysis:
+    We now proceed by case analysis on $e$:
 
     \begin{description}
       \item[$c$] Impossible case (cannot be reduced).
       \item[$x$] Impossible case (cannot be reduced).
-      \item[$\lambda^{t}x.e$] Impossible case (cannot be reduced).
-      \item[$e_1\ v_2$]
-      \item[$e_1\ e_2$]
+      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] Impossible case (cannot be reduced).
+      \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+
+      The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
+      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, and $t_2 \in \dom {t_1}$.
+      (should show that $t_2 \rightarrow t' \leq t_1$)
+
+      $t_1 \leq t_2 \rightarrow \Any$ and $t_1 \leq t_2 \rightarrow t$
+
+      \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      We just apply the induction hypothesis on $e_1$ and conclude using the monotonicity of the $\circ$ operator.
+      \item[$e_1\ e_2$] In this case, only $e_2$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      We just apply the induction hypothesis on $e_2$ and conclude using the monotonicity of the $\circ$ operator.
       \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] 
       \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
     \end{description}
