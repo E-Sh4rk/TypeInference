@@ -392,7 +392,7 @@
 
     If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial
     (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
-    Let's suppose it is not the case (thus we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+    Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
 
     If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is trivial).
     Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
@@ -409,21 +409,20 @@
       Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
 
       From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
-      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t'$ for a certain type $t'$ such that $t_2 \rightarrow t' \leq t_1$.
+      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
       
       The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can be either $\Rule{Abs}$ or $\Rule{Occ}$.
-      In both case, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
+      In both cases, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
 
       As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
       For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
       Using the monotonicity lemma, we get, for any $i\in I$, $\Gamma,(x:t_2^i) \vdash e_x : t_i'$ with $t_i' \leq t_i$.
 
       TODO: Merge all these derivations into $\Gamma, (x:t_2) \vdash e_x: t'$, using a new lemma?
+      We have $t' \leq \bigvee_{i\in I} t_i' \leq t_i$... TODO: show $t' \leq t$.
 
-      We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t'$.
+      We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t' \leq t$
       (the hypotheses are easily verified since $\Gamma$ is trivial).
-
-      TODO
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
@@ -431,7 +430,22 @@
       \item[$e_1\ e_2$] In this case, only $e_2$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
       We just apply the induction hypothesis on $e_2$ and conclude using the monotonicity of the $\circ$ operator.
-      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] 
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] In this case, the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
+       
+      So we have $\Gamma \vdash v_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,v_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+
+      There are two cases:
+      \begin{description}
+        \item[$v_0 \in t_{if}$] In this case, we have $e'=e_1$.
+        Let's show that $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is trivial.
+
+        As $\Gamma \vdash v_0 : t_0$ and $v_0 \in t_{if}$, we have TODO
+
+        Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is trivial.
+        By using the lemma TODO, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
+        \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
+      \end{description}
+        
       \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
     \end{description}
 
