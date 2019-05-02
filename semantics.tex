@@ -156,7 +156,7 @@
           {c\not\in\dom\Gamma}
        \\
       \Infer[Abs]
-          {\Gamma,x:s_i\vdash e:t_i}
+          {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
           {
           \Gamma\vdash\lambda^{\wedge_{i\in I}s_i\to t_i}x.e:\textstyle\bigwedge_{i\in I}s_i\to t_i
           }
@@ -244,6 +244,14 @@
       If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
+    \begin{lemma}[Value test lemma]
+      If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ trivial, then $t' \leq t$.
+    \end{lemma}
+
+    \begin{lemma}[Intersection lemma]
+      If $\Gamma, (x:t_1) \vdash e:t_1'$ and $\Gamma, (x:t_2) \vdash e:t_2'$, then $\Gamma, (x:t_1\land t_2) \vdash e:t'$ with $t' \leq t_1'\land t_2'$.
+    \end{lemma}
+
     \begin{theorem}[Subject reduction]
       Let $\Gamma$ an environment that is trivial, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
@@ -320,15 +328,15 @@
       \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
       \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$]
       We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
-      We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i$.
-      By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i$. We conclude by applying $\Rule {Abs}$.
+      We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i'$ with $t_i'\leq t_i$.
+      By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i''$ with $t_i''\leq t_i'\leq t_i$. We conclude by applying $\Rule {Abs}$.
       \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
       We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
-      By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1$ and $\Gamma\rho\vdash e_2\rho:t_2$. We conclude by applying $\Rule {App}$.
+      By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$ and $\Gamma\rho\vdash e_2\rho:t_2'$ with $t_2' \leq t_2$. We conclude by applying $\Rule {App}$.
       \item[$\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
       We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
       \begin{itemize}
-        \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0$.
+        \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0'$ with $t_0'\leq t_0$.
         \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\bigwedge_{\{e''\in \dom {\Gamma_1}\alt e''\rho=e'\}} \Gamma_1(e''))$.
         In particular, $\Gamma_1'(e')\leq\Gamma_1(x)=\Gamma_1'(x)$.
         
@@ -409,20 +417,20 @@
       Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
 
       From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
-      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
-      
-      The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can be either $\Rule{Abs}$ or $\Rule{Occ}$.
-      In both cases, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
-
-      As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
-      For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
-      Using the monotonicity lemma, we get, for any $i\in I$, $\Gamma,(x:t_2^i) \vdash e_x : t_i'$ with $t_i' \leq t_i$.
-
-      TODO: Merge all these derivations into $\Gamma, (x:t_2) \vdash e_x: t'$, using a new lemma?
-      We have $t' \leq \bigvee_{i\in I} t_i' \leq t_i$... TODO: show $t' \leq t$.
-
-      We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t' \leq t$
-      (the hypotheses are easily verified since $\Gamma$ is trivial).
+      %Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
+      %
+      %The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can be either $\Rule{Abs}$ or $\Rule{Occ}$.
+      %In both cases, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
+      %
+      %As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
+      %For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
+      %Using the monotonicity lemma, we get, for any $i\in I$, $\Gamma,(x:t_2^i) \vdash e_x : t_i'$ with $t_i' \leq t_i$.
+      %
+      %TODO: Merge all these derivations into $\Gamma, (x:t_2) \vdash e_x: t'$, using a new lemma?
+      %We have $t' \leq \bigvee_{i\in I} t_i' \leq t_i$... TODO: show $t' \leq t$.
+      %
+      %We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t' \leq t$
+      %(the hypotheses are easily verified since $\Gamma$ is trivial).
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
