@@ -210,13 +210,8 @@
     \end{align*}
   \end{definition}
 
-  \begin{definition}[Trivial environments]
-    We say that an environment $\Gamma$ is trivial iff:
-    \begin{itemize}
-      \item Its domain only contains values and variables.
-      \item For any value $v \in \dom \Gamma$, if $\Gamma(v)=t$, then there exists $t' \leq t$
-      such that $\Gamma \setminus (v:t) \vdash v : t'$.
-    \end{itemize}
+  \begin{definition}[Ordinary environments]
+    We say that an environment $\Gamma$ is ordinary iff its domain only contains variables.
   \end{definition}
 
     \subsection{Theorems}
@@ -230,7 +225,12 @@
       \end{align*}
     \end{lemma}
 
-    \begin{lemma}[Substitution lemma]
+    \begin{corollary}[Strengthening]
+      If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
+      $\Gamma, (x:t_1^x\land t_2^x) \vdash e:t$ with $t \leq t_1\land t_2$.
+    \end{corollary}
+
+    \begin{lemma}[Substitution]
       Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
       If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then:
       \begin{align*}
@@ -239,21 +239,17 @@
       \end{align*}
     \end{lemma}
 
-    \begin{corollary}[Substitution lemma 2]
+    \begin{corollary}[Substitution 2]
       Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
       If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
     \end{corollary}
 
-    \begin{lemma}[Value test lemma]
-      If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ trivial, then $t' \leq t$.
-    \end{lemma}
-
-    \begin{lemma}[Intersection lemma]
-      If $\Gamma, (x:t_1) \vdash e:t_1'$ and $\Gamma, (x:t_2) \vdash e:t_2'$, then $\Gamma, (x:t_1\land t_2) \vdash e:t'$ with $t' \leq t_1'\land t_2'$.
+    \begin{lemma}[Value test]
+      If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
-      Let $\Gamma$ an environment that is trivial, $e$ and $e'$ two expressions and $t$ a type.
+      Let $\Gamma$ an environment that is ordinary, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
     \end{theorem}
 
@@ -402,7 +398,7 @@
     (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
     Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
 
-    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is trivial).
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is ordinary, and variables are not reducible).
     Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
 
     We now proceed by case analysis on $e$:
@@ -419,8 +415,8 @@
       From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
       %Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
       %
-      %The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can be either $\Rule{Abs}$ or $\Rule{Occ}$.
-      %In both cases, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$ (the fact that $\Gamma$ is trivial is useful in the case of the rule $\Rule{Occ}$).
+      %The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
+      %Thus, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$.
       %
       %As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
       %For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
@@ -430,7 +426,7 @@
       %We have $t' \leq \bigvee_{i\in I} t_i' \leq t_i$... TODO: show $t' \leq t$.
       %
       %We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t' \leq t$
-      %(the hypotheses are easily verified since $\Gamma$ is trivial).
+      %(the hypotheses are easily verified since $\Gamma$ is ordinary).
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
@@ -445,11 +441,11 @@
       There are two cases:
       \begin{description}
         \item[$v_0 \in t_{if}$] In this case, we have $e'=e_1$.
-        Let's show that $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is trivial.
+        Let's show that $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is equivalent to $\Gamma$.
 
         As $\Gamma \vdash v_0 : t_0$ and $v_0 \in t_{if}$, we have TODO
 
-        Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is trivial.
+        Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}} \equiv \Gamma$.
         By using the lemma TODO, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
         \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
       \end{description}
