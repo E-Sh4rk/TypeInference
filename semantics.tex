@@ -252,6 +252,12 @@
       If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
     \end{lemma}
 
+    \begin{lemma}[Tests reduction]
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t'$ two types.
+      If $\Gamma \vdash e : t$, $e \leadsto e'$ and $\Gamma \vdash e' : t'$ with $t'\leq t$,
+      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$.
+    \end{lemma}
+
     \begin{theorem}[Subject reduction]
       Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
