@@ -225,6 +225,10 @@
       \end{align*}
     \end{lemma}
 
+    \begin{corollary}[Equivalence]
+      If $\Gamma \vdash e:t$ and $\Gamma' \equiv \Gamma$, then $\Gamma' \vdash e:t$.
+    \end{corollary}
+
     \begin{corollary}[Strengthening]
       If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
       $\Gamma, (x:t_1^x\land t_2^x) \vdash e:t$ with $t \leq t_1\land t_2$.
@@ -342,13 +346,13 @@
         Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
 
         Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
-        For any $e_s$ subexpression of $e_0$, we have:
+        For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ e_0\downarrow\varpi=e_s$, we have:
         \begin{align*}
           \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt e_0\rho\downarrow\varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
           &\leq \bigwedge_{\{\varpi\alt (e_0\downarrow\varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
-          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
-          &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
-          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
+          &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
           &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
         \end{align*}
 
@@ -438,12 +442,14 @@
       There are two cases:
       \begin{description}
         \item[$v_0 \in t_{if}$] In this case, we have $e'=e_1$.
-        Let's show that $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}$ is equivalent to $\Gamma$.
-
-        As $\Gamma \vdash v_0 : t_0$ and $v_0 \in t_{if}$, we have TODO
+        By the value test lemma, we have $t_0 \leq t_{if}$.
+        Thus, we can easily show that $\Gamma^+_{\Gamma,v_0,t_{if}} \leq \Gamma$:
+        For each expression in its domain, we proceed by induction on the associated paths.
+        Since $v_0$ is a value, the paths $\varpi.0$ and $\varpi.1$ are never encountered. Other cases are trivial.
 
         Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}} \equiv \Gamma$.
-        By using the lemma TODO, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
+
+        By using the equivalence lemma, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
         \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
       \end{description}
         
