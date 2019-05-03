@@ -249,7 +249,7 @@
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
-      Let $\Gamma$ an environment that is ordinary, $e$ and $e'$ two expressions and $t$ a type.
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
     \end{theorem}
 
@@ -413,20 +413,17 @@
       Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
 
       From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
-      %Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
-      %
-      %The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
-      %Thus, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i$ for any $i\in I$.
-      %
-      %As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
-      %For any $i\in I$, let $t_2^i=t_2 \land s_i$ (we have $t_2=\bigvee_{i\in I}t_2^i$).
-      %Using the monotonicity lemma, we get, for any $i\in I$, $\Gamma,(x:t_2^i) \vdash e_x : t_i'$ with $t_i' \leq t_i$.
-      %
-      %TODO: Merge all these derivations into $\Gamma, (x:t_2) \vdash e_x: t'$, using a new lemma?
-      %We have $t' \leq \bigvee_{i\in I} t_i' \leq t_i$... TODO: show $t' \leq t$.
-      %
-      %We can apply the corollary of the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2} : t''$ with $t'' \leq t' \leq t$
-      %(the hypotheses are easily verified since $\Gamma$ is ordinary).
+      It gives $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$.
+      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
+
+      Let $I'=\{i\in I\alt t_2 \leq s_i\}$. TODO: Alain Frisch magics here...
+      We can deduce, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
+      that $\bigwedge_{i\in I'} t_i \leq t$ (see lemma 4.9 of Alain Frisch thesis).
+
+      The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
+      Thus, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i'$ with $t_i' \leq t_i$ for any $i\in I'$. By using the strengthening lemma, we deduce that
+      $\Gamma, (x:\bigwedge_{i\in I'} s_i) \vdash e_x:t'$ with $t'\leq \bigwedge_{i\in I'} t_i' \leq \bigwedge_{i\in I'} t_i \leq t$.
+      As $t_2 \leq \bigwedge_{i\in I'} s_i$, we can apply the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2}:t''$ with $t'' \leq t' \leq t$.
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
 
