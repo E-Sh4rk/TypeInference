@@ -252,11 +252,17 @@
       If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
     \end{lemma}
 
+    \begin{lemma}[Test monotonicity]
+      Let $\Gamma$ an environment. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
+      If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Gamma^+_{\Gamma,e,t_{if}'} \leq \Gamma^+_{\Gamma,e,t_{if}}$
+      and $\Gamma^-_{\Gamma,e,t_{if}} \leq \Gamma^-_{\Gamma,e,t_{if}'}$.
+    \end{lemma}
+
     \begin{lemma}[Test reduction]
-      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t_{if}$ two types.
       If $\Gamma \vdash e : t$, $e \leadsto e'$ and
       if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$ with $t'$ a type such that $\Gamma \vdash e':t'$ and $t'\leq t$.
+      then $\forall p.\ \Gamma^p_{\Gamma,e',t_{if}} \leq \Gamma^p_{\Gamma,e,t_{if}}$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
@@ -402,7 +408,11 @@
 
     We proceed by induction on $e$.
 
-    Let $\Gamma,t,e'$ as in the theorem statement.
+    Let $\Gamma,t,t_{if},e'$ as in the theorem statement.
+    
+    We will prove here that $\Gamma^+_{\Gamma,e',t_{if}} \leq \Gamma^+_{\Gamma,e,t_{if}}$.
+    The proof for $\Gamma^-_{\dots}$ follows as $\Gamma^-_{\Gamma,e,t_{if}}=\Gamma^+_{\Gamma,e,\neg t_{if}}$.
+
     We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
     Let $t'$ such that $\Gamma \vdash e':t'$ and $t'\leq t$ (using subject reduction).
 
@@ -423,15 +433,37 @@
       TODO
 
       \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+      
+      So we have $\Gamma \vdash e_1:t_1$ and $\Gamma \vdash v_2:t_2$ with $t=\apply {t_1} {t_2}$.
 
-      TODO
+      We also have $e' = e_1' v_2$ with $e_1 \leadsto e_1'$.
 
-      \item[$e_1\ e_2$] In this case, only $e_2$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+      \begin{itemize}
+        \item Let $t_\epsilon = \Gp + {\Gamma,e,t_{if}} (\epsilon)$ and $t_\epsilon' = \Gp + {\Gamma,e',t_{if}} (\epsilon)$.
+        
+        Notice that $t_\epsilon' = t_{if} \land t' \leq t_{if} \land t = t_\epsilon$.
 
-      TODO
+        \item Let $t_{left} = \Gp + {\Gamma,e,t_{if}} (0)$ and $t_{left}' = \Gp + {\Gamma,e',t_{if}} (0)$.
 
-      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^p_{\Gamma,e,t} = (e, t\land t_{if})$.
-      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^p_{\Gamma,e,t} = (e, t\land t_{if})$.
+        We have $t_{left}' \leq t_{left}$ (direct consequence of $t_\epsilon' \leq t_\epsilon$).
+  
+        Using the induction hypothesis, we get $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}'}$,
+        and using the test monotonicity lemma we deduce $\Gamma^+_{\Gamma,e_1,t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+
+        Thus $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+
+        \item Let $t_{right} = \Gp + {\Gamma,e,t_{if}} (1)$ and $t_{right}' = \Gp + {\Gamma,e',t_{if}} (1)$.
+        
+        As in the previous point, we also have $t_{right}' \leq t_{right}$.
+
+        Thus, using the test monotonicity lemma, we deduce $\Gamma^+_{\Gamma,v_2,t_{right}'} \leq \Gamma^+_{\Gamma,v_2,t_{right}}$.
+      \end{itemize}
+      
+      $\Gamma^+_{\Gamma,e,t_{if}} = \Gamma^+_{\Gamma,v_2,t_{right}} \land \Gamma^+_{\Gamma,e_1,t_{left}} \land (e:t_\epsilon)$ TODO
+
+      \item[$e_1\ e_2$] This case is similar to the previous one.
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^+_{\Gamma,e,t_{if}} = (e, t\land t_{if})$. TODO: Actually not trivial.
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] This case is similar to the previous one.
     \end{description}
 
     \qed
@@ -502,7 +534,7 @@
       We also have $e'=\ite {e_0'} {t_{if}} {e_1} {e_2}$ with $e_0\leadsto e_0'$.
 
       By applying the test reduction lemma, we get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
-      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ with $t_0'$ such that $\Gamma \vdash e_0':t_0'$ and $t_0' \leq t_0$.
+      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$.
 
       Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
       and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
