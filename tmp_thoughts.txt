@@ -1,0 +1,29 @@
+Can't express relations between variables
+
+if (x,y) is Int*Int | Bool*Bool
+then
+	if x is Int then y
+	else 0
+else 0
+
+-----
+
+Adding reducible expressions in the env can loose precision sometimes
+(here, typing is more precise without the second if)
+
+if z is Int*Int | Bool*Bool
+then
+	if snd z is Int | Bool
+	then
+		if fst z is Int
+		then snd z
+		else 0
+	else 0
+else 0
+
+-----
+
+Adding reducible expressions in the env makes subject reduction false (but the type system seems still correct)
+
+if (id id) 3 is Int then (id id) 3 else 0
+with id: Any->Any
