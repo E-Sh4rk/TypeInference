@@ -253,9 +253,10 @@
     \end{lemma}
 
     \begin{lemma}[Test reduction]
-      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t'$ two types.
-      If $\Gamma \vdash e : t$, $e \leadsto e'$ and $\Gamma \vdash e' : t'$ with $t'\leq t$,
-      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$.
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
+      If $\Gamma \vdash e : t$, $e \leadsto e'$ and
+      if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
+      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$ with $t'$ such that $\Gamma \vdash e' : t'$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
@@ -401,8 +402,9 @@
 
     We proceed by induction on $e$.
 
-    Let $\Gamma,t,e',t'$ as in the theorem statement.
+    Let $\Gamma,t,e'$ as in the theorem statement.
     We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
+    Let $t'$ such that $\Gamma \vdash e':t'$ and $t'\leq t$ (using subject reduction).
 
     If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial.
     Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
