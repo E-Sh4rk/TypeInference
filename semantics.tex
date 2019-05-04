@@ -197,7 +197,7 @@
       &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
       &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
     \end{align*}
-    Note: this relation is a preorder (for a proof of the transitivity, see the monotonicity lemma).
+    Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
     We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
   \end{definition}
 
@@ -252,7 +252,7 @@
       If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
     \end{lemma}
 
-    \begin{lemma}[Tests reduction]
+    \begin{lemma}[Test reduction]
       Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t'$ two types.
       If $\Gamma \vdash e : t$, $e \leadsto e'$ and $\Gamma \vdash e' : t'$ with $t'\leq t$,
       then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$.
@@ -397,6 +397,8 @@
 
     \qed
 
+    \subsection{Test reduction}
+
     \subsection{Subject reduction}
 
     We proceed by induction on $e$.
@@ -459,7 +461,18 @@
         \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
       \end{description}
         
-      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] In this case, only $e_0$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
+      
+      So we have $\Gamma \vdash e_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,e_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,e_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+      
+      We also have $e'=\ite {e_0'} {t_{if}} {e_1} {e_2}$ with $e_0\leadsto e_0'$.
+
+      By applying the induction hypothesis on $e_0$, we get $\Gamma \vdash e_0':t_0'$ with $t_0' \leq t_0$.
+      Thus, we can apply the test reduction lemma to get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
+      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$.
+
+      Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
+      and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
     \end{description}
 
 
