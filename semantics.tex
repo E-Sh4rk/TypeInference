@@ -256,7 +256,7 @@
       Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
       If $\Gamma \vdash e : t$, $e \leadsto e'$ and
       if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$ with $t'$ such that $\Gamma \vdash e' : t'$.
+      then $\forall p.\ \Gamma^p_{\Gamma,e',t'} \leq \Gamma^p_{\Gamma,e,t}$ with $t'$ a type such that $\Gamma \vdash e':t'$ and $t'\leq t$.
     \end{lemma}
 
     \begin{theorem}[Subject reduction]
@@ -501,9 +501,8 @@
       
       We also have $e'=\ite {e_0'} {t_{if}} {e_1} {e_2}$ with $e_0\leadsto e_0'$.
 
-      By applying the induction hypothesis on $e_0$, we get $\Gamma \vdash e_0':t_0'$ with $t_0' \leq t_0$.
-      Thus, we can apply the test reduction lemma to get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
-      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$.
+      By applying the test reduction lemma, we get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
+      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ with $t_0'$ such that $\Gamma \vdash e_0':t_0'$ and $t_0' \leq t_0$.
 
       Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
       and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
