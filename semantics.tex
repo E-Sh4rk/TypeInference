@@ -399,6 +399,41 @@
 
     \subsection{Test reduction}
 
+    We proceed by induction on $e$.
+
+    Let $\Gamma,t,e',t'$ as in the theorem statement.
+    We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
+
+    If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial.
+    Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is ordinary, and variables are not reducible).
+    Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis on $e$ (impossible cases are not shown)::
+
+    \begin{description}
+      \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+
+      The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
+      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
+      
+      TODO
+
+      \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      TODO
+
+      \item[$e_1\ e_2$] In this case, only $e_2$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      TODO
+
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^p_{\Gamma,e,t} = (e, t\land t_{if})$.
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^p_{\Gamma,e,t} = (e, t\land t_{if})$.
+    \end{description}
+
+    \qed
+
     \subsection{Subject reduction}
 
     We proceed by induction on $e$.
@@ -413,12 +448,9 @@
     If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is ordinary, and variables are not reducible).
     Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
 
-    We now proceed by case analysis on $e$:
+    We now proceed by case analysis on $e$ (impossible cases are not shown):
 
     \begin{description}
-      \item[$c$] Impossible case (cannot be reduced).
-      \item[$x$] Impossible case (cannot be reduced).
-      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] Impossible case (cannot be reduced).
       \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
 
       The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
@@ -474,6 +506,8 @@
       Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
       and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
     \end{description}
+
+    \qed
 
 
 \end{document}
