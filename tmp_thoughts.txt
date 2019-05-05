@@ -1,4 +1,5 @@
-Can't express relations between variables
+Can't express relations between variables.
+Could be possible by constraining not only subexpressions but every relevant subexpression in the domain of Gamma
 
 if (x,y) is Int*Int | Bool*Bool
 then
@@ -8,9 +9,10 @@ else 0
 
 -----
 
-Adding reducible expressions in the env can loose precision sometimes
-(here, typing is more precise without the second if)
+Adding reducible expressions (or even just non-variable expr) in the env
+can loose precision sometimes
 
+(here, typing is more precise without the second if)
 if z is Int*Int | Bool*Bool
 then
 	if snd z is Int | Bool
@@ -18,6 +20,15 @@ then
 		if fst z is Int
 		then snd z
 		else 0
+	else 0
+else 0
+
+(here typing is more precise without the first if)
+if (x,y) is Any * Any
+then
+	if x is Int
+	then
+		fst (x,y)
 	else 0
 else 0
 
