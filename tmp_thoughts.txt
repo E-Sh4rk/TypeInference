@@ -9,6 +9,12 @@ else 0
 
 -----
 
+Constr can give better results after 2 iterations (y: Int)
+
+if (x,(x,y)) is (Int,Int*Int|Bool*Bool) then y else ...
+
+-----
+
 Adding reducible expressions (or even just non-variable expr) in the env
 can loose precision sometimes
 
