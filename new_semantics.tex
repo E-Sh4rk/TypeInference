@@ -125,23 +125,438 @@
       \Infer[Forget]
       {}
       {(e,\rho) \leadsto (e,\varnothing)}
-      {}\\
+      {\\\rho \neq \varnothing}\\
       \Infer[Ctx]
       {(e,\varnothing) \leadsto (e',\rho)}
       {(C[e],\varnothing) \leadsto (C[e'],\rho)}
       {}\\
       \Infer[App]
       {}
-      {((\lambda^tx.e) v, \varnothing) \leadsto (e\subst x v, \subst x v)}
+      {(E=(\lambda^tx.e) v, \varnothing) \leadsto (E'=e\subst x v, \subst {E} {E'})}
       {}\\
       \Infer[TestCtx]
       {(e,\varnothing) \leadsto (e',\rho)}
-      {(\ite e t {e_1} {e_2}, \varnothing) \leadsto (\ite {e'} t {e_1\rho} {e_2\rho}, \varnothing)}
+      {(E=\ite e t {e_1} {e_2}, \varnothing) \leadsto (E'=\ite {e'} t {e_1\rho} {e_2\rho}, \subst {E} {E'})}
       {}\\
       \Infer[Ite]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
-      {(\ite v t {e_1} {e_2},\varnothing) \leadsto (e_i,\varnothing)}
+      {(E=\ite v t {e_1} {e_2},\varnothing) \leadsto (E'=e_i,\subst {E} {E'})}
       {}\\
     \end{mathpar}
+
+    \begin{align*}
+      n &\in \{n\}\\
+      \true &\in \True\\
+      \false &\in \False\\
+      \lambda^tx.e &\in t\\
+      v \in t \text{ and } t \leq t' \Rightarrow v &\in t'
+    \end{align*}
+
+    \subsection{Recall: Type System}
+
+    \begin{mathpar}
+
+      \Infer[Empty]
+        { }
+        {\Gamma\vdash e:\Empty}
+        {\exists e' \in \dom\Gamma.\ \Gamma(e') \leq \Empty}
+      \\
+      \Infer[Occ]
+          {
+          }
+          { \Gamma \vdash e: \Gamma(e) }
+          { e\in\dom\Gamma}
+      \qquad
+      \Infer[Const]
+          { }
+          {\Gamma\vdash c:\basic{c}}
+          {c\not\in\dom\Gamma}
+       \\
+      \Infer[Abs]
+          {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+          {
+          \Gamma\vdash\lambda^{\wedge_{i\in I}s_i\to t_i}x.e:\textstyle\bigwedge_{i\in I}s_i\to t_i
+          }
+          {\lambda^{\wedge_{i\in I}s_i\to t_i}x.e\not\in\dom\Gamma}
+          \\
+      \Infer[App]
+          {
+            \Gamma \vdash e_1: t_1 \\
+            \Gamma\vdash e_2: t_2\\
+            t_1 \leq \Empty \to \Any\\
+            t_2 \leq \dom {t_1}
+          }
+          { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+          { {e_1}{e_2}\not\in\dom\Gamma}
+          \\
+      \Infer[If]
+            {\Gamma\vdash e:t_\circ\\
+              \Gamma, \Gamma^+_{\Gamma,e,t}\vdash e_1 : t_1\\
+              \Gamma, \Gamma^-_{\Gamma,e,t}\vdash e_2 : t_2}
+            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+            {\makebox[3cm][l]{$\ite {e} t {e_1}{e_2}\not\in\dom\Gamma$}}
+      \\\end{mathpar}
+
+    \subsection{Definitions}
+
+  \begin{definition}[Environment equivalence]
+    Two environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
+    \begin{align*} 
+      &\forall e \in \dom \Gamma.\ \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
+      \forall e' \in \dom {\Gamma'}.\ \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
+      \text{and} \hspace{1cm} &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Leftrightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty
+    \end{align*}
+  \end{definition}
+
+  \begin{definition}[Environment inclusion]
+    Let $\Gamma$ and $\Gamma'$ two environments. We says that $\Gamma' \leq \Gamma$ iff:
+    \begin{align*}
+      &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
+      &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
+    \end{align*}
+    Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
+    We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
+  \end{definition}
+
+  \begin{definition}[Environment substitution]
+    Let $\Gamma$ an environment and $\rho$ a substitution from variables to expressions.
+    The environment $\Gamma\rho$ is defined by:
+    \begin{align*}
+      &\dom {\Gamma\rho} = \dom \Gamma \rho\\
+      &\forall e' \in \dom {\Gamma\rho}, (\Gamma\rho)(e') = \bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e'}\Gamma(e'')
+    \end{align*}
+  \end{definition}
+
+  \begin{definition}[Ordinary environments]
+    We say that an environment $\Gamma$ is ordinary iff its domain only contains variables.
+  \end{definition}
+
+    \subsection{Theorems}
+
+    \begin{lemma}[Monotonicity]
+      Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
+      Then:\\
+      \begin{align*}
+        &\Gamma' \vdash e:t' \text{ with } t' \leq t\\
+        &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+      \end{align*}
+    \end{lemma}
+
+    \begin{corollary}[Equivalence]
+      If $\Gamma \vdash e:t$ and $\Gamma' \equiv \Gamma$, then $\Gamma' \vdash e:t$.
+    \end{corollary}
+
+    \begin{corollary}[Strengthening]
+      If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
+      $\Gamma, (x:t_1^x\land t_2^x) \vdash e:t$ with $t \leq t_1\land t_2$.
+    \end{corollary}
+
+    \begin{lemma}[Substitution]
+      Let $\Gamma$ an environment, $x$ a variable, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ and $t_x$ two types.
+      If $\Gamma \vdash e:t$ and $\Gamma(x) = t_x$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then:
+      \begin{align*}
+        &\Gamma \subst x {e'} \vdash e \subst x {e'}:t' \text{ with } t'\leq t\\
+        &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\subst x {e'},e\subst x {e'},t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+      \end{align*}
+    \end{lemma}
+
+    \begin{corollary}[Substitution 2]
+      Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
+      If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
+    \end{corollary}
+
+    \begin{lemma}[Value test]
+      If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
+    \end{lemma}
+
+    \begin{lemma}[Test monotonicity]
+      Let $\Gamma$ an environment. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
+      If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Gamma^+_{\Gamma,e,t_{if}'} \leq \Gamma^+_{\Gamma,e,t_{if}}$
+      and $\Gamma^-_{\Gamma,e,t_{if}} \leq \Gamma^-_{\Gamma,e,t_{if}'}$.
+    \end{lemma}
+
+    \begin{lemma}[Test reduction]
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t_{if}$ two types.
+      If $\Gamma \vdash e : t$, $e \leadsto e'$ and
+      if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
+      then $\forall p.\ \Gamma^p_{\Gamma,e',t_{if}} \leq \Gamma^p_{\Gamma,e,t_{if}}$.
+    \end{lemma}
+
+    \begin{theorem}[Subject reduction]
+      Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
+      If $\Gamma \vdash e : t$ and $e \leadsto e'$, then there exists $t' \leq t$ such that $\Gamma \vdash e' : t'$.
+    \end{theorem}
+
+    \section{Proofs}
+
+    \subsection{Monotonicity}
+
+    We proceed by induction on $e$. We suppose that, for any $e'$ strict subexpression of $e$, for any $\Gamma' \leq \Gamma$,
+    \begin{align*}
+      &\Gamma \vdash e':t' \Rightarrow \Gamma' \vdash e':t'' \text{ with } t'' \leq t'\\
+      &\Gamma \vdash e':t' \Rightarrow \forall p \forall t'' \forall \varpi.\ \Gp p {\Gamma',e',t''} (\varpi) \leq \Gp p {\Gamma,e',t''} (\varpi)
+    \end{align*}
+
+    Let $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
+    If $\exists e' \in \dom {\Gamma'}.\ \Gamma'(e') = \Empty$, then the properties are trivial.
+    So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
+
+    If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
+    So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis on $e$:
+    \begin{description}
+      \item[$c$] Trivial.
+      \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
+      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+      We can conclude directly by noticing that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and applying the induction hypothesis.
+      \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      We can conclude directly by applying the induction hypothesis and noticing that the $\circ$ operator is monotonic.
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+      Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
+      Thus, we can conclude by applying the induction hypothesis again.\\
+    \end{description}
+
+    Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
+
+    Let $p\in \{+,-\}$ and $t'$ a type.
+    We proceed by induction on $\varpi$.
+    
+    The base case is straightforward (as we already proved that $\Gamma' \vdash e:t' \text{ with } t' \leq t$).\\
+    For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varpi.0} \leq \tyof {\Gamma} {e\downarrow\varpi.0}$.
+    We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
+    The case $\varpi.0$ follows from the previous case and the induction hypothesis.
+
+    \qed
+
+    \subsection{Substitution lemma}
+
+    Let $x,e'$ as in the lemma statement. We will denote the substitution $\subst x {e'}$ by $\rho$.
+
+    We proceed by induction on $e$. We suppose that, for any $e_s$ strict subexpression of $e$,
+    \begin{align*}
+      \forall \Gamma \forall t_s.\ &\Gamma \vdash e_s:t_s \Rightarrow \exists t'.\ \Gamma \rho \vdash e_s \rho:t' \text{ with } t'\leq t_s\\
+      \forall \Gamma \forall t_s.\ &\Gamma \vdash e_s:t_s \Rightarrow \forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e_s\rho,t'} (\varpi) \leq \Gp p {\Gamma,e_s,t'} (\varpi)
+    \end{align*}
+
+    Let $\Gamma,t,t_x,t_{e'}$ as in the lemma statement.
+
+    If $\exists e_\bot \in \dom {\Gamma}.\ \Gamma(e_\bot) = \Empty$, then $(\Gamma\rho)(e_\bot\rho) = \Empty$ and thus the properties are trivial.
+    So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    First, let's show that $\Gamma \rho \vdash e \rho:t'$ with $t'\leq t$.
+
+    If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). Thus, $(\Gamma\rho)(e\rho)=\bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e\rho} \Gamma(e'') \leq \Gamma(e) \leq t$.
+    So we can derive the wanted result using the rule $\Rule {Occ}$. It concludes this case. So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+    
+    We now proceed by a case analysis on $e$:
+    
+    \begin{description}
+      \item[$c$] Trivial.
+      \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
+      \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$]
+      We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+      We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i'$ with $t_i'\leq t_i$.
+      By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i''$ with $t_i''\leq t_i'\leq t_i$. We conclude by applying $\Rule {Abs}$.
+      \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+      We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
+      By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$ and $\Gamma\rho\vdash e_2\rho:t_2'$ with $t_2' \leq t_2$. We conclude by applying $\Rule {App}$.
+      \item[$\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+      We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
+      \begin{itemize}
+        \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0'$ with $t_0'\leq t_0$.
+        \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e',\bigwedge_{\{e''\in \dom {\Gamma_1}\alt e''\rho=e'\}} \Gamma_1(e''))$.
+        In particular, $\Gamma_1'(e')\leq\Gamma_1(x)=\Gamma_1'(x)$.
+        
+        Moreover, we have $\Gamma_1' \leq \Gamma_1$ ($e'$ does not contain $x$ and so $e'\rho=e'$).
+        As $\Gamma_1 \vdash e_1:t_1$, we have by using the monotonicity lemma $\Gamma_1' \vdash e_1:t_1'$ with $t_1'\leq t_1$.
+
+        Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
+
+        Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
+        For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ e_0\downarrow\varpi=e_s$, we have:
+        \begin{align*}
+          \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt e_0\rho\downarrow\varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+          &\leq \bigwedge_{\{\varpi\alt (e_0\downarrow\varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
+          &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
+          &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
+          &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
+        \end{align*}
+
+        Thus, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho = \Gamma_1\rho$.
+
+        Moreover, we have $\Gamma_1'\rho=\Gamma_1\rho$ (recall that $e'\rho=e'$).
+        It gives $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+
+        We deduce, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1''$ with $t_1'' \leq t_1' \leq t_1$.
+        \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
+      \end{itemize}
+      We conclude by applying the rule $\Rule {If}$.
+    \end{description}
+
+    Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma\rho,e\rho,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
+
+    Let $p\in \{+,-\}$ and $t'$ a type.
+    We proceed by induction on $\varpi$.
+
+    The base case is straightforward (as we already proved that $\Gamma \rho \vdash e \rho:t'$ with $t'\leq t$).\\
+    The inductive cases are also straightfoward using the induction hypothesis (same reasonning as for the proof of monotonicity).
+
+    \qed
+
+    \subsection{Substitution lemma 2}
+
+    Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
+    We will denote the substitution $\subst x {e'}$ by $\rho$.
+
+    By the substitution lemma, we get $(\Gamma, (x:t_x))\rho \vdash e\rho:t'$ with $t' \leq t$.
+    As $x$ does not appear in $\dom \Gamma$, we have $(\Gamma, (x:t_x))\rho = \Gamma, (e':t_x)$.
+    We deduce $\Gamma, (e':t_x) \vdash e\rho:t'$ with $t' \leq t$.
+
+    As $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$ and $t_x \neq \Empty$, we have $\Gamma \leq \Gamma, (e':t_x)$.
+    Thus, by using the monotonicity lemma, we get $\Gamma\vdash e\rho:t''$ with $t'' \leq t' \leq t$.
+
+    \qed
+
+    \subsection{Test reduction}
+
+    We proceed by induction on $e$.
+
+    Let $\Gamma,t,t_{if},e'$ as in the theorem statement.
+    
+    We will prove here that $\Gamma^+_{\Gamma,e',t_{if}} \leq \Gamma^+_{\Gamma,e,t_{if}}$.
+    The proof for $\Gamma^-_{\dots}$ follows as $\Gamma^-_{\Gamma,e,t_{if}}=\Gamma^+_{\Gamma,e,\neg t_{if}}$.
+
+    We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
+    Let $t'$ such that $\Gamma \vdash e':t'$ and $t'\leq t$ (using subject reduction).
+
+    If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial.
+    Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is ordinary, and variables are not reducible).
+    Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis on $e$ (impossible cases are not shown)::
+
+    \begin{description}
+      \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+
+      The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
+      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
+      
+      TODO
+
+      \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+      
+      So we have $\Gamma \vdash e_1:t_1$ and $\Gamma \vdash v_2:t_2$ with $t=\apply {t_1} {t_2}$.
+
+      We also have $e' = e_1' v_2$ with $e_1 \leadsto e_1'$.
+
+      \begin{itemize}
+        \item Let $t_\epsilon = \Gp + {\Gamma,e,t_{if}} (\epsilon)$ and $t_\epsilon' = \Gp + {\Gamma,e',t_{if}} (\epsilon)$.
+        
+        Notice that $t_\epsilon' = t_{if} \land t' \leq t_{if} \land t = t_\epsilon$.
+
+        \item Let $t_{left} = \Gp + {\Gamma,e,t_{if}} (0)$ and $t_{left}' = \Gp + {\Gamma,e',t_{if}} (0)$.
+
+        We have $t_{left}' \leq t_{left}$ (direct consequence of $t_\epsilon' \leq t_\epsilon$).
+  
+        Using the induction hypothesis, we get $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}'}$,
+        and using the test monotonicity lemma we deduce $\Gamma^+_{\Gamma,e_1,t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+
+        Thus $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+
+        \item Let $t_{right} = \Gp + {\Gamma,e,t_{if}} (1)$ and $t_{right}' = \Gp + {\Gamma,e',t_{if}} (1)$.
+        
+        As in the previous point, we also have $t_{right}' \leq t_{right}$.
+
+        Thus, using the test monotonicity lemma, we deduce $\Gamma^+_{\Gamma,v_2,t_{right}'} \leq \Gamma^+_{\Gamma,v_2,t_{right}}$.
+      \end{itemize}
+      
+      $\Gamma^+_{\Gamma,e,t_{if}} = \Gamma^+_{\Gamma,v_2,t_{right}} \land \Gamma^+_{\Gamma,e_1,t_{left}} \land (e:t_\epsilon)$ TODO
+
+      \item[$e_1\ e_2$] This case is similar to the previous one.
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^+_{\Gamma,e,t_{if}} = (e, t\land t_{if})$. TODO: Actually not trivial.
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] This case is similar to the previous one.
+    \end{description}
+
+    \qed
+
+    \subsection{Subject reduction}
+
+    We proceed by induction on $e$.
+
+    Let $\Gamma,t,e'$ as in the theorem statement.
+    We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
+
+    If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial
+    (we can apply the rule $\Rule {Empty}$) to type the beta-reduced expression).
+    Let's suppose it is not the case (in particular we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
+
+    If we had $e\in\dom\Gamma$, then $e$ would not be reducible (because $\Gamma$ is ordinary, and variables are not reducible).
+    Thus, we can suppose that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+
+    We now proceed by case analysis on $e$ (impossible cases are not shown):
+
+    \begin{description}
+      \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+
+      The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
+      Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
+
+      From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
+      It gives $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$.
+      Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
+
+      Let $I'=\{i\in I\alt t_2 \leq s_i\}$. TODO: Alain Frisch magics here...
+      We can deduce, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
+      that $\bigwedge_{i\in I'} t_i \leq t$ (see lemma 4.9 of Alain Frisch thesis).
+
+      The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
+      Thus, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i'$ with $t_i' \leq t_i$ for any $i\in I'$. By using the strengthening lemma, we deduce that
+      $\Gamma, (x:\bigwedge_{i\in I'} s_i) \vdash e_x:t'$ with $t'\leq \bigwedge_{i\in I'} t_i' \leq \bigwedge_{i\in I'} t_i \leq t$.
+      As $t_2 \leq \bigwedge_{i\in I'} s_i$, we can apply the substitution lemma to get $\Gamma \vdash e_x\subst x {v_2}:t''$ with $t'' \leq t' \leq t$.
+
+      \item[$e_1\ v_2$] In this case, only $e_1$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      We just apply the induction hypothesis on $e_1$ and conclude using the monotonicity of the $\circ$ operator.
+      \item[$e_1\ e_2$] In this case, only $e_2$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{App}$.
+
+      We just apply the induction hypothesis on $e_2$ and conclude using the monotonicity of the $\circ$ operator.
+      \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] In this case, the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
+       
+      So we have $\Gamma \vdash v_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,v_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+
+      There are two cases:
+      \begin{description}
+        \item[$v_0 \in t_{if}$] In this case, we have $e'=e_1$.
+        By the value test lemma, we have $t_0 \leq t_{if}$.
+        Thus, we can easily show that $\Gamma^+_{\Gamma,v_0,t_{if}} \leq \Gamma$:
+        For each expression in its domain, we proceed by induction on the associated paths.
+        Since $v_0$ is a value, the paths $\varpi.0$ and $\varpi.1$ are never encountered. Other cases are trivial.
+
+        Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}} \equiv \Gamma$.
+
+        By using the equivalence lemma, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
+        \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
+      \end{description}
+        
+      \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] In this case, only $e_0$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
+      
+      So we have $\Gamma \vdash e_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,e_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,e_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+      
+      We also have $e'=\ite {e_0'} {t_{if}} {e_1} {e_2}$ with $e_0\leadsto e_0'$.
+
+      By applying the test reduction lemma, we get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
+      $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$.
+
+      Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
+      and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
+    \end{description}
+
+    \qed
 
 \end{document}
