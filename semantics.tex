@@ -250,6 +250,7 @@
 
     \begin{lemma}[Value test]
       If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
+      Reciprocally, if $\Gamma \vdash v : t$ with $\Gamma$ ordinary, then $v \in t$.
     \end{lemma}
 
     \begin{lemma}[Test monotonicity]
@@ -494,9 +495,14 @@
       It gives $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$.
       Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
 
-      Let $I'=\{i\in I\alt t_2 \leq s_i\}$. TODO: Alain Frisch magics here...
-      We can deduce, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
-      that $\bigwedge_{i\in I'} t_i \leq t$ (see lemma 4.9 of Alain Frisch thesis).
+      Let $I'=\{i\in I\alt t_2 \leq s_i\}$. As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
+      Thus, by the value test lemma, we have $v_2 \in \bigvee_{i\in I} s_i$ and by using the lemma 6.23 of [TODO:ref semantic_subtyping],
+      we can deduce that there is at least one $i$ such that $v_2 \in s_i$ (and thus $\Gamma \vdash v_2 : s_i$).
+      It follows that $I'$ is not empty.
+
+      Moreover, $t_2 \not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise it would contradict the definition of $I'$.
+      As a consequence, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
+      we can deduce $\bigwedge_{i \in I'}t_i \leq t$.
 
       The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
       Thus, we can derive $\Gamma,(x:s_i) \vdash e_x : t_i'$ with $t_i' \leq t_i$ for any $i\in I'$. By using the strengthening lemma, we deduce that
