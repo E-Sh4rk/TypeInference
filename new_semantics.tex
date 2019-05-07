@@ -132,15 +132,15 @@
       {}\\
       \Infer[App]
       {}
-      {(E=(\lambda^tx.e) v, \varnothing) \leadsto (E'=e\subst x v, \subst {E} {E'})}
+      {(\underbrace{(\lambda^tx.e) v}_E, \varnothing) \leadsto (\underbrace{e\subst x v}_{E'}, \subst {E} {E'})}
       {}\\
       \Infer[TestCtx]
       {(e,\varnothing) \leadsto (e',\rho)}
-      {(E=\ite e t {e_1} {e_2}, \varnothing) \leadsto (E'=\ite {e'} t {e_1\rho} {e_2\rho}, \subst {E} {E'})}
+      {(\underbrace{\ite e t {e_1} {e_2}}_E, \varnothing) \leadsto (\underbrace{\ite {e'} t {e_1\rho} {e_2\rho}}_{E'}, \subst {E} {E'})}
       {}\\
       \Infer[Ite]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
-      {(E=\ite v t {e_1} {e_2},\varnothing) \leadsto (E'=e_i,\subst {E} {E'})}
+      {(\underbrace{\ite v t {e_1} {e_2}}_E,\varnothing) \leadsto (\underbrace{e_i}_{E'},\subst {E} {E'})}
       {}\\
     \end{mathpar}
 
@@ -375,7 +375,10 @@
           We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
           \begin{itemize}
             \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0'$ with $t_0'\leq t_0$.
-            \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$. Let $\Gamma_1'=\Gamma_1,(e_a:\tyof {e_a} {\Gamma_1}), (e_b:\tyof {e_a} {\Gamma_1}\land\tyof {e_b} {\Gamma_1}\land\bigwedge_{\{e'\in \dom {\Gamma_1}\alt e'\rho=e_b\}} \Gamma_1(e'))$.
+            \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$.
+            Let $\Gamma_1'=\Gamma_1,(e_a:\tyof {e_a} {\Gamma_1}), (e_b:\tyof {e_a} {\Gamma_1}\land\tyof {e_b} {\Gamma_1}
+            %\land\bigwedge_{\{e'\in \dom {\Gamma_1}\alt e'\rho=e_b\}} \Gamma_1(e')
+            )$.
             
             In particular, $\Gamma_1'(e_b)\leq \tyof {e_a} {\Gamma_1} = \Gamma_1'(e_a)$.
             
