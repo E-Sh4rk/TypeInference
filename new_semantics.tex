@@ -103,7 +103,7 @@
     \begin{align*}
       &\Gamma^p_{\Gamma,es,ts}=\fixpoint_\Gamma (\Gamma^p_{es,ts})\\&\\
       &\Gamma^p_{\varnothing,\varnothing} (\Gamma) = \Gamma\\
-      &\Gamma^p_{\cons e {es},\cons t {ts}} (\Gamma) = \Gamma^p_{\Gamma,e,t},\Gamma^p_{es,ts}(\Gamma^p_{\Gamma,e,t})
+      &\Gamma^p_{\cons e {es},\cons t {ts}} (\Gamma) = \Gamma^p_{es,ts}(\Gamma,\Gamma^p_{\Gamma,e,t})
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -199,8 +199,19 @@
 
       \subsection{Definitions}
 
+      \begin{definition}[Well formed environment]
+        An environment $\Gamma$ is well-formed iff:
+        \[
+          \forall e \in \dom \Gamma \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+        \]
+        This also implies:
+        \[
+          \forall e \in \dom \Gamma \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
+        \]
+      \end{definition}
+
       \begin{definition}[Environment equivalence]
-        Two environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
+        Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
         \begin{align*} 
           &\forall e \in \dom \Gamma.\ \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
           \forall e' \in \dom {\Gamma'}.\ \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
@@ -209,11 +220,10 @@
       \end{definition}
     
       \begin{definition}[Environment inclusion]
-        Let $\Gamma$ and $\Gamma'$ two environments. We says that $\Gamma' \leq \Gamma$ iff:
+        Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
         \begin{align*}
           &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
-          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)\\
-          &\forall e' \in \dom {\Gamma'}.\ \Gamma \vdash e' : t \Rightarrow \Gamma(e') \leq t
+          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
         \end{align*}
         Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
         We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
@@ -233,9 +243,14 @@
       \end{definition}
     
         \subsection{Theorems}
+
+        \begin{lemma}[Well-formedness]
+          Let $\Gamma$ a well-formed environment. Let $e$ a well-typed expression in $\Gamma$, $t_{if}$ a type and $p\in\{-,+\}$.\\
+          Thus, $\Gamma^p_{\Gamma,e,t_{if}}$ is well defined and $\Gamma,\Gamma^p_{\Gamma,e,t_{if}}$ is well-formed.
+        \end{lemma}
     
         \begin{lemma}[Monotonicity]
-          Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
+          Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
           Then:\\
           \begin{align*}
             &\Gamma' \vdash e:t' \text{ with } t' \leq t\\
@@ -253,7 +268,7 @@
         \end{corollary}
     
         \begin{lemma}[Substitution]
-          Let $\Gamma$ an environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ somes types.
+          Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ somes types.
           If $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t' \text{ with } t'\leq t\\
@@ -261,6 +276,8 @@
           \end{align*}
         \end{lemma}
     
+        TODO: beyond this point, statements and proofs must be checked/updated (a lot of changes have been made).
+
         \begin{corollary}[Substitution 2]
           Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
           If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
@@ -308,7 +325,8 @@
         If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
         So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
     
-        Similarly, we can suppose $e\not\in\dom{\Gamma'}$.
+        We can also suppose $e\not\in\dom{\Gamma'}$. If it is not the case, we can just consider $\Gamma'\setminus(e:\Gamma'(e))$ instead of $\Gamma'$
+        and obtain the wanted result on $\Gamma'$ by using its well-formedness.
 
         We now proceed by case analysis on $e$:
         \begin{description}
@@ -320,7 +338,9 @@
           \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
           For that, we just have to apply the induction hypothesis and notice that the $\circ$ operator is monotonic.
-          \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+          \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] TODO: Should use well-formedness here.
+
+          We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
           Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
           We can conclude by applying the induction hypothesis again.\\
@@ -339,6 +359,8 @@
         \qed
     
         \subsection{Substitution lemma}
+
+        TODO: Update the proof to match the new statement and definitions. In particular the ite case.
     
         Let $e_a,e_b$ as in the lemma statement. We will denote the substitution $\subst {e_a} {e_b}$ by $\rho$.
     
