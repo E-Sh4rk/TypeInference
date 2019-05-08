@@ -202,11 +202,11 @@
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
         \[
-          \forall e \in \dom \Gamma \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+          \forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
         \]
         This also implies:
         \[
-          \forall e \in \dom \Gamma \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
+          \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
         \]
       \end{definition}
 
@@ -323,7 +323,7 @@
         First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
     
         If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
-        So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+        So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that $e$ is not a variable and that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
     
         We can also suppose $e\not\in\dom{\Gamma'}$. If it is not the case, we can just consider $\Gamma'\setminus(e:\Gamma'(e))$ instead of $\Gamma'$
         and obtain the wanted result on $\Gamma'$ by using its well-formedness.
