@@ -254,7 +254,7 @@
     
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ somes types.
-          If $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma \vdash e_b:t_b$ with $t_b \leq t_a$, then:
+          If $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t' \text{ with } t'\leq t\\
             &\forall p \forall t_{if} \forall \varpi.\ \Gp p {\Gamma\subst {e_a} {e_b},e\subst {e_a} {e_b},t_{if}} (\varpi) \leq \Gp p {\Gamma,e,t_{if}} (\varpi)
@@ -355,9 +355,12 @@
     
         First, let's show that $\Gamma \rho \vdash e \rho:t'$ with $t'\leq t$.
     
-        If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). Thus, $(\Gamma\rho)(e\rho)=\bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e\rho} \Gamma(e'') \leq \Gamma(e) \leq t$.
-        So we can derive the wanted result using the rule $\Rule {Occ}$. It concludes this case. So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+        If $e\in\dom\Gamma$, we know that $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho) \leq \Gamma(e)$.
+        As $\Gamma(e) = t$ (because $\Gamma \vdash e:t$), we can derive the wanted result using the rule $\Rule {Occ}$.
+        It concludes this case. So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
         
+        TODO: What if $e\rho\in\dom{\Gamma\rho}$ ? 
+
         We now proceed by a case analysis on $e$:
         
         \begin{description}
@@ -422,6 +425,8 @@
         \qed
     
         \subsection{Substitution lemma 2}
+
+        TODO: Update to match new substitution lemma
     
         Let $\Gamma,e,x,e',t,t_x,t_{e'}$ as in the lemma statement.
         We will denote the substitution $\subst x {e'}$ by $\rho$.
