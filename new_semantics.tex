@@ -330,7 +330,7 @@
         First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
     
         If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
-        So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that $e$ is not a variable and that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+        So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that $e$ is not a variable and that the last rule applied to type $\Gamma \vdash e:t$ is not $\Rule{Occ}$).
     
         We can also suppose $e\not\in\dom{\Gamma'}$. If it is not the case, we can just consider $\Gamma'\setminus(e:\Gamma'(e))$ instead of $\Gamma'$
         and obtain the wanted result on $\Gamma'$ by using its well-formedness.
@@ -389,7 +389,7 @@
     
         If $e\in\dom\Gamma$, we know that $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho) \leq \Gamma(e)$.
         As $\Gamma(e) = t$ (because $\Gamma \vdash e:t$), we can derive the wanted result using the rule $\Rule {Occ}$.
-        It concludes this case. So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Occ}$).
+        So let's suppose now that $e\not\in\dom\Gamma$ (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ is not $\Rule{Occ}$).
         
         TODO: What if $e\rho\in\dom{\Gamma\rho}$ ? 
 
@@ -401,6 +401,9 @@
           \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$]
           We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
           We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i'$ with $t_i'\leq t_i$.
+          
+          TODO: What if y is in dom(gamma)? It would not be well-formed anymore.
+
           By induction hypothesis, for each $i$, we get  $\Gamma\rho,y:s_i \vdash e_y\rho:t_i''$ with $t_i''\leq t_i'\leq t_i$. We conclude by applying $\Rule {Abs}$.
           \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
           We have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$ with $t_1$ an arrow type and $t_2 \in \dom {t_1}$.
@@ -481,7 +484,7 @@
         We will prove here that $\Gamma^+_{\Gamma,e',t_{if}} \leq \Gamma^+_{\Gamma,e,t_{if}}$.
         The proof for $\Gamma^-_{\dots}$ follows as $\Gamma^-_{\Gamma,e,t_{if}}=\Gamma^+_{\Gamma,e,\neg t_{if}}$.
     
-        We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
+        %We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
         Let $t'$ such that $\Gamma \vdash e':t'$ and $t'\leq t$ (using subject reduction).
     
         If $\exists e_{\bot} \in \dom\Gamma.\ \Gamma(e_{\bot}) = \Empty$, thus the property is trivial.
