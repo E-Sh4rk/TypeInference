@@ -103,7 +103,9 @@
     \begin{align*}
       &\Gamma^p_{\Gamma,es,ts}=\fixpoint_\Gamma (\Gamma^p_{es,ts})\\&\\
       &\Gamma^p_{\varnothing,\varnothing} (\Gamma) = \Gamma\\
-      &\Gamma^p_{\cons e {es},\cons t {ts}} (\Gamma) = \Gamma^p_{es,ts}(\Gamma,\Gamma^p_{\Gamma,e,t})
+      &\Gamma^p_{\cons e {es},\cons t {ts}} (\Gamma) = \Gamma^p_{es,ts}(\Gamma,\Gamma^p_{\Gamma,e,t})\\&\\
+      &\Gp p {\Gamma,e,t} (\varpi) = \typep p {\Gamma,e,t} \varpi \land \tyof {e\downarrow\varpi} \Gamma
+      \land \tyof {e\downarrow\varpi} {\Gamma\setminus\{e\}}
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -244,9 +246,14 @@
     
         \subsection{Theorems}
 
-        \begin{lemma}[Well-formedness]
+        \begin{lemma}[$\Gamma^p $ well-formedness]
           Let $\Gamma$ a well-formed environment. Let $e$ a well-typed expression in $\Gamma$, $t_{if}$ a type and $p\in\{-,+\}$.\\
           Thus, $\Gamma^p_{\Gamma,e,t_{if}}$ is well defined and $\Gamma,\Gamma^p_{\Gamma,e,t_{if}}$ is well-formed.
+        \end{lemma}
+
+        \begin{lemma}[Well-formedness preservation]
+          Let $\Gamma$ a well-formed environment. Let $\rho$ a substitution.
+          Then $\Gamma\rho$ is a well-formed environment.
         \end{lemma}
     
         \begin{lemma}[Monotonicity]
@@ -338,11 +345,14 @@
           \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
           For that, we just have to apply the induction hypothesis and notice that the $\circ$ operator is monotonic.
-          \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] TODO: Should use well-formedness here.
-
+          \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
           We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
-          We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
-          Using the induction hypothesis, we know that $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
+
+          Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
+
+          By the $\Gamma^p$ well-formedness lemma, we know that $\Gamma^p_{\Gamma',e_0,t_{if}}$ is defined and that $\Gamma',\Gamma^p_{\Gamma',e_0,t_{if}}$ is well formed.
+          Using the induction hypothesis, we get $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
+          Thus, we have $\Gamma',\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma,\Gamma^p_{\Gamma,e_0,t_{if}}$.
           We can conclude by applying the induction hypothesis again.\\
         \end{description}
     
