@@ -100,6 +100,8 @@
 
     \section{New typing system}
 
+    TODO: vector notation, include Env \& Constr, find other names
+
     \begin{align*}
       &\Gamma^p_{\Gamma,es,ts}=\fixpoint_\Gamma (\Gamma^p_{es,ts})\\&\\
       &\Gamma^p_{\varnothing,\varnothing} (\Gamma) = \Gamma\\
@@ -109,6 +111,8 @@
     \end{align*}
 
     \section{New (intermediate) semantics}
+
+    TODO: substitutions under arrows
 
     \[
       \begin{array}{lrcl}
@@ -342,6 +346,9 @@
           \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
           For that, we just have to notice that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and we apply the induction hypothesis.
+          
+          TODO: What if x is in dom(gamma)? It would not be well-formed anymore.
+
           \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
           For that, we just have to apply the induction hypothesis and notice that the $\circ$ operator is monotonic.
@@ -369,8 +376,6 @@
         \qed
     
         \subsection{Substitution lemma}
-
-        TODO: Update the proof to match the new statement and definitions. In particular the ite case.
     
         Let $e_a,e_b$ as in the lemma statement. We will denote the substitution $\subst {e_a} {e_b}$ by $\rho$.
     
@@ -414,16 +419,17 @@
           \begin{itemize}
             \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0'$ with $t_0'\leq t_0$.
             \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$.
-            Let $\Gamma_1'=\Gamma_1,(e_a:\tyof {e_a} {\Gamma_1}), (e_b:\tyof {e_a} {\Gamma_1}\land\tyof {e_b} {\Gamma_1}
+            %Let $\Gamma_1'=\Gamma_1,(e_a:\tyof {e_a} {\Gamma_1}), (e_b:\tyof {e_a} {\Gamma_1}\land\tyof {e_b} {\Gamma_1}
             %\land\bigwedge_{\{e'\in \dom {\Gamma_1}\alt e'\rho=e_b\}} \Gamma_1(e')
-            )$.
+            %)$.
             
-            In particular, $\Gamma_1'(e_b)\leq \tyof {e_a} {\Gamma_1} = \Gamma_1'(e_a)$.
+            %In particular, $\Gamma_1'(e_b)\leq \tyof {e_a} {\Gamma_1} = \Gamma_1'(e_a)$.
+            $(\Gamma_1\rho)(e_b) \leq (\Gamma\rho)(e_b) \leq \Gamma(e_a) \leq (\Gamma_1)(e_a)$ ?? TODO
             
-            Moreover, we have $\Gamma_1' \leq \Gamma_1$.
-            As $\Gamma_1 \vdash e_1:t_1$, we have by using the monotonicity lemma $\Gamma_1' \vdash e_1:t_1'$ with $t_1'\leq t_1$.
+            %Moreover, we have $\Gamma_1' \leq \Gamma_1$.
+            %As $\Gamma_1 \vdash e_1:t_1$, we have by using the monotonicity lemma $\Gamma_1' \vdash e_1:t_1'$ with $t_1'\leq t_1$.
     
-            Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
+            %Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
     
             Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
             For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ e_0\downarrow\varpi=e_s$, we have (the induction hypothesis is used at the third step):
@@ -436,14 +442,14 @@
               &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
             \end{align*}
     
-            Thus, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho = \Gamma_1\rho$.
+            %Thus, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho = \Gamma_1\rho$.
     
-            Let's show that $\Gamma_1\rho \vdash e_1\rho:t_1''$ with $t_1''\leq t_1'$.
+            %Let's show that $\Gamma_1\rho \vdash e_1\rho:t_1''$ with $t_1''\leq t_1'$.
             TODO
             %Moreover, we have $\Gamma_1'\rho=\Gamma_1\rho$ (recall that $e'\rho=e'$).
             %It gives $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
     
-            We conclude, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1'''$ with $t_1''' \leq t_1$.
+            %We conclude, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1'''$ with $t_1''' \leq t_1$.
             \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
           \end{itemize}
           We conclude by applying the rule $\Rule {If}$.
