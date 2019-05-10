@@ -21,9 +21,11 @@ EX: if (fun (Unit->Any) _ -> if random then 0 else false) () is Int then ... els
 
 - Could remove all expressions containing 'x' of the environment when typing a lambda-abstraction.  
 Example: if x + 1 is Even then (fun (Bool -> Int) x -> x + 1) true else x  
-Should not suppose that every lambda abstraction has a different variable because automatic alpha renaming is not compatible with new semantics.
+Could also suppose that every lambda abstraction has a different variable name,
+but in this case the new semantics must apply substitutions up to alpha-renaming
+in order to be invariant by alpha-renaming.
 
-- Need new definition for Gamma^p that preserves well-formedness.
+- Should not keep values in the environment! Otherwise some information could be deduced on values "f" and "v" when testing "f v \in t" and would not after reduction.
 
 ### Adding polymorphism
 

@@ -203,6 +203,8 @@
 
       \subsection{Definitions}
 
+      TODO: Add no-value constraint?
+      
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
         \[
@@ -292,9 +294,12 @@
           If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
         \end{corollary}
     
-        \begin{lemma}[Value test]
-          If $v \in t$ and $\Gamma \vdash v : t'$ with $\Gamma$ ordinary, then $t' \leq t$.
-          Reciprocally, if $\Gamma \vdash v : t$ with $\Gamma$ ordinary, then $v \in t$.
+        \begin{lemma}[Value typing]
+          If $\Gamma$ does not contain any value in its domain, then:
+          \begin{align*}
+            v \in t &\Rightarrow \exists t'.\ \Gamma \vdash v : t' \text{ with } t' \leq t\\
+            \Gamma \vdash v : t &\Rightarrow v \in t
+          \end{align*}
         \end{lemma}
     
         \begin{lemma}[Test monotonicity]
@@ -570,9 +575,9 @@
           Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
     
           Let $I'=\{i\in I\alt t_2 \leq s_i\}$. As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
-          Thus, by the value test lemma, we have $v_2 \in \bigvee_{i\in I} s_i$ and by using the lemma 6.23 of [TODO:ref semantic_subtyping],
+          Using the value typing lemma, we have $v_2 \in \bigvee_{i\in I} s_i$ and by using the lemma 6.23 of [TODO:ref semantic_subtyping],
           we can deduce that there is at least one $i$ such that $v_2 \in s_i$ (and thus $\Gamma \vdash v_2 : s_i$).
-          It follows that $I'$ is not empty.
+          It follows, using the value typing lemma, that $I'$ is not empty.
     
           Moreover, $t_2 \not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise it would contradict the definition of $I'$.
           As a consequence, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
