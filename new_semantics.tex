@@ -78,6 +78,8 @@
 
 \newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
 \newcommand{\fixpoint}{\textsf{fixpoint}}
+\newcommand{\xleadsto}[1]{\overset{#1}{\leadsto}}
+\newcommand{\idleadsto}[0]{\xleadsto{Id}} 
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -100,19 +102,17 @@
 
     \section{New typing system}
 
-    TODO: vector notation, include Env \& Constr, find other names
+    TODO: include Env \& Constr, find other names
 
     \begin{align*}
-      &\Gamma^p_{\Gamma,es,ts}=\fixpoint_\Gamma (\Gamma^p_{es,ts})\\&\\
-      &\Gamma^p_{\varnothing,\varnothing} (\Gamma) = \Gamma\\
-      &\Gamma^p_{\cons e {es},\cons t {ts}} (\Gamma) = \Gamma^p_{es,ts}(\Gamma,\Gamma^p_{\Gamma,e,t})\\&\\
+      &\Gamma^p_{\Gamma,\vec {i}}=\fixpoint_\Gamma (\Gamma^p_{\vec {i}})\\&\\
+      &\Gamma^p_{\varnothing} (\Gamma) = \Gamma\\
+      &\Gamma^p_{\cons {(e,t)} {\vec i}} (\Gamma) = \Gamma^p_{\vec i}(\Gamma,\Gamma^p_{\Gamma,e,t})\\&\\
       &\Gp p {\Gamma,e,t} (\varpi) = \typep p {\Gamma,e,t} \varpi \land \tyof {e\downarrow\varpi} \Gamma
       \land \tyof {e\downarrow\varpi} {\Gamma\setminus\{e\}}
     \end{align*}
 
     \section{New (intermediate) semantics}
-
-    TODO: substitutions under arrows
 
     \[
       \begin{array}{lrcl}
@@ -127,26 +127,24 @@
       \end{array}
     \]
 
+    For convenience, we denote $E\xleadsto{E\mapsto E'}E'$ by $E\idleadsto E'$.
+
     \begin{mathpar}
-      \Infer[Forget]
-      {}
-      {(e,\rho) \leadsto (e,\varnothing)}
-      {\\\rho \neq \varnothing}\\
       \Infer[Ctx]
-      {(e,\varnothing) \leadsto (e',\rho)}
-      {(C[e],\varnothing) \leadsto (C[e'],\rho)}
+      {e \xleadsto{E\mapsto E'} e'}
+      {C[e] \xleadsto{E\mapsto E'} C[e']}
       {}\\
       \Infer[App]
       {}
-      {(\underbrace{(\lambda^tx.e) v}_E, \varnothing) \leadsto (\underbrace{e\subst x v}_{E'}, \subst {E} {E'})}
+      {(\lambda^tx.e) v \idleadsto e\subst x v}
       {}\\
       \Infer[TestCtx]
-      {(e,\varnothing) \leadsto (e',\rho)}
-      {(\underbrace{\ite e t {e_1} {e_2}}_E, \varnothing) \leadsto (\underbrace{\ite {e'} t {e_1\rho} {e_2\rho}}_{E'}, \subst {E} {E'})}
+      {e \xleadsto{E\mapsto E'} e'}
+      {\ite e t {e_1} {e_2} \idleadsto \ite {e'} t {e_1\subst E {E'}} {e_2\subst E {E'}}}
       {}\\
       \Infer[Ite]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
-      {(\underbrace{\ite v t {e_1} {e_2}}_E,\varnothing) \leadsto (\underbrace{e_i}_{E'},\subst {E} {E'})}
+      {\ite v t {e_1} {e_2} \idleadsto e_i}
       {}\\
     \end{mathpar}
 
