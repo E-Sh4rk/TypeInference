@@ -156,6 +156,10 @@
       v \in t \text{ and } t \leq t' \Rightarrow v &\in t'
     \end{align*}
 
+    TODO: Add a certain condition on the type of lambda abstractions
+
+    TODO: Close by equivalence with a certain definition
+
     \subsection{Recall: Type System}
 
     \begin{mathpar}
@@ -202,8 +206,6 @@
       \\\end{mathpar}
 
       \subsection{Definitions}
-
-      TODO: Add no-value constraint?
       
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
@@ -214,6 +216,8 @@
         \[
           \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
         \]
+        
+      TODO: Add constraint on values (should be 'equivalent' to the taw type of the value, with a certain definition)
       \end{definition}
 
       \begin{definition}[Environment equivalence]
@@ -295,7 +299,7 @@
         \end{corollary}
     
         \begin{lemma}[Value typing]
-          If $\Gamma$ does not contain any value in its domain, then:
+          If $\Gamma$ is well-formed, then:
           \begin{align*}
             v \in t &\Rightarrow \exists t'.\ \Gamma \vdash v : t' \text{ with } t' \leq t\\
             \Gamma \vdash v : t &\Rightarrow v \in t

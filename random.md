@@ -22,10 +22,19 @@ EX: if (fun (Unit->Any) _ -> if random then 0 else false) () is Int then ... els
 - Could remove all expressions containing 'x' of the environment when typing a lambda-abstraction.  
 Example: if x + 1 is Even then (fun (Bool -> Int) x -> x + 1) true else x  
 Could also suppose that every lambda abstraction has a different variable name,
-but in this case the new semantics must apply substitutions up to alpha-renaming
-in order to be invariant by alpha-renaming.
+but in this case :  
+  - the new semantics must apply substitutions up to alpha-renaming
+  in order to be invariant by alpha-renaming.
+  - the typing system must operate up to alpha-renaming when building Gamma^p and testing e \in dom Gamma
+  in the typing rules.
 
-- Should not keep values in the environment! Otherwise some information could be deduced on values "f" and "v" when testing "f v \in t" and would not after reduction.
+- Rule "Empty" should be removed. Instead, test inclusion in the ite rule and generate a special environment bottom if necessary.
+
+- Problem with values in the environment: some information could be deduced on values "f" and "v" when testing "f v \in t" and would not after reduction.  
+For instance: (Unit -> Bool) could become (Unit -> Bool) & ~(Unit -> ~False) & ~(Unit -> ~True)  
+Value could be removed from the environment (but it only moves the problem). Should prove an additional "equivalence" lemma that states that two environments only differing on a value in an "insignificant way" always yield the same types.
+
+- Implementation part: there should be constraints on the DNF form... (What if sp->tp = sn->tn)
 
 ### Adding polymorphism
 
