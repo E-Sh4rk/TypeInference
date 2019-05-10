@@ -280,7 +280,7 @@
     
         \begin{lemma}[Substitution]
           Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ somes types.
-          If $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
+          If $e \in \dom \Gamma$, $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t' \text{ with } t'\leq t\\
             &\forall p \forall t_{if} \forall \varpi.\ \Gp p {\Gamma\subst {e_a} {e_b},e\subst {e_a} {e_b},t_{if}} (\varpi) \leq \Gp p {\Gamma,e,t_{if}} (\varpi)
