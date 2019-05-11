@@ -79,12 +79,15 @@
 \newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
 \newcommand{\fixpoint}{\textsf{fixpoint}}
 \newcommand{\xleadsto}[1]{\overset{#1}{\leadsto}}
-\newcommand{\idleadsto}[0]{\xleadsto{Id}} 
+\newcommand{\idleadsto}[0]{\xleadsto{Id}}
+\newcommand{\values}[0]{\mathcal{V}}
+\newcommand{\valsemantic}[1]{{\llbracket #1 \rrbracket}_{\values}}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
 \newtheorem{corollary}{Corollary}
 
 \newcommand {\Infer} [4] [] {
@@ -143,22 +146,16 @@
       {\ite e t {e_1} {e_2} \idleadsto \ite {e'} t {e_1\subst E {E'}} {e_2\subst E {E'}}}
       {}\\
       \Infer[Ite]
-      {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in t)}
+      {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
       {\ite v t {e_1} {e_2} \idleadsto e_i}
       {}\\
     \end{mathpar}
 
-    \begin{align*}
-      n &\in \{n\}\\
-      \true &\in \True\\
-      \false &\in \False\\
-      \lambda^tx.e &\in t\\
-      v \in t \text{ and } t \leq t' \Rightarrow v &\in t'
-    \end{align*}
+    \[\valsemantic t = \{v \alt \vdash v : t\}\]
 
-    TODO: Add a certain condition on the type of lambda abstractions
+    TODO: Not really correct with our algorithmic type system... Define a separate typing system for values.
 
-    TODO: Close by equivalence with a certain definition
+    TODO: Add a certain condition on the type of lambda abstractions in order to make the app case work.
 
     \subsection{Recall: Type System}
 
@@ -209,15 +206,14 @@
       
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
-        \[
-          \forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
-        \]
-        This also implies:
+        \begin{align*}
+          &\forall v \in \dom \Gamma \text{ a value. } v \in \valsemantic {\Gamma(v)}\\
+          &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+        \end{align*}
+        In particular, this last property implies:
         \[
           \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
         \]
-        
-      TODO: Add constraint on values (should be 'equivalent' to the taw type of the value, with a certain definition)
       \end{definition}
 
       \begin{definition}[Environment equivalence]
@@ -253,6 +249,16 @@
       \end{definition}
     
         \subsection{Theorems}
+
+        \begin{property}[$\valsemantic \_$ properties]
+          \begin{align*}
+            &\forall s.\ \forall t.\ \valsemantic s \subseteq \valsemantic t \Leftrightarrow s \leq t\\
+            &\valsemantic \Empty = \varnothing\\
+            &\forall t.\ \valsemantic {\neg t} = \values \setminus \valsemantic t\\
+            &\forall s.\ \forall t.\ \valsemantic {s\vee t} = \valsemantic s \cup \valsemantic t
+          \end{align*}
+        \end{property}
+        Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
 
         \begin{lemma}[$\Gamma^p $ well-formedness]
           Let $\Gamma$ a well-formed environment. Let $e$ a well-typed expression in $\Gamma$, $t_{if}$ a type and $p\in\{-,+\}$.\\
@@ -297,14 +303,6 @@
           Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
           If $\Gamma, (x:t_x) \vdash e:t$ and $\Gamma \vdash e':t_{e'}$ with $t_{e'} \leq t_x$, then $\Gamma \vdash e \subst x {e'}:t'$ with $t'\leq t$.
         \end{corollary}
-    
-        \begin{lemma}[Value typing]
-          If $\Gamma$ is well-formed, then:
-          \begin{align*}
-            v \in t &\Rightarrow \exists t'.\ \Gamma \vdash v : t' \text{ with } t' \leq t\\
-            \Gamma \vdash v : t &\Rightarrow v \in t
-          \end{align*}
-        \end{lemma}
     
         \begin{lemma}[Test monotonicity]
           Let $\Gamma$ an environment. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
@@ -579,9 +577,9 @@
           Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
     
           Let $I'=\{i\in I\alt t_2 \leq s_i\}$. As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
-          Using the value typing lemma, we have $v_2 \in \bigvee_{i\in I} s_i$ and by using the lemma 6.23 of [TODO:ref semantic_subtyping],
-          we can deduce that there is at least one $i$ such that $v_2 \in s_i$ (and thus $\Gamma \vdash v_2 : s_i$).
-          It follows, using the value typing lemma, that $I'$ is not empty.
+          As $\Gamma$ is well-formed, we have $v_2 \in \bigvee_{i\in I} s_i$ and by using the $\valsemantic \_$ properties,
+          we can deduce that there is at least one $i$ such that $v_2 \in s_i$ and thus $t_2 \leq s_i$ (thanks to the restrictions on lambda-abstraction type annotations).
+          It follows that $I'$ is not empty.
     
           Moreover, $t_2 \not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise it would contradict the definition of $I'$.
           As a consequence, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
