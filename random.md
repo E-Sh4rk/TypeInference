@@ -30,11 +30,11 @@ but in this case :
 
 - Rule "Empty" should be removed. Instead, test inclusion in the ite rule and generate a special environment bottom if necessary.
 
-- Problem with values in the environment: some information could be deduced on values "f" and "v" when testing "f v \in t" and would not after reduction.  
-For instance: (Unit -> Bool) could become (Unit -> Bool) & ~(Unit -> ~False) & ~(Unit -> ~True)  
-Value could be removed from the environment (but it only moves the problem). Should prove an additional "equivalence" lemma that states that two environments only differing on a value in an "insignificant way" always yield the same types.
-
 - Implementation part: there should be constraints on the DNF form... (What if sp->tp = sn->tn)
+
+- Should add contraints to types of lambda abstractions
+
+- Should not keep values in the environment
 
 ### Adding polymorphism
 
