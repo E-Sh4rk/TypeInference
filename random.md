@@ -19,6 +19,10 @@ If we have a good type inference engine, we could put the nested condition in a 
 - If side effects, we should only keep variables and non-reducible expressions in the environment (or at least we should not keep occurences containing an application).  
 EX: if (fun (Unit->Any) _ -> if random then 0 else false) () is Int then ... else ...
 
+------
+
+- Implementation part: should precise constraints on the DNF form (clauses not empty)
+
 - Could remove all expressions containing 'x' of the environment when typing a lambda-abstraction.  
 Example: if x + 1 is Even then (fun (Bool -> Int) x -> x + 1) true else x  
 Could also suppose that every lambda abstraction has a different variable name,
@@ -29,8 +33,6 @@ but in this case :
   in the typing rules.
 
 - Rule "Empty" should be removed. Instead, test inclusion in the ite rule and generate a special environment bottom if necessary.
-
-- Implementation part: there should be constraints on the DNF form... (What if sp->tp = sn->tn)
 
 - Should add contraints to types of lambda abstractions
 

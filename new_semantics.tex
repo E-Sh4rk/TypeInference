@@ -177,7 +177,7 @@
           {}
       \\
       \Infer[Abs]
-          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s_j} {t_j}))\\t\neq \Empty}
+          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\neq \Empty}
           {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
           {}
       \\
@@ -189,11 +189,11 @@
 
     \begin{mathpar}
 
-      \Infer[Empty]
-        { }
-        {\Gamma\vdash e:\Empty}
-        {\exists e' \in \dom\Gamma.\ \Gamma(e') \leq \Empty}
-      \\
+      %\Infer[Empty]
+      %  { }
+      %  {\Gamma\vdash e:\Empty}
+      %  {\exists e' \in \dom\Gamma.\ \Gamma(e') \leq \Empty}
+      %\\
       \Infer[Occ]
           {
           }
@@ -223,11 +223,20 @@
           { {e_1}{e_2}\not\in\dom\Gamma}
           \\
       \Infer[If]
-            {\Gamma\vdash e:t_\circ\\
-              \Gamma, \Gamma^+_{\Gamma,e,t}\vdash e_1 : t_1\\
-              \Gamma, \Gamma^-_{\Gamma,e,t}\vdash e_2 : t_2}
+            {\Gamma\vdash e:t_0\\
+              \left\{
+                \makebox{$\begin{array}{ll}
+                \Gamma, \Gamma^+_{\Gamma,e,t}\vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
+                t_1 = \Empty & \text{ otherwise}
+              \end{array}$}\right.\\
+              \left\{
+                \makebox{$\begin{array}{ll}
+                \Gamma, \Gamma^-_{\Gamma,e,t}\vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
+                t_2 = \Empty & \text{ otherwise}
+              \end{array}$}\right.}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
-            {\makebox[3cm][l]{$\ite {e} t {e_1}{e_2}\not\in\dom\Gamma$}}
+            %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
+            {\texttt{if}\dots\not\in\dom\Gamma}
       \\\end{mathpar}
 
       \subsection{Definitions}
