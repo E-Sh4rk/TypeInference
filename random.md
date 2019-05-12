@@ -34,7 +34,7 @@ but in this case :
 
 - Should add contraints to types of lambda abstractions
 
-- Should not keep values in the environment
+- Should "normalize" every type so that values always match their base type?
 
 ### Adding polymorphism
 

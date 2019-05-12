@@ -75,6 +75,8 @@
 \newcommand{\tyof}[2]{\textsf{typeof}_{#2}(#1)}
 \newcommand{\typep}[3]{\textsf{Constr}^{#1}_{#3}(#2)}
 \newcommand{\Gp}[2]{\textsf{Env}^{#1}_{#2}}
+\newcommand{\arrow}[2]{#1\to #2}
+\newcommand{\occ}[2]{#1{\downarrow}#2}
 
 \newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
 \newcommand{\fixpoint}{\textsf{fixpoint}}
@@ -105,14 +107,23 @@
 
     \section{New typing system}
 
-    TODO: include Env \& Constr, find other names
+    TODO: find better names
+
+    \[
+    \begin{array}{lcl}
+      \typep+\epsilon{\Gamma,e,t} & = & t\\
+      \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
+      \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
+      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p {\Gamma,e,t} \varpi \land \tyof {\occ e \varpi} \Gamma
+      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}\\
+    \end{array}
+    \]
 
     \begin{align*}
       &\Gamma^p_{\Gamma,\vec {i}}=\fixpoint_\Gamma (\Gamma^p_{\vec {i}})\\&\\
       &\Gamma^p_{\varnothing} (\Gamma) = \Gamma\\
-      &\Gamma^p_{\cons {(e,t)} {\vec i}} (\Gamma) = \Gamma^p_{\vec i}(\Gamma,\Gamma^p_{\Gamma,e,t})\\&\\
-      &\Gp p {\Gamma,e,t} (\varpi) = \typep p {\Gamma,e,t} \varpi \land \tyof {e\downarrow\varpi} \Gamma
-      \land \tyof {e\downarrow\varpi} {\Gamma\setminus\{e\}}
+      &\Gamma^p_{\cons {(e,t)} {\vec i}} (\Gamma) = \Gamma^p_{\vec i}(\Gamma,\Gamma^p_{\Gamma,e,t})
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -250,9 +261,7 @@
     
         \subsection{Theorems}
 
-        TODO: Do not keep values in the env (otherwise, sr is not true).
-
-        TODO: Lemma that states that, if we add an entry for a value in a well-formed environment, it will not chanhe the type of any non-value expressions.
+        TODO: "Normalization" of types?
 
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
@@ -352,7 +361,7 @@
         \begin{description}
           \item[$c$] Trivial.
           \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
-          \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+          \item[$\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
           For that, we just have to notice that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and we apply the induction hypothesis.
           
@@ -378,7 +387,7 @@
         We proceed by induction on $\varpi$.
         
         The base case is straightforward (as we already proved that $\Gamma' \vdash e:t' \text{ with } t' \leq t$).\\
-        For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {e\downarrow\varpi.0} \leq \tyof {\Gamma} {e\downarrow\varpi.0}$.
+        For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {\occ e {\varpi.0}} \leq \tyof {\Gamma} {\occ e {\varpi.0}}$.
         We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
         The case $\varpi.0$ follows from the previous case and the induction hypothesis.
     
@@ -412,7 +421,7 @@
         \begin{description}
           \item[$c$] Trivial.
           \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
-          \item[$\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}y.e_y$]
+          \item[$\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}y.e_y$]
           We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
           We have, for each $i \in I$, $\Gamma,y:s_i \vdash e_y:t_i'$ with $t_i'\leq t_i$.
           
@@ -441,12 +450,12 @@
             %Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
     
             Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
-            For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ e_0\downarrow\varpi=e_s$, we have (the induction hypothesis is used at the third step):
+            For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ \occ {e_0} \varpi=e_s$, we have (the induction hypothesis is used at the third step):
             \begin{align*}
-              \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt e_0\rho\downarrow\varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
-              &\leq \bigwedge_{\{\varpi\alt (e_0\downarrow\varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
-              &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
-              &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt e_0\downarrow\varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
+              \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt \occ {e_0\rho} \varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+              &\leq \bigwedge_{\{\varpi\alt (\occ {e_0} \varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+              &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt \occ {e_0} \varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
+              &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt \occ {e_0} \varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
               &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
               &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
             \end{align*}
@@ -511,7 +520,7 @@
         We now proceed by case analysis on $e$ (impossible cases are not shown)::
     
         \begin{description}
-          \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+          \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$ and $e'=e_x\subst x {v_2}$.
     
           The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
           Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
@@ -571,13 +580,13 @@
         We now proceed by case analysis on $e$ (impossible cases are not shown):
     
         \begin{description}
-          \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} s_i \rightarrow t_i}x.e_x$ and $e'=e_x\subst x {v_2}$.
+          \item[$v_1\ v_2$] In this case, we must have $v_1=\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$ and $e'=e_x\subst x {v_2}$.
     
           The last rule applied to derive $\Gamma \vdash e:t$ is $\Rule{App}$.
           Thus, we know that $\Gamma \vdash v_1 : t_1$ with $t_1$ an arrow type, $\Gamma \vdash v_2 : t_2$, $t_2 \in \dom {t_1}$ and $t=\apply {t_1} {t_2}$.
     
-          From this last equality, we deduce $t_1 \leq t_2 \rightarrow t$ using the declarative definition of $\circ$.
-          It gives $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$.
+          From this last equality, we deduce $t_1 \leq \arrow {t_2} t$ using the declarative definition of $\circ$.
+          It gives $\bigwedge_{i\in I} \arrow {s_i} {t_i} \leq \arrow {t_2} t$.
           Let's show that $\Gamma \vdash e_x\subst x {v_2}:t''$ for a certain type $t''\leq t$.
     
           Let $I'=\{i\in I\alt t_2 \leq s_i\}$. As $t_2 \in \dom {t_1}$, we have $t_2 \leq \bigvee_{i\in I} s_i$.
@@ -586,7 +595,7 @@
           It follows that $I'$ is not empty.
     
           Moreover, $t_2 \not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise it would contradict the definition of $I'$.
-          As a consequence, as $\bigwedge_{i\in I} s_i \rightarrow t_i \leq t_2 \rightarrow t$,
+          As a consequence, as $\bigwedge_{i\in I} \arrow {s_i} {t_i} \leq \arrow {t_2} t$,
           we can deduce $\bigwedge_{i \in I'}t_i \leq t$.
     
           The last rule of the derivation of $\Gamma \vdash v_1 : t_1$ can only be $\Rule{Abs}$ (it can't be $\Rule{Occ}$ because $\Gamma$ is ordinary).
