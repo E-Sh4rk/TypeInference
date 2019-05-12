@@ -84,6 +84,7 @@
 \newcommand{\idleadsto}[0]{\xleadsto{Id}}
 \newcommand{\values}[0]{\mathcal{V}}
 \newcommand{\valsemantic}[1]{{\llbracket #1 \rrbracket}_{\values}}
+\newcommand{\vvdash}[0]{\vdash_\values}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -159,12 +160,28 @@
       \Infer[Ite]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
       {\ite v t {e_1} {e_2} \idleadsto e_i}
-      {}\\
+      {}
     \end{mathpar}
 
-    \[\valsemantic t = \{v \alt \vdash v : t\}\]
+    \[\valsemantic t = \{v \alt \vvdash v : t\}\]
 
-    TODO: Not really correct with our algorithmic type system... Define a separate typing system for values.
+    \begin{mathpar}
+      \Infer[Subsum]
+          {\vvdash v:t'\\t'\leq t}
+          {\vvdash v:t}
+          {}
+      \\
+      \Infer[Const]
+          {}
+          {\vvdash c:\basic{c}}
+          {}
+      \\
+      \Infer[Abs]
+          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s_j} {t_j}))\\t\neq \Empty}
+          {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
+          {}
+      \\
+      \end{mathpar}
 
     TODO: Add a certain condition on the type of lambda abstractions in order to make the app case work.
 
@@ -191,15 +208,15 @@
       \Infer[Abs]
           {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
           {
-          \Gamma\vdash\lambda^{\wedge_{i\in I}s_i\to t_i}x.e:\textstyle\bigwedge_{i\in I}s_i\to t_i
+          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
           }
-          {\lambda^{\wedge_{i\in I}s_i\to t_i}x.e\not\in\dom\Gamma}
+          {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
           \\
       \Infer[App]
           {
             \Gamma \vdash e_1: t_1 \\
             \Gamma\vdash e_2: t_2\\
-            t_1 \leq \Empty \to \Any\\
+            t_1 \leq \arrow \Empty \Any\\
             t_2 \leq \dom {t_1}
           }
           { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
