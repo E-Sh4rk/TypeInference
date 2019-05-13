@@ -91,6 +91,7 @@
 \newcommand{\values}[0]{\mathcal{V}}
 \newcommand{\valsemantic}[1]{{\llbracket #1 \rrbracket}_{\values}}
 \newcommand{\vvdash}[0]{\vdash_\values}
+\newcommand{\norm}[1]{\textsf{Norm}(#1)}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -133,6 +134,18 @@
     \end{align*}
 
     \section{New (intermediate) semantics}
+
+    \[
+    \begin{array}{lrcl}
+    \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
+    \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
+    \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
+    \end{array}
+    \]
+
+    \[
+      \norm t = \text{DNF + remove negative arrows}
+    \]
 
     \[
       \begin{array}{lrcl}
