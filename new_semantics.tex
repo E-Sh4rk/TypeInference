@@ -116,36 +116,41 @@
     \section{New typing system}
 
     \[
+      \begin{array}{lrcl}
+      \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
+      \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
+      \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
+      \end{array}
+    \]
+
+    \[
+      \norm t = \text{remove negative arrows from DNF}
+    \]
+
+    \[
     \begin{array}{lcl}
       \typep+\epsilon{\Gamma,e,t} & = & t\\
       \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
       \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
       \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}\\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
+      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}}\\
     \end{array}
     \]
 
     \begin{align*}
-      &\Refine p {(e,t)} \Gamma = \Gamma,\Gamma^p_{\Gamma,e,t}\\&\\
+      &(\Refine p {(e,t)} \Gamma)(e') = 
+        \left\{\begin{array}{ll}
+          \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
+          \text{undefined} & \text{otherwise}
+        \end{array}\right.\\&\\
       &\Gaux p {\varnothing} \Gamma = \Gamma\\
       &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}\\&\\
       &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})
     \end{align*}
 
     \section{New (intermediate) semantics}
-
-    \[
-    \begin{array}{lrcl}
-    \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
-    \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
-    \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
-    \end{array}
-    \]
-
-    \[
-      \norm t = \text{DNF + remove negative arrows}
-    \]
 
     \[
       \begin{array}{lrcl}
@@ -201,7 +206,7 @@
       \\
       \end{mathpar}
 
-    TODO: Add a certain condition on the type of lambda abstractions (and tests) in order to make the app case work.
+    TODO: Add a certain condition on the type of lambda abstractions (and tests) in order to make the app case to work.
 
     \subsection{Recall: Type System}
 
