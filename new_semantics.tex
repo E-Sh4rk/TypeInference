@@ -114,24 +114,22 @@
 
     \section{New typing system}
 
-    TODO: find better names
-
     \[
     \begin{array}{lcl}
       \typep+\epsilon{\Gamma,e,t} & = & t\\
       \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
       \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
       \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p {\Gamma,e,t} \varpi \land \tyof {\occ e \varpi} \Gamma
+      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
       \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}\\
     \end{array}
     \]
 
     \begin{align*}
-      &\Refine p {(e,t)} \Gamma = \Gamma,\dots\\&\\
-      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})\\&\\
+      &\Refine p {(e,t)} \Gamma = \Gamma,\Gamma^p_{\Gamma,e,t}\\&\\
       &\Gaux p {\varnothing} \Gamma = \Gamma\\
-      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}
+      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}\\&\\
+      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -190,7 +188,7 @@
       \\
       \end{mathpar}
 
-    TODO: Add a certain condition on the type of lambda abstractions in order to make the app case work.
+    TODO: Add a certain condition on the type of lambda abstractions (and tests) in order to make the app case work.
 
     \subsection{Recall: Type System}
 
@@ -232,13 +230,13 @@
       \Infer[If]
             {\Gamma\vdash e:t_0\\
               \left\{
-                \makebox{$\begin{array}{ll}
-                \Gamma, \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
+                \makebox{$\begin{array}{ll} %\Gamma,
+                \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
                 t_1 = \Empty & \text{ otherwise}
               \end{array}$}\right.\\
               \left\{
-                \makebox{$\begin{array}{ll}
-                \Gamma, \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
+                \makebox{$\begin{array}{ll} %\Gamma,
+                \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
                 t_2 = \Empty & \text{ otherwise}
               \end{array}$}\right.}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
