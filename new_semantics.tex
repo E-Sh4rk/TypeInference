@@ -78,6 +78,12 @@
 \newcommand{\arrow}[2]{#1\to #2}
 \newcommand{\occ}[2]{#1{\downarrow}#2}
 
+\newcommand{\Genv}[3]{\textsf{Gamma}^{#1}_{#2}(#3)}
+\newcommand{\Ga}[2]{\textsf{Gamma}^{#1}_{#2}}
+\newcommand{\Gaux}[3]{\textsf{Aux}^{#1}_{#2}(#3)}
+\newcommand{\Gaa}[2]{\textsf{Aux}^{#1}_{#2}}
+\newcommand{\Refine}[3]{\textsf{Refine}^{#1}_{#2}(#3)}
+
 \newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
 \newcommand{\fixpoint}{\textsf{fixpoint}}
 \newcommand{\xleadsto}[1]{\overset{#1}{\leadsto}}
@@ -122,9 +128,10 @@
     \]
 
     \begin{align*}
-      &\Gamma^p_{\Gamma,\vec {i}}=\fixpoint_\Gamma (\Gamma^p_{\vec {i}})\\&\\
-      &\Gamma^p_{\varnothing} (\Gamma) = \Gamma\\
-      &\Gamma^p_{\cons {(e,t)} {\vec i}} (\Gamma) = \Gamma^p_{\vec i}(\Gamma,\Gamma^p_{\Gamma,e,t})
+      &\Refine p {(e,t)} \Gamma = \Gamma,\dots\\&\\
+      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})\\&\\
+      &\Gaux p {\varnothing} \Gamma = \Gamma\\
+      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -226,12 +233,12 @@
             {\Gamma\vdash e:t_0\\
               \left\{
                 \makebox{$\begin{array}{ll}
-                \Gamma, \Gamma^+_{\Gamma,e,t}\vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
+                \Gamma, \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
                 t_1 = \Empty & \text{ otherwise}
               \end{array}$}\right.\\
               \left\{
                 \makebox{$\begin{array}{ll}
-                \Gamma, \Gamma^-_{\Gamma,e,t}\vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
+                \Gamma, \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
                 t_2 = \Empty & \text{ otherwise}
               \end{array}$}\right.}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
@@ -299,9 +306,9 @@
         \end{property}
         Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
 
-        \begin{lemma}[$\Gamma^p $ well-formedness]
+        \begin{lemma}[$\Ga p {} $ well-formedness]
           Let $\Gamma$ a well-formed environment. Let $e$ a well-typed expression in $\Gamma$, $t_{if}$ a type and $p\in\{-,+\}$.\\
-          Thus, $\Gamma^p_{\Gamma,e,t_{if}}$ is well defined and $\Gamma,\Gamma^p_{\Gamma,e,t_{if}}$ is well-formed.
+          Thus, $\Genv p {e,t_{if}} \Gamma$ is well defined and $\Gamma,\Genv p {e,t_{if}} \Gamma$ is well-formed.
         \end{lemma}
 
         \begin{lemma}[Well-formedness preservation]
@@ -345,15 +352,15 @@
     
         \begin{lemma}[Test monotonicity]
           Let $\Gamma$ an environment. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
-          If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Gamma^+_{\Gamma,e,t_{if}'} \leq \Gamma^+_{\Gamma,e,t_{if}}$
-          and $\Gamma^-_{\Gamma,e,t_{if}} \leq \Gamma^-_{\Gamma,e,t_{if}'}$.
+          If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Genv + {e,t_{if}'} \Gamma \leq \Genv + {e,t_{if}} \Gamma$
+          and $\Genv - {e,t_{if}} \Gamma \leq \Genv - {e,t_{if}'} \Gamma$.
         \end{lemma}
     
         \begin{lemma}[Test reduction]
           Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t_{if}$ two types.
           If $\Gamma \vdash e : t$, $e \leadsto e'$ and
           if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-          then $\forall p.\ \Gamma^p_{\Gamma,e',t_{if}} \leq \Gamma^p_{\Gamma,e,t_{if}}$.
+          then $\forall p.\ \Genv p {e',t_{if}} \Gamma \leq \Genv p {e,t_{if}} \Gamma$.
         \end{lemma}
     
         \begin{theorem}[Subject reduction]
@@ -401,9 +408,9 @@
 
           Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
 
-          By the $\Gamma^p$ well-formedness lemma, we know that $\Gamma^p_{\Gamma',e_0,t_{if}}$ is defined and that $\Gamma',\Gamma^p_{\Gamma',e_0,t_{if}}$ is well formed.
-          Using the induction hypothesis, we get $\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma^p_{\Gamma,e_0,t_{if}}$ (it follows from the monotonicity of $\Gp {} {}$).
-          Thus, we have $\Gamma',\Gamma^p_{\Gamma',e_0,t_{if}} \leq \Gamma,\Gamma^p_{\Gamma,e_0,t_{if}}$.
+          By the $\Ga p {}$ well-formedness lemma, we know that $\Genv p {e_0,t_{if}} {\Gamma'}$ is defined and that $\Gamma',\Genv p {e_0,t_{if}} {\Gamma'}$ is well formed.
+          Using the induction hypothesis, we get $\Genv p {e_0,t_{if}} {\Gamma'} \leq \Genv p {e_0,t_{if}} \Gamma$ (it follows from the monotonicity of $\Gp {} {}$).
+          Thus, we have $\Gamma',\Genv p {e_0,t_{if}} {\Gamma'} \leq \Gamma,\Genv p {e_0,t_{if}} \Gamma$.
           We can conclude by applying the induction hypothesis again.\\
         \end{description}
     
@@ -459,10 +466,10 @@
           By induction hypothesis, we get $\Gamma\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$ and $\Gamma\rho\vdash e_2\rho:t_2'$ with $t_2' \leq t_2$.
           We conclude by applying $\Rule {App}$ and noticing that the operator $\circ$ is monotonic.
           \item[$\ite {e_0} {t_{\text{if}}} {e_1}{e_2}$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
-          We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\vdash e_1 : t_1$ and $\Gamma,\Gamma^-_{\Gamma,e_0,t_{\text{if}}}\vdash e_2 : t_2$.
+          We have $\Gamma\vdash e_0:t_0$, $\Gamma,\Genv + {e_0,t_{\text{if}}} \Gamma\vdash e_1 : t_1$ and $\Gamma,\Genv - {e_0,t_{\text{if}}} \Gamma\vdash e_2 : t_2$.
           \begin{itemize}
             \item By induction hypothesis, we directly get $\Gamma\rho\vdash e_0\rho:t_0'$ with $t_0'\leq t_0$.
-            \item Let $\Gamma_1 = \Gamma,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}$.
+            \item Let $\Gamma_1 = \Gamma,\Genv + {e_0,t_{\text{if}}} \Gamma$.
             %Let $\Gamma_1'=\Gamma_1,(e_a:\tyof {e_a} {\Gamma_1}), (e_b:\tyof {e_a} {\Gamma_1}\land\tyof {e_b} {\Gamma_1}
             %\land\bigwedge_{\{e'\in \dom {\Gamma_1}\alt e'\rho=e_b\}} \Gamma_1(e')
             %)$.
@@ -475,26 +482,26 @@
     
             %Thus, we get by induction hypothesis $\Gamma_1'\rho\vdash e_1\rho:t_1'$ with $t_1' \leq t_1$.
     
-            Let's show that we have $\Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho$.
+            Let's show that we have $\Genv + {e_0\rho,t_{\text{if}}} {\Gamma\rho} \leq \Genv + {e_0,t_{\text{if}}} \Gamma \rho$.
             For any $e_s$ subexpression of $e_0$ such that $\exists \varpi.\ \occ {e_0} \varpi=e_s$, we have (the induction hypothesis is used at the third step):
             \begin{align*}
-              \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}}(e_s\rho) &= \bigwedge_{\{\varpi\alt \occ {e_0\rho} \varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
+              \Genv + {e_0\rho,t_{\text{if}}} {\Gamma\rho}(e_s\rho) &= \bigwedge_{\{\varpi\alt \occ {e_0\rho} \varpi=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
               &\leq \bigwedge_{\{\varpi\alt (\occ {e_0} \varpi)\rho=e_s\rho\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\\
               &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt \occ {e_0} \varpi=e_s'\}} \Gp + {\Gamma\rho,e_0\rho,t_{\text{if}}} (\varpi)\right)\\
               &\leq \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \left(\bigwedge_{\{\varpi\alt \occ {e_0} \varpi=e_s'\}} \Gp + {\Gamma,e_0,t_{\text{if}}} (\varpi)\right)\\
-              &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \Gamma^+_{\Gamma,e_0,t_{\text{if}}} (e_s')\\
-              &= (\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho)(e_s\rho)
+              &= \bigwedge_{\substack{e_s' \text{ subexpression of } e_0\\\text{s.t. } \dots \text{ and } e_s'\rho=e_s\rho}} \Genv + {e_0,t_{\text{if}}} \Gamma (e_s')\\
+              &= (\Genv + {e_0,t_{\text{if}}} \Gamma \rho)(e_s\rho)
             \end{align*}
     
-            %Thus, we have $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma\rho,\Gamma^+_{\Gamma,e_0,t_{\text{if}}}\rho = \Gamma_1\rho$.
+            %Thus, we have $\Gamma\rho, \Genv + {e_0\rho,t_{\text{if}}} {\Gamma\rho} \leq \Gamma\rho,\Genv + {e_0,t_{\text{if}}}\Gamma\rho = \Gamma_1\rho$.
     
             %Let's show that $\Gamma_1\rho \vdash e_1\rho:t_1''$ with $t_1''\leq t_1'$.
             TODO
             %Moreover, we have $\Gamma_1'\rho=\Gamma_1\rho$ (recall that $e'\rho=e'$).
-            %It gives $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \leq \Gamma_1\rho = \Gamma_1'\rho$.
+            %It gives $\Gamma\rho, \Genv + {e_0\rho,t_{\text{if}}} {\Gamma\rho} \leq \Gamma_1\rho = \Gamma_1'\rho$.
     
-            %We conclude, by using the monotonicity lemma, $\Gamma\rho, \Gamma^+_{\Gamma\rho,e_0\rho,t_{\text{if}}} \vdash e_1\rho:t_1'''$ with $t_1''' \leq t_1$.
-            \item We get $\Gamma\rho, \Gamma^-_{\Gamma\rho,e_0\rho,t_{\text{if}}}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
+            %We conclude, by using the monotonicity lemma, $\Gamma\rho, \Genv + {e_0\rho,t_{\text{if}}} {\Gamma\rho} \vdash e_1\rho:t_1'''$ with $t_1''' \leq t_1$.
+            \item We get $\Gamma\rho, \Genv - {e_0\rho,t_{\text{if}}} {\Gamma\rho}\vdash e_2\rho:t_2''$ with $t_2'' \leq t_2$ in a similar way.
           \end{itemize}
           We conclude by applying the rule $\Rule {If}$.
         \end{description}
@@ -531,8 +538,8 @@
     
         Let $\Gamma,t,t_{if},e'$ as in the theorem statement.
         
-        We will prove here that $\Gamma^+_{\Gamma,e',t_{if}} \leq \Gamma^+_{\Gamma,e,t_{if}}$.
-        The proof for $\Gamma^-_{\dots}$ follows as $\Gamma^-_{\Gamma,e,t_{if}}=\Gamma^+_{\Gamma,e,\neg t_{if}}$.
+        We will prove here that $\Genv + {e',t_{if}} \Gamma \leq \Genv + {e,t_{if}} \Gamma$.
+        The proof for $\Genv - {\dots} \Gamma$ follows as $\Genv - {e,t_{if}} \Gamma=\Genv + {e,\neg t_{if}} \Gamma$.
     
         %We will suppose that all lambda abstracted variables are different in $e$ and $e'$. When it is not the case, we can alpha-rename the terms.
         Let $t'$ such that $\Gamma \vdash e':t'$ and $t'\leq t$ (using subject reduction).
@@ -568,22 +575,22 @@
     
             We have $t_{left}' \leq t_{left}$ (direct consequence of $t_\epsilon' \leq t_\epsilon$).
       
-            Using the induction hypothesis, we get $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}'}$,
-            and using the test monotonicity lemma we deduce $\Gamma^+_{\Gamma,e_1,t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+            Using the induction hypothesis, we get $\Genv + {e_1',t_{left}'} \Gamma \leq \Genv + {e_1,t_{left}'} \Gamma$,
+            and using the test monotonicity lemma we deduce $\Genv + {e_1,t_{left}'} \Gamma \leq \Genv + {e_1,t_{left}} \Gamma$.
     
-            Thus $\Gamma^+_{\Gamma,e_1',t_{left}'} \leq \Gamma^+_{\Gamma,e_1,t_{left}}$.
+            Thus $\Genv + {e_1',t_{left}'} \Gamma \leq \Genv + {e_1,t_{left}} \Gamma$.
     
             \item Let $t_{right} = \Gp + {\Gamma,e,t_{if}} (1)$ and $t_{right}' = \Gp + {\Gamma,e',t_{if}} (1)$.
             
             As in the previous point, we also have $t_{right}' \leq t_{right}$.
     
-            Thus, using the test monotonicity lemma, we deduce $\Gamma^+_{\Gamma,v_2,t_{right}'} \leq \Gamma^+_{\Gamma,v_2,t_{right}}$.
+            Thus, using the test monotonicity lemma, we deduce $\Genv + {v_2,t_{right}'} \Gamma \leq \Genv + {v_2,t_{right}} \Gamma$.
           \end{itemize}
           
-          $\Gamma^+_{\Gamma,e,t_{if}} = \Gamma^+_{\Gamma,v_2,t_{right}} \land \Gamma^+_{\Gamma,e_1,t_{left}} \land (e:t_\epsilon)$ TODO
+          $\Genv + {e,t_{if}} \Gamma = \Genv + {v_2,t_{right}} \Gamma \land \Genv + {e_1,t_{left}} \Gamma \land (e:t_\epsilon)$ TODO
     
           \item[$e_1\ e_2$] This case is similar to the previous one.
-          \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Gamma^+_{\Gamma,e,t_{if}} = (e, t\land t_{if})$. TODO: Actually not trivial.
+          \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] This case is trivial as $\Genv + {e,t_{if}} \Gamma = (e, t\land t_{if})$. TODO: Actually not trivial.
           \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] This case is similar to the previous one.
         \end{description}
     
@@ -637,17 +644,17 @@
           We just apply the induction hypothesis on $e_2$ and conclude using the monotonicity of the $\circ$ operator.
           \item[$\ite {v_0} {t_{if}} {e_1} {e_2}$] In this case, the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
            
-          So we have $\Gamma \vdash v_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,v_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+          So we have $\Gamma \vdash v_0 : t_0$, $\Gamma, \Genv + {v_0,t_{if}} \Gamma\vdash e_1 : t_1$ and $\Gamma, \Genv - {v_0,t_{if}} \Gamma\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
     
           There are two cases:
           \begin{description}
             \item[$v_0 \in t_{if}$] In this case, we have $e'=e_1$.
             By the value test lemma, we have $t_0 \leq t_{if}$.
-            Thus, we can easily show that $\Gamma^+_{\Gamma,v_0,t_{if}} \leq \Gamma$:
+            Thus, we can easily show that $\Genv + {v_0,t_{if}} \Gamma \leq \Gamma$:
             For each expression in its domain, we proceed by induction on the associated paths.
             Since $v_0$ is a value, the paths $\varpi.0$ and $\varpi.1$ are never encountered. Other cases are trivial.
     
-            Thus $\Gamma, \Gamma^+_{\Gamma,v_0,t_{if}} \equiv \Gamma$.
+            Thus $\Gamma, \Genv + {v_0,t_{if}} \Gamma \equiv \Gamma$.
     
             By using the equivalence lemma, we can deduce that $\Gamma \vdash e_1 : t_1$, which ends this case since $t_1 \leq t$.
             \item[$v_0 \not\in t_{if}$] This case is similar to the previous one.
@@ -655,15 +662,15 @@
             
           \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$] In this case, only $e_0$ can be reduced, and the last rule in the derivation of $\Gamma \vdash e:t$ is $\Rule{If}$.
           
-          So we have $\Gamma \vdash e_0 : t_0$, $\Gamma, \Gamma^+_{\Gamma,e_0,t_{if}}\vdash e_1 : t_1$ and $\Gamma, \Gamma^-_{\Gamma,e_0,t_{if}}\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
+          So we have $\Gamma \vdash e_0 : t_0$, $\Gamma, \Genv + {e_0,t_{if}} \Gamma\vdash e_1 : t_1$ and $\Gamma, \Genv - {e_0,t_{if}} \Gamma\vdash e_2 : t_2$ with $t=t_1\vee t_2$.
           
           We also have $e'=\ite {e_0'} {t_{if}} {e_1} {e_2}$ with $e_0\leadsto e_0'$.
     
-          By applying the test reduction lemma, we get $\Gamma^+_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$ and
-          $\Gamma^-_{\Gamma,e_0',t_{if}} \leq \Gamma^+_{\Gamma,e_0,t_{if}}$.
+          By applying the test reduction lemma, we get $\Genv + {e_0',t_{if}} \Gamma \leq \Genv + {e_0,t_{if}} \Gamma$ and
+          $\Genv - {e_0',t_{if}} \Gamma \leq \Genv + {e_0,t_{if}} \Gamma$.
     
-          Using the monotonicity lemma, we get $\Gamma, \Gamma^+_{\Gamma,e_0',t_{if}}\vdash e_1 : t_1'$ with $t_1'\leq t_1$
-          and $\Gamma, \Gamma^-_{\Gamma,e_0',t_{if}}\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
+          Using the monotonicity lemma, we get $\Gamma, \Genv + {e_0',t_{if}} \Gamma\vdash e_1 : t_1'$ with $t_1'\leq t_1$
+          and $\Gamma, \Genv - {e_0',t_{if}} \Gamma\vdash e_2 : t_2'$ with $t_2'\leq t_2$, and so we conclude easily.
         \end{description}
     
         \qed
