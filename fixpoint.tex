@@ -1,0 +1,125 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Type inference - M2 Internship}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Typing system}
+
+    \[
+      \begin{array}{lrcl}
+      \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
+      \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
+      \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
+      \end{array}
+    \]
+
+    \[
+      \norm t = \text{remove negative arrows from DNF}
+    \]
+
+    \[
+    \begin{array}{lcl}
+      \typep+\epsilon{\Gamma,e,t} & = & t\\
+      \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
+      \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
+      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.l}{\Gamma,e,t} & = & \bpl{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
+      \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
+      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}}\\
+    \end{array}
+    \]
+
+    \begin{align*}
+      &(\Refine p {(e,t)} \Gamma)(e') = 
+        \left\{\begin{array}{ll}
+          \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
+          \text{undefined} & \text{otherwise}
+        \end{array}\right.\\&\\
+      &\Gaux p {\varnothing} \Gamma = \Gamma\\
+      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}\\&\\
+      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})
+    \end{align*}
+
+    \begin{mathpar}
+
+        \Infer[Occ]
+            {
+            }
+            { \Gamma \vdash e: \Gamma(e) }
+            { e\in\dom\Gamma}
+        \qquad
+        \Infer[Const]
+            { }
+            {\Gamma\vdash c:\basic{c}}
+            {c\not\in\dom\Gamma}
+         \\
+        \Infer[Abs]
+            {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+            {
+            \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
+            }
+            {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
+            \\
+        \Infer[App]
+            {
+              \Gamma \vdash e_1: t_1 \\
+              \Gamma\vdash e_2: t_2\\
+              t_1 \leq \arrow \Empty \Any\\
+              t_2 \leq \dom {t_1}
+            }
+            { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+            { {e_1}{e_2}\not\in\dom\Gamma}
+            \\
+        \Infer[If]
+              {\Gamma\vdash e:t_0\\
+                \left\{
+                  \makebox{$\begin{array}{ll} %\Gamma,
+                  \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
+                  t_1 = \Empty & \text{ otherwise}
+                \end{array}$}\right.\\
+                \left\{
+                  \makebox{$\begin{array}{ll} %\Gamma,
+                  \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
+                  t_2 = \Empty & \text{ otherwise}
+                \end{array}$}\right.}
+              {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+              %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
+              {\texttt{if}\dots\not\in\dom\Gamma}
+        \\
+        \Infer[Proj]
+        {\Gamma \vdash e:t\and t\leq\pair\Any\Any}
+        {\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(t)}
+        {\pi_i e\not\in\dom\Gamma}
+
+        \Infer[Pair]
+        {\Gamma \vdash e_1:t_1 \and \Gamma \vdash e_2:t_2}
+        {\Gamma \vdash (e_1,e_2):\pair{t_1}{t_2}}
+        {(e_1,e_2)\not\in\dom\Gamma}
+    \end{mathpar}
+
+    \section{Proofs}
+    
+\end{document}

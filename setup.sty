@@ -1,0 +1,152 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{setup}[2018/04/25 v0.1]
+\newcommand\hmmax{0}
+\newcommand\bmmax{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{alltt}
+\usepackage{bm}
+\usepackage{nicefrac}
+\usepackage{stmaryrd}
+\usepackage{mathpartir}
+\usepackage{color}
+
+% New packages
+\usepackage[utf8]{inputenc}%           gestion des accents (source)
+\usepackage[T1]{fontenc}%              gestion des accents (PDF)
+\usepackage[francais]{babel}%          gestion du francais
+\usepackage{textcomp}%                 caracteres additionnels
+\usepackage{lmodern}%                  police de caractere
+\usepackage[top=2cm,left=2cm,right=2cm,bottom=2cm]{geometry}%     gestion des marges
+\usepackage{graphicx}%                 gestion des images
+\usepackage{array}%                    gestion amelioree des tableaux
+\usepackage{calc}%                     syntaxe naturelle pour les calculs
+\usepackage{titlesec}%                 pour les sections
+\usepackage{titletoc}%                 pour la table des matieres
+\usepackage{fancyhdr}%                 pour les en-tetes
+\usepackage{titling}%                  pour le titre
+\usepackage{enumitem}%                 pour les listes numerotees
+\usepackage{hyperref}%                 gestion des hyperliens
+\usepackage{syntax}
+\usepackage{minted}
+\usepackage[parfill]{parskip}
+\usepackage{amsmath}
+\usepackage{fourier}
+\usepackage{heuristica}
+\usepackage[overload]{empheq}
+\usepackage{cleveref}
+\usemintedstyle{vs}
+
+\definecolor{darkblue}{rgb}{0,0.2,0.4}
+\definecolor{darkred}{rgb}{0.7,0.4,0.4}
+
+\newcommand{\beppe}[1]{{\bf\color{blue}Beppe: #1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Support macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand {\DeclareMyOperator}[2] {%
+  \expandafter\newcommand\csname#1\endcsname{\textsf{\textup{#2}}}}
+
+\DeclareMathAlphabet {\MyMathBb} {U} {bbold} {m} {n}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inference rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def \TirNameStyle #1{\small #1}
+
+\newcommand {\Infer} [4] [] {
+  \inferrule*[%
+    left={\ifx\\#1\\#1\else\ifx\\#2\\[\textsc{#1}]\:\else[\textsc{#1}]\fi\fi},%
+    right={$ #4 $}%
+  ]%
+  {#2}{#3}}
+
+\newcommand {\Rule}[1] {[\textsc{#1}]}
+
+\newcommand{\occ}[2]{#1{\downarrow}#2}
+\newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
+\newcommand{\tyof}[2]{\textsf{typeof}_{#2}(#1)}
+\newcommand{\typep}[3]{\textsf{Constr}^{#1}_{#3}(#2)}
+\newcommand{\Gp}[2]{\textsf{Env}^{#1}_{#2}}
+\newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
+\newcommand{\Let}[3]{\ensuremath{\texttt{let}\;#1\;\texttt{=}\;#2\;\texttt{in}\;#3}}
+\newcommand{\alt}{~|~}
+\newcommand{\arrow}[2]{#1\to #2}
+\newcommand{\pair}[2]{#1\times #2}
+\newcommand{\orecord}[1]{\texttt{\{}#1\ \text{..}\texttt{\}}}
+\newcommand{\crecord}[1]{\texttt{\{}#1\texttt{\}}}
+\newcommand{\record}[2]{\{#1 ,\ \_ = #2\}}
+\DeclareFontFamily{U}{mathb}{}
+\DeclareFontShape{U}{mathb}{m}{n}{
+  <-5.5> mathb5
+  <5.5-6.5> mathb6
+  <6.5-7.5> mathb7
+  <7.5-8.5> mathb8
+  <8.5-9.5> mathb9
+  <9.5-11.5> mathb10
+  <11.5-> mathb12
+}{}
+\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
+\DeclareMathSymbol{\sqdot}{\mathbin}{mathb}{"0D}% name to be checked
+
+\newcommand{\worra}[2]{#1\mathop{\,\sqdot\,} #2}
+\newcommand{\apply}[2]{#1\circ#2}
+\newcommand {\Empty} {\textsf{Empty}}%\MyMathBb{0}}
+\newcommand {\Any} {\textsf{Any}}%\MyMathBb{1}}
+\newcommand {\dom}[1]{\textsf{dom}(#1)}
+\newcommand {\Keyw} [1] {\text{\textsf{#1}}}
+\newcommand {\False} {\Keyw{False}}
+\newcommand {\True} {\Keyw{True}}
+\newcommand {\Int} {\Keyw{Int}}
+\newcommand {\Bool} {\Keyw{Bool}}
+\newcommand {\Real} {\Keyw{Real}}
+\newcommand {\Complex} {\Keyw{Complex}}
+\newcommand {\String} {\Keyw{String}}
+\newcommand{\Labels}{\Keyw{Labels}}
+\newcommand{\Undef}{\Keyw{Undef}}
+\newcommand{\undefcst}{\texttt{undef}}
+\newcommand {\Cast}[2]{\tt #2\(\langle\)#1\(\rangle\)}
+\newcommand {\ifty}[4]{\ensuremath{\texttt{(}#1\in#2\texttt{)?}#3\texttt{:}#4}}
+\newcommand {\code}[1]{\texttt{\color{darkblue}#1}}
+\newcommand {\eqdef}  {\hbox{\;\;$=$\hspace*{-2.94mm}\raise5pt\hbox{\rm\scriptsize def}\hspace*{1mm}}}
+\newcommand {\eqdeftiny}  {\hbox{\;\;$=$\hspace*{-2.55mm}\raise5pt\hbox{\rm\tiny def}\hspace*{1.5mm}}}
+\newcommand {\bpi} {\boldsymbol{\pi}}
+\newcommand {\bpl}[1] {\boldsymbol{\pi}_{\boldsymbol 1}(#1)}
+\newcommand {\bpr}[1] {\boldsymbol{\pi}_{\boldsymbol 2}(#1)}
+\newcommand {\proj}[2] {#2.#1}
+\newcommand {\recupd}[3] {\{ #1 \texttt{ with } #2 = #3 \}}
+\newcommand {\recdel}[2] {#1 \mathtt{ \setminus } #2}
+\DeclareMathOperator{\eqq}{\texttt{=?}}
+
+
+% New commands
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\true} {\textsf{true}}
+\newcommand{\false} {\textsf{false}}
+\newcommand{\Even} {\textsf{Even}}
+\newcommand{\Odd} {\textsf{Odd}}
+\newcommand{\subst}[2]{\{#1 \mapsto #2\}}
+
+\newcommand{\Genv}[3]{\textsf{Gamma}^{#1}_{#2}(#3)}
+\newcommand{\Ga}[2]{\textsf{Gamma}^{#1}_{#2}}
+\newcommand{\Gaux}[3]{\textsf{Aux}^{#1}_{#2}(#3)}
+\newcommand{\Gaa}[2]{\textsf{Aux}^{#1}_{#2}}
+\newcommand{\Refine}[3]{\textsf{Refine}^{#1}_{#2}(#3)}
+
+\newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
+\newcommand{\fixpoint}{\textsf{fixpoint}}
+\newcommand{\xleadsto}[1]{\overset{#1}{\leadsto}}
+\newcommand{\idleadsto}[0]{\xleadsto{Id}}
+\newcommand{\values}[0]{\mathcal{V}}
+\newcommand{\valsemantic}[1]{{\llbracket #1 \rrbracket}_{\values}}
+\newcommand{\vvdash}[0]{\vdash_\values}
+\newcommand{\norm}[1]{\textsf{Norm}(#1)}

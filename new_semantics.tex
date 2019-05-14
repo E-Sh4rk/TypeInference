@@ -1,36 +1,6 @@
-% Header
-\documentclass[a4paper]{article}%      autres choix : book, report
-\usepackage[utf8]{inputenc}%           gestion des accents (source)
-\usepackage[T1]{fontenc}%              gestion des accents (PDF)
-\usepackage[francais]{babel}%          gestion du francais
-\usepackage{textcomp}%                 caracteres additionnels
-\usepackage{mathtools,amssymb,amsthm}% packages de l'AMS + mathtools
-\usepackage{lmodern}%                  police de caractere
-\usepackage[top=2cm,left=2cm,right=2cm,bottom=2cm]{geometry}%     gestion des marges
-\usepackage{graphicx}%                 gestion des images
-\usepackage{array}%                    gestion amelioree des tableaux
-\usepackage{calc}%                     syntaxe naturelle pour les calculs
-\usepackage{titlesec}%                 pour les sections
-\usepackage{titletoc}%                 pour la table des matieres
-\usepackage{fancyhdr}%                 pour les en-tetes
-\usepackage{titling}%                  pour le titre
-\usepackage{enumitem}%                 pour les listes numerotees
-\usepackage{hyperref}%                 gestion des hyperliens
-\usepackage{syntax}
-\usepackage{minted}
-\usepackage[parfill]{parskip}
-\usepackage{amsmath}
-\usepackage{fourier}
-\usepackage{heuristica}
-\usepackage[overload]{empheq}
-\usepackage{cleveref}
-\usepackage{alltt}
-\usepackage{bm}
-\usepackage{nicefrac}
-\usepackage{stmaryrd}
-\usepackage{mathpartir}
-\usepackage{color}
-\usemintedstyle{vs}
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
 
 \hypersetup{pdfstartview=XYZ}%         zoom par defaut
 
@@ -40,58 +10,6 @@
 \date{\vspace{-5ex}}
 
 \pagenumbering{gobble}
-\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
-\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-
-\DeclareFontFamily{U}{mathb}{}
-\DeclareFontShape{U}{mathb}{m}{n}{
-  <-5.5> mathb5
-  <5.5-6.5> mathb6
-  <6.5-7.5> mathb7
-  <7.5-8.5> mathb8
-  <8.5-9.5> mathb9
-  <9.5-11.5> mathb10
-  <11.5-> mathb12
-}{}
-\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
-\DeclareMathSymbol{\sqdot}{\mathbin}{mathb}{"0D}
-\newcommand{\worra}[2]{#1\mathop{\,\sqdot\,} #2}
-\newcommand{\apply}[2]{#1\circ#2}
-\newcommand{\dom}[1]{\textsf{dom}(#1)}
-\newcommand{\alt}{~|~}
-\newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
-\newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
-\newcommand{\Int} {\textsf{Int}}
-\newcommand{\Bool} {\textsf{Bool}}
-\newcommand{\True} {\textsf{True}}
-\newcommand{\False} {\textsf{False}}
-\newcommand{\true} {\textsf{true}}
-\newcommand{\false} {\textsf{false}}
-\newcommand{\Even} {\textsf{Even}}
-\newcommand{\Odd} {\textsf{Odd}}
-\newcommand{\ite}[4]{\ensuremath{\texttt{if}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
-\newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
-\newcommand{\subst}[2]{\{#1 \mapsto #2\}}
-\newcommand{\tyof}[2]{\textsf{typeof}_{#2}(#1)}
-\newcommand{\typep}[3]{\textsf{Constr}^{#1}_{#3}(#2)}
-\newcommand{\Gp}[2]{\textsf{Env}^{#1}_{#2}}
-\newcommand{\arrow}[2]{#1\to #2}
-\newcommand{\occ}[2]{#1{\downarrow}#2}
-
-\newcommand{\Genv}[3]{\textsf{Gamma}^{#1}_{#2}(#3)}
-\newcommand{\Ga}[2]{\textsf{Gamma}^{#1}_{#2}}
-\newcommand{\Gaux}[3]{\textsf{Aux}^{#1}_{#2}(#3)}
-\newcommand{\Gaa}[2]{\textsf{Aux}^{#1}_{#2}}
-\newcommand{\Refine}[3]{\textsf{Refine}^{#1}_{#2}(#3)}
-
-\newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
-\newcommand{\fixpoint}{\textsf{fixpoint}}
-\newcommand{\xleadsto}[1]{\overset{#1}{\leadsto}}
-\newcommand{\idleadsto}[0]{\xleadsto{Id}}
-\newcommand{\values}[0]{\mathcal{V}}
-\newcommand{\valsemantic}[1]{{\llbracket #1 \rrbracket}_{\values}}
-\newcommand{\vvdash}[0]{\vdash_\values}
-\newcommand{\norm}[1]{\textsf{Norm}(#1)}
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
@@ -99,15 +17,6 @@
 \newtheorem{definition}{Definition}
 \newtheorem{property}{Property}
 \newtheorem{corollary}{Corollary}
-
-\newcommand {\Infer} [4] [] {
-  \inferrule*[%
-    left={\ifx\\#1\\#1\else\ifx\\#2\\[\textsc{#1}]\:\else[\textsc{#1}]\fi\fi},%
-    right={$ #4 $}%
-  ]%
-  {#2}{#3}}
-
-\newcommand {\Rule}[1] {[\textsc{#1}]}
 
 \begin{document}
 
@@ -171,9 +80,10 @@
       \Infer[Ctx]
       {e \xleadsto{E\mapsto E'} e'}
       {C[e] \xleadsto{E\mapsto E'} C[e']}
-      {}\\
-      \Infer[App]
       {}
+      \qquad
+      \Infer[App]
+      { }
       {(\lambda^tx.e) v \idleadsto e\subst x v}
       {}\\
       \Infer[TestCtx]
@@ -193,9 +103,9 @@
           {\vvdash v:t'\\t'\leq t}
           {\vvdash v:t}
           {}
-      \\
+      \qquad
       \Infer[Const]
-          {}
+          { }
           {\vvdash c:\basic{c}}
           {}
       \\
