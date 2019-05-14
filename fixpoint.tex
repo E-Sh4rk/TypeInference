@@ -26,8 +26,9 @@
 
     \[
       \begin{array}{lrcl}
-      \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
-      \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
+      \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
+      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t\\
+      \textbf{Non-Functional Types} & t_b & ::= & b \alt \pair {t_b} {t_b} \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
       \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
       \end{array}
     \]
@@ -97,12 +98,12 @@
               {\Gamma\vdash e:t_0\\
                 \left\{
                   \makebox{$\begin{array}{ll} %\Gamma,
-                  \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
+                  \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
                   t_1 = \Empty & \text{ otherwise}
                 \end{array}$}\right.\\
                 \left\{
                   \makebox{$\begin{array}{ll} %\Gamma,
-                  \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
+                  \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
                   t_2 = \Empty & \text{ otherwise}
                 \end{array}$}\right.}
               {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
@@ -121,5 +122,39 @@
     \end{mathpar}
 
     \section{Proofs}
+
+    \begin{definition}[DNF]
+      A disjonctive normal form $\tau$ is a finite set of pairs of finite sets atoms such that:
+      \[ \forall (P,N)\in \tau.\ \semantic {\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A} \neq \varnothing \]
+
+      The interpretation $\semantic \tau$ of $\tau$ is the following:
+      \[
+        \semantic \tau = \semantic {\bigvee_{(P,N)\in \tau} \left(\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A \right)}
+      \]
+    \end{definition}
+
+    \begin{property}
+      For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
+    \end{property}
+
+    \begin{definition}[Plinth]
+      A plinth $S$ is a set of types such that:
+      \begin{itemize}
+        \item $S$ is finite.
+        \item $\Empty \in S$ and $S$ is stable by $\neg, \land, \vee$. 
+        \item If $\tau$ is a DNF of $t\in S$, let's introduce $A=\{t_a \alt \exists (P,N) \in \tau \text{ s.t. } t_a \in P \text{ or } t_a \in N \}$. Thus:
+        \begin{itemize}
+          \item For all $t_a \in A$, we have $t_a \in S$.
+          \item For all $t_1$, $t_2$ such that $\arrow {t_1} {t_2} \in A$ or $\pair {t_1} {t_2} \in A$,
+          we have $t_1 \in S$ and $t_2 \in S$.
+        \end{itemize}
+      \end{itemize}
+    \end{definition}
+
+    \begin{theorem}
+      Every finite set of types is included in a plinth.
+    \end{theorem}
+
+    Proof: Alain Frisch thesis, theorem 3.8 (p64).
     
 \end{document}

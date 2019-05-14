@@ -27,6 +27,7 @@
     \[
       \begin{array}{lrcl}
       \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
+      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\\
       \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
       \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
       \end{array}
@@ -110,7 +111,7 @@
           {}
       \\
       \Infer[Abs]
-          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\neq \Empty}
+          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\not\leq \Empty}
           {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
           {}
       \\
@@ -121,12 +122,7 @@
     \subsection{Recall: Type System}
 
     \begin{mathpar}
-
-      %\Infer[Empty]
-      %  { }
-      %  {\Gamma\vdash e:\Empty}
-      %  {\exists e' \in \dom\Gamma.\ \Gamma(e') \leq \Empty}
-      %\\
+      
       \Infer[Occ]
           {
           }
@@ -155,22 +151,23 @@
           { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
           { {e_1}{e_2}\not\in\dom\Gamma}
           \\
-      \Infer[If]
-            {\Gamma\vdash e:t_0\\
-              \left\{
-                \makebox{$\begin{array}{ll} %\Gamma,
-                \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \land t \neq \varnothing\\
-                t_1 = \Empty & \text{ otherwise}
-              \end{array}$}\right.\\
-              \left\{
-                \makebox{$\begin{array}{ll} %\Gamma,
-                \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \land \neg t \neq \varnothing\\
-                t_2 = \Empty & \text{ otherwise}
-              \end{array}$}\right.}
-            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
-            %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
-            {\texttt{if}\dots\not\in\dom\Gamma}
-      \\\end{mathpar}
+        \Infer[If]
+          {\Gamma\vdash e:t_0\\
+            \left\{
+              \makebox{$\begin{array}{ll} %\Gamma,
+              \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
+              t_1 = \Empty & \text{ otherwise}
+            \end{array}$}\right.\\
+            \left\{
+              \makebox{$\begin{array}{ll} %\Gamma,
+              \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
+              t_2 = \Empty & \text{ otherwise}
+            \end{array}$}\right.}
+          {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+          %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
+          {\texttt{if}\dots\not\in\dom\Gamma}
+        \\
+      \end{mathpar}
 
       \subsection{Definitions}
       
