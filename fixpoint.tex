@@ -156,5 +156,52 @@
     \end{theorem}
 
     Proof: Alain Frisch thesis, theorem 3.8 (p64).
+
+    \subsection{Computation of the least fixpoint}
+
+    Let $\vec i$, $p$ and $\Gamma$ (well-formed).
+
+    The existence of a least fixpoint $\fixpoint_\Gamma (\Gaa p {\vec {i}})$ is trivial since $\Gaa p {\vec {i}}$ is extensive
+    (for the order relation $\leq$ on environments).
+
+    Let's prove that we can reach it in a finite number of iterations.\\
+    In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
+    (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
+
+    We will show that, starting from $\Gamma$, the successive $\Gaa p {\vec {i}}$ stay in a finite set of environments.
+
+    Let's consider a finite set of types $T$ such that:
+    \begin{itemize}
+      \item $\forall (e,t) \in \vec i$, $t \in T$
+      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
+      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
+    \end{itemize}
+
+    Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
+
+    We define the "product context" of a type $t$ by:
+    \[
+      \texttt{pctx}(t)=\left\{
+        \begin{array}{ll}
+          \pair {\texttt{pctx}(\bpl t)} {\texttt{pctx}(\bpr t)} & \text{ if } t \leq \pair \Any \Any\\
+          {[}] & \text{ otherwise}
+        \end{array}  
+      \right.
+    \]
+
+    Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
+    $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then there exists $\vec s$ a vector of elements of $S$ s.t. $\Gamma'(\occ e \varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
     
+    We prove it by induction on the number of iterations.
+
+    The base case (0 iteration) is trivial.
+
+    For the inductive case, let's take $\Gamma'$ (well-formed) that satifies the induction hypothesis
+    and show that $\Gamma'' = \Gaux p {\vec {i}} {\Gamma'}$ also satisfies the induction hypothesis.
+
+    Let's fix $(e,t)$ and $\varpi$.\\
+    We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
+    
+    We proceed by induction on $\varpi$.\\
+
 \end{document}
