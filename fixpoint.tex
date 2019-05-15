@@ -174,6 +174,7 @@
     \begin{itemize}
       \item $\forall (e,t) \in \vec i$, $t \in T$
       \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
+      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
       \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
     \end{itemize}
 
@@ -207,4 +208,23 @@
     Before treating the base case and the inductive case, we have to show that both $\tyof {\occ e \varpi} {\Gamma'}$
     and $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}}$ (if relevant) are equal to $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ for a certain $\vec s$ of $S$.
 
+    It can be easily proven by induction on the derivation.\\
+    The last rule can't be $\Rule{If}$ (we have assumed it before).\\
+    If the last rule is $\Rule{App}$, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
+    Other rules are trivial.
+
+    Now, the base case of our induction (for $\varpi=\epsilon$) becomes trivial.
+
+    Here are the inductive cases:
+    \begin{description}
+      \item[$\varpi.0$] Although a new arrow type is created, it is a negative one and so it will disappear after normalisation.
+      \item[$\varpi.1$] We just have to notice that plinths are stable by $\worra {} {}$.
+      \item[$\varpi.l$ and $\varpi.r$] Trivial (as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi}) = \pair {\texttt{pctx}(\occ e {\varpi.l})} {\dots}$).
+      \item[$\varpi.f$ and $\varpi.s$] Trivial (as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi.f}) = \pair {\texttt{pctx}(\occ e {\varpi})} {\dots}$).
+    \end{description}
+
+    It concludes the induction.
+
+    We can deduce that there is finitely many possible environements that can be produced by the successive $\Gaa p {\vec {i}}$,
+    and so we always reach a fixpoint in a finite number of iterations.
 \end{document}
