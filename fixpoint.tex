@@ -48,7 +48,7 @@
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
       \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}}\\
+      \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_\text{if $\occ e \varpi$ is not a variable}}\\
     \end{array}
     \]
 
@@ -202,6 +202,9 @@
     Let's fix $(e,t)$ and $\varpi$.\\
     We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
     
-    We proceed by induction on $\varpi$.\\
+    We proceed by induction on $\varpi$.
+
+    Before treating the base case and the inductive case, we have to show that both $\tyof {\occ e \varpi} {\Gamma'}$
+    and $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}}$ (if relevant) are equal to $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ for a certain $\vec s$ of $S$.
 
 \end{document}

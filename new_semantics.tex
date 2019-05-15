@@ -44,7 +44,7 @@
       \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
       \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
       \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-      \land \tyof {\occ e \varpi} {\Gamma\setminus\{e\}}}\\
+      \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_\text{if $\occ e \varpi$ is not a variable}}\\
     \end{array}
     \]
 
