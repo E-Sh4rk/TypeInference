@@ -117,8 +117,6 @@
       \\
       \end{mathpar}
 
-    TODO: Add a certain condition on the type of lambda abstractions (and tests) in order to make the app case to work.
-
     \subsection{Recall: Type System}
 
     \begin{mathpar}
@@ -174,7 +172,7 @@
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
         \begin{align*}
-          &\forall v \in \dom \Gamma \text{ a value. } v \in \valsemantic {\Gamma(v)}\\
+          &\forall e \in \dom \Gamma.\ e \text{ is normal (it has a DNF without negative arrow)}\\
           &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
         \end{align*}
         In particular, this last property implies:
@@ -186,16 +184,14 @@
       \begin{definition}[Environment equivalence]
         Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
         \begin{align*} 
-          &\forall e \in \dom \Gamma.\ \Gamma(e)=t \Rightarrow \Gamma' \vdash e:t \hspace{1cm} \text{and} \hspace{1cm}
-          \forall e' \in \dom {\Gamma'}.\ \Gamma(e')=t' \Rightarrow \Gamma \vdash e':t' \\
-          \text{and} \hspace{1cm} &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Leftrightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty
+          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e:\Gamma(e) \hspace{1cm} \text{and} \hspace{1cm}
+          \forall e' \in \dom {\Gamma'}.\ \Gamma \vdash e':\Gamma'(e')
         \end{align*}
       \end{definition}
     
       \begin{definition}[Environment inclusion]
         Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
         \begin{align*}
-          &\exists e\in \dom \Gamma.\ \Gamma(e)=\Empty \Rightarrow \exists e'\in \dom {\Gamma'}.\ \Gamma'(e')=\Empty\\
           &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
         \end{align*}
         Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
@@ -216,8 +212,6 @@
       \end{definition}
     
         \subsection{Theorems}
-
-        TODO: "Normalization" of types?
 
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
@@ -258,7 +252,7 @@
         \end{corollary}
     
         \begin{lemma}[Substitution]
-          Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ somes types.
+          Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ some types.
           If $e \in \dom \Gamma$, $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t' \text{ with } t'\leq t\\
@@ -292,6 +286,8 @@
         \end{theorem}
     
         \section{Proofs}
+
+        TODO: Update proofs
     
         \subsection{Monotonicity}
     
