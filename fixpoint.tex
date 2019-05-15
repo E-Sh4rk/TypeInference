@@ -22,10 +22,6 @@
 
     \maketitle
 
-    TODO: Remove p from Gamma, use thoses in alpha
-
-    TODO: Update new semantic (rules, defs for gamma)
-
     \section{Typing system}
 
     \[
@@ -57,15 +53,15 @@
     \]
 
     \begin{align*}
-      &(\Refine p {(e,t)} \Gamma)(e') = 
+      &(\Refine p {e,t} \Gamma)(e') = 
         \left\{\begin{array}{ll}
           \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
           \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\&\\
-      &\Gaux p {\varnothing} \Gamma = \Gamma\\
-      &\Gaux p {\cons {(e,t)} \tenv} \Gamma = \Gaux p \tenv {\Refine p {(e,t)} \Gamma}\\&\\
-      &\Genv p \tenv \Gamma=\fixpoint_\Gamma (\Gaa p \tenv)
+      &\Gaux {\varnothing} \Gamma = \Gamma\\
+      &\Gaux {\cons {(e,t)} \tenv} \Gamma = \Gaux \tenv {\Refine p {e,t} \Gamma}\\&\\
+      &\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)
     \end{align*}
 
     \begin{mathpar}
@@ -103,12 +99,12 @@
               \makebox{$\begin{array}{l}
                 \left\{
                   \begin{array}{ll} %\Gamma,
-                  \cons {(e,t,+)} \tenv,\Genv + {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
+                  \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
                   t_1 = \Empty & \text{ otherwise}
                 \end{array}\right.\\
                 \left\{
                   \begin{array}{ll} %\Gamma,
-                  \cons {(e,t,-)} \tenv,\Genv - {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
+                  \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
                   t_2 = \Empty & \text{ otherwise}
                 \end{array}\right.
               \end{array}$}}
@@ -170,11 +166,11 @@
     The existence of a fixed-point smaller than $\Gamma$ (for the order relation $\leq$ on environments) is trivial
     (we can easily construct one by mapping every relevant expression to $\Empty$).
 
-    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa p \tenv$ a finite number of times.\\
+    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa \tenv$ a finite number of times.\\
     In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
     (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
 
-    We will show that, starting from $\Gamma$, successive applications of $\Gaa p \tenv$ stay in a finite set of environments.
+    We will show that, starting from $\Gamma$, successive applications of $\Gaa \tenv$ stay in a finite set of environments.
 
     Let's consider a finite set of types $T$ such that:
     \begin{itemize}
@@ -204,7 +200,7 @@
     The base case (0 iteration) is trivial.
 
     For the inductive case, let's take $\Gamma'$ (well-formed) that satifies the induction hypothesis
-    and show that $\Gamma'' = \Gaux p \tenv {\Gamma'}$ also satisfies the induction hypothesis.
+    and show that $\Gamma'' = \Gaux \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
     Let's fix $(e,t)$ and $\varpi$.\\
     We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
@@ -231,8 +227,8 @@
 
     It concludes the induction.
 
-    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa p \tenv$.
-    As $\Gaa p \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
-    By construction, this fixpoint is the greatest (as $\Gaa p \tenv$ is reductive and monotonic).
+    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa \tenv$.
+    As $\Gaa \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
+    By construction, this fixpoint is the greatest (as $\Gaa \tenv$ is reductive and monotonic).
 
 \end{document}

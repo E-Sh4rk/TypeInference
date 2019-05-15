@@ -49,15 +49,15 @@
     \]
 
     \begin{align*}
-      &(\Refine p {(e,t)} \Gamma)(e') = 
+      &(\Refine p {e,t} \Gamma)(e') = 
         \left\{\begin{array}{ll}
           \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
           \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\&\\
-      &\Gaux p {\varnothing} \Gamma = \Gamma\\
-      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}\\&\\
-      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})
+      &\Gaux {\varnothing} \Gamma = \Gamma\\
+      &\Gaux {\cons {(e,t)} \tenv} \Gamma = \Gaux \tenv {\Refine p {e,t} \Gamma}\\&\\
+      &\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)
     \end{align*}
 
     \section{New (intermediate) semantics}
@@ -122,49 +122,51 @@
     \begin{mathpar}
       
       \Infer[Occ]
-          {
-          }
-          { \Gamma \vdash e: \Gamma(e) }
-          { e\in\dom\Gamma}
+      {
+      }
+      { \tenv,\Gamma \vdash e: \Gamma(e) }
+      { e\in\dom\Gamma}
       \qquad
       \Infer[Const]
-          { }
-          {\Gamma\vdash c:\basic{c}}
-          {c\not\in\dom\Gamma}
-       \\
+      { }
+      {\tenv,\Gamma\vdash c:\basic{c}}
+      {c\not\in\dom\Gamma}
+      \\
       \Infer[Abs]
-          {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
-          {
-          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
-          }
-          {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
-          \\
+      {\tenv,\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+      {
+      \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
+      }
+      {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
+      \\
       \Infer[App]
-          {
-            \Gamma \vdash e_1: t_1 \\
-            \Gamma\vdash e_2: t_2\\
-            t_1 \leq \arrow \Empty \Any\\
-            t_2 \leq \dom {t_1}
-          }
-          { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
-          { {e_1}{e_2}\not\in\dom\Gamma}
-          \\
-        \Infer[If]
-          {\Gamma\vdash e:t_0\\
-            \left\{
-              \makebox{$\begin{array}{ll} %\Gamma,
-              \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
-              t_1 = \Empty & \text{ otherwise}
-            \end{array}$}\right.\\
-            \left\{
-              \makebox{$\begin{array}{ll} %\Gamma,
-              \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
-              t_2 = \Empty & \text{ otherwise}
-            \end{array}$}\right.}
-          {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
-          %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
-          {\texttt{if}\dots\not\in\dom\Gamma}
-        \\
+      {
+        \tenv,\Gamma \vdash e_1: t_1\\
+        \tenv,\Gamma \vdash e_2: t_2\\
+        t_1 \leq \arrow \Empty \Any\\
+        t_2 \leq \dom {t_1}
+      }
+      { \tenv,\Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+      { {e_1}{e_2}\not\in\dom\Gamma}
+      \\
+      \Infer[If]
+        {\tenv,\Gamma\vdash e:t_0\\
+        \makebox{$\begin{array}{l}
+          \left\{
+            \begin{array}{ll} %\Gamma,
+            \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
+            t_1 = \Empty & \text{ otherwise}
+          \end{array}\right.\\
+          \left\{
+            \begin{array}{ll} %\Gamma,
+            \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
+            t_2 = \Empty & \text{ otherwise}
+          \end{array}\right.
+        \end{array}$}}
+        {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+        %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
+        {\texttt{if}\dots\not\in\dom\Gamma}
+      \\
       \end{mathpar}
 
       \subsection{Definitions}
@@ -223,9 +225,9 @@
         \end{property}
         Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
 
-        \begin{lemma}[$\Ga p {} $ well-formedness]
-          Let $\Gamma$ a well-formed environment. Let $e$ a well-typed expression in $\Gamma$, $t_{if}$ a type and $p\in\{-,+\}$.\\
-          Thus, $\Genv p {e,t_{if}} \Gamma$ is well defined and $\Gamma,\Genv p {e,t_{if}} \Gamma$ is well-formed.
+        \begin{lemma}[$\Ga {} $ well-formedness]
+          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
+          Thus, $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{lemma}
 
         \begin{lemma}[Well-formedness preservation]
@@ -276,16 +278,15 @@
         \end{corollary}
     
         \begin{lemma}[Test monotonicity]
-          Let $\Gamma$ an environment. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
-          If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Genv + {e,t_{if}'} \Gamma \leq \Genv + {e,t_{if}} \Gamma$
-          and $\Genv - {e,t_{if}} \Gamma \leq \Genv - {e,t_{if}'} \Gamma$.
+          Let $\Gamma$ an environment. Let $\tenv$ a set of (well typed) tests. Let $e$ a well typed expression and $t$, $t_{if}$, $t_{if}'$ some types.
+          If $\Gamma \vdash e : t$ and $t_{if}' \leq t_{if}$ then $\Genv {\cons {(e,t_{if}',+)} \tenv} \Gamma \leq \Genv {\cons {(e,t_{if},+)} \tenv} \Gamma$
+          and $\Genv {\cons {(e,t_{if},-)} \tenv} \Gamma \leq \Genv {\cons {(e,t_{if}',-)} \tenv} \Gamma$.
         \end{lemma}
     
         \begin{lemma}[Test reduction]
-          Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$, $t_{if}$ two types.
-          If $\Gamma \vdash e : t$, $e \leadsto e'$ and
-          if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-          then $\forall p.\ \Genv p {e',t_{if}} \Gamma \leq \Genv p {e,t_{if}} \Gamma$.
+          Let $\Gamma$ an ordinary environment. Let $\tenv$ a set of (well typed) tests. Let $e$ and $e'$ two expressions, $t$ and $t_{if}$ two types and $p \in \{+,-\}$.
+          If $\Gamma \vdash e : t$, $e \leadsto e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
+          then $\Genv {\cons {(e',t_{if},p)} \tenv} \Gamma \leq \Genv {\cons {(e,t_{if},p)} \tenv} \Gamma$.
         \end{lemma}
     
         \begin{theorem}[Subject reduction]
@@ -331,10 +332,11 @@
 
           Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
 
-          By the $\Ga p {}$ well-formedness lemma, we know that $\Genv p {e_0,t_{if}} {\Gamma'}$ is defined and that $\Gamma',\Genv p {e_0,t_{if}} {\Gamma'}$ is well formed.
-          Using the induction hypothesis, we get $\Genv p {e_0,t_{if}} {\Gamma'} \leq \Genv p {e_0,t_{if}} \Gamma$ (it follows from the monotonicity of $\Gp {} {}$).
-          Thus, we have $\Gamma',\Genv p {e_0,t_{if}} {\Gamma'} \leq \Gamma,\Genv p {e_0,t_{if}} \Gamma$.
-          We can conclude by applying the induction hypothesis again.\\
+          By the $\Ga {}$ well-formedness lemma, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
+          Using the induction hypothesis, we get $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$ (it follows from the monotonicity of $\Gp {} {}$).
+          TODO: explain this... it is due to the fact that we compute the greatest fixed-point
+
+          Again we can conclude by applying the induction hypothesis.\\
         \end{description}
     
         Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
@@ -351,7 +353,7 @@
     
         \qed
 
-        TODO: Update proofs
+        TODO: Update proofs, in particular update the use of $\Genv {} {}$.
     
         \subsection{Substitution lemma}
     
