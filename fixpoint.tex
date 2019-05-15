@@ -22,6 +22,10 @@
 
     \maketitle
 
+    TODO: Remove p from Gamma, use thoses in alpha
+
+    TODO: Update new semantic (rules, defs for gamma)
+
     \section{Typing system}
 
     \[
@@ -60,8 +64,8 @@
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\&\\
       &\Gaux p {\varnothing} \Gamma = \Gamma\\
-      &\Gaux p {\cons {(e,t)} {\vec i}} \Gamma = \Gaux p {\vec i} {\Refine p {(e,t)} \Gamma}\\&\\
-      &\Genv p {\vec {i}} \Gamma=\fixpoint_\Gamma (\Gaa p {\vec {i}})
+      &\Gaux p {\cons {(e,t)} \tenv} \Gamma = \Gaux p \tenv {\Refine p {(e,t)} \Gamma}\\&\\
+      &\Genv p \tenv \Gamma=\fixpoint_\Gamma (\Gaa p \tenv)
     \end{align*}
 
     \begin{mathpar}
@@ -69,55 +73,57 @@
         \Infer[Occ]
             {
             }
-            { \Gamma \vdash e: \Gamma(e) }
+            { \tenv,\Gamma \vdash e: \Gamma(e) }
             { e\in\dom\Gamma}
         \qquad
         \Infer[Const]
             { }
-            {\Gamma\vdash c:\basic{c}}
+            {\tenv,\Gamma\vdash c:\basic{c}}
             {c\not\in\dom\Gamma}
          \\
         \Infer[Abs]
-            {\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+            {\tenv,\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
             {
-            \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
+            \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
             }
             {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
             \\
         \Infer[App]
             {
-              \Gamma \vdash e_1: t_1 \\
-              \Gamma\vdash e_2: t_2\\
+              \tenv,\Gamma \vdash e_1: t_1\\
+              \tenv,\Gamma \vdash e_2: t_2\\
               t_1 \leq \arrow \Empty \Any\\
               t_2 \leq \dom {t_1}
             }
-            { \Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+            { \tenv,\Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
             { {e_1}{e_2}\not\in\dom\Gamma}
             \\
         \Infer[If]
-              {\Gamma\vdash e:t_0\\
+              {\tenv,\Gamma\vdash e:t_0\\
+              \makebox{$\begin{array}{l}
                 \left\{
-                  \makebox{$\begin{array}{ll} %\Gamma,
-                  \Genv + {e,t} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
+                  \begin{array}{ll} %\Gamma,
+                  \cons {(e,t,+)} \tenv,\Genv + {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
                   t_1 = \Empty & \text{ otherwise}
-                \end{array}$}\right.\\
+                \end{array}\right.\\
                 \left\{
-                  \makebox{$\begin{array}{ll} %\Gamma,
-                  \Genv - {e,t} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
+                  \begin{array}{ll} %\Gamma,
+                  \cons {(e,t,-)} \tenv,\Genv - {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
                   t_2 = \Empty & \text{ otherwise}
-                \end{array}$}\right.}
-              {\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+                \end{array}\right.
+              \end{array}$}}
+              {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
               %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
               {\texttt{if}\dots\not\in\dom\Gamma}
         \\
         \Infer[Proj]
-        {\Gamma \vdash e:t\and t\leq\pair\Any\Any}
-        {\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(t)}
+        {\tenv,\Gamma \vdash e:t\and t\leq\pair\Any\Any}
+        {\tenv,\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(t)}
         {\pi_i e\not\in\dom\Gamma}
 
         \Infer[Pair]
-        {\Gamma \vdash e_1:t_1 \and \Gamma \vdash e_2:t_2}
-        {\Gamma \vdash (e_1,e_2):\pair{t_1}{t_2}}
+        {\tenv,\Gamma \vdash e_1:t_1 \and \tenv,\Gamma \vdash e_2:t_2}
+        {\tenv,\Gamma \vdash (e_1,e_2):\pair{t_1}{t_2}}
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
 
@@ -155,27 +161,27 @@
       Every finite set of types is included in a plinth.
     \end{theorem}
 
-    Proof: Alain Frisch thesis, theorem 3.8 (p64).
+    Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
 
     \subsection{Computation of the greatest fixpoint}
 
-    Let $\vec i$, $p$ and $\Gamma$ (well-formed).
+    Let $\tenv$, $p$ and $\Gamma$ (well-formed).
 
     The existence of a fixed-point smaller than $\Gamma$ (for the order relation $\leq$ on environments) is trivial
     (we can easily construct one by mapping every relevant expression to $\Empty$).
 
-    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa p {\vec {i}}$ a finite number of times.\\
+    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa p \tenv$ a finite number of times.\\
     In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
     (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
 
-    We will show that, starting from $\Gamma$, successive applications of $\Gaa p {\vec {i}}$ stay in a finite set of environments.
+    We will show that, starting from $\Gamma$, successive applications of $\Gaa p \tenv$ stay in a finite set of environments.
 
     Let's consider a finite set of types $T$ such that:
     \begin{itemize}
-      \item $\forall (e,t) \in \vec i$, $t \in T$
-      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
-      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
-      \item $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
+      \item $\forall (e,t) \in \tenv$, $t \in T$
+      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
+      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
+      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
     \end{itemize}
 
     Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
@@ -191,14 +197,14 @@
     \]
 
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
-    $\forall (e,t) \in \vec i\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then there exists $\vec s$ a vector of elements of $S$ s.t. $\Gamma'(\occ e \varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
+    $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then there exists $\vec s$ a vector of elements of $S$ s.t. $\Gamma'(\occ e \varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
     
     We prove it by induction on the number of iterations.
 
     The base case (0 iteration) is trivial.
 
     For the inductive case, let's take $\Gamma'$ (well-formed) that satifies the induction hypothesis
-    and show that $\Gamma'' = \Gaux p {\vec {i}} {\Gamma'}$ also satisfies the induction hypothesis.
+    and show that $\Gamma'' = \Gaux p \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
     Let's fix $(e,t)$ and $\varpi$.\\
     We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
@@ -225,8 +231,8 @@
 
     It concludes the induction.
 
-    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa p {\vec {i}}$.
-    As $\Gaa p {\vec {i}}$ is reductive, we always reach a fixpoint in a finite number of iterations.
-    By construction, this fixpoint is the greatest (as $\Gaa p {\vec {i}}$ is reductive and monotonic).
+    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa p \tenv$.
+    As $\Gaa p \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
+    By construction, this fixpoint is the greatest (as $\Gaa p \tenv$ is reductive and monotonic).
 
 \end{document}
