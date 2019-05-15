@@ -232,6 +232,14 @@
           Let $\Gamma$ a well-formed environment. Let $\rho$ a substitution.
           Then $\Gamma\rho$ is a well-formed environment.
         \end{lemma}
+
+        \begin{lemma}[Alpha-renaming]
+          Both the type system and the semantics are invariant by alpha-renaming.
+        \end{lemma}
+        Proof: quite straightforward.
+        For the type system, it is a consequence of the fact that domains of environments are up to alpha-renaming.
+        For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
+        are up to alpha-renaming.
     
         \begin{lemma}[Monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
@@ -286,8 +294,6 @@
         \end{theorem}
     
         \section{Proofs}
-
-        TODO: Update proofs
     
         \subsection{Monotonicity}
     
@@ -298,9 +304,7 @@
         \end{align*}
     
         Let $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
-        If $\exists e' \in \dom {\Gamma'}.\ \Gamma'(e') = \Empty$, then the properties are trivial.
-        So let's suppose it is not the case (in particular, we know that the last rule applied to type $\Gamma \vdash e:t$ can't be $\Rule{Empty}$).
-    
+
         First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
     
         If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
@@ -312,12 +316,12 @@
         We now proceed by case analysis on $e$:
         \begin{description}
           \item[$c$] Trivial.
-          \item[$x$] Impossible case, as we have already treated the rules $\Rule{Empty}$ and $\Rule{Occ}$.
+          \item[$x$] Impossible case, as we have already treated the rule $\Rule{Occ}$.
           \item[$\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
-          We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
+          Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
           For that, we just have to notice that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and we apply the induction hypothesis.
-          
-          TODO: What if x is in dom(gamma)? It would not be well-formed anymore.
+          Note that if $x \in \dom \Gamma$ or $x \in \dom {\Gamma'}$, $\Gamma',x:s_i$ or $\Gamma,x:s_i$ could be not well-formed.
+          In this case, we must alpha-rename the current lambda-abstraction.
 
           \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
           We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
@@ -338,12 +342,16 @@
         Let $p\in \{+,-\}$ and $t'$ a type.
         We proceed by induction on $\varpi$.
         
-        The base case is straightforward (as we already proved that $\Gamma' \vdash e:t' \text{ with } t' \leq t$).\\
+        The base case is straightforward:\\
+        we have $\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}$ (we just proved it)
+        and similarly $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}} \leq \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}$.\\
         For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {\occ e {\varpi.0}} \leq \tyof {\Gamma} {\occ e {\varpi.0}}$.
         We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
         The case $\varpi.0$ follows from the previous case and the induction hypothesis.
     
         \qed
+
+        TODO: Update proofs
     
         \subsection{Substitution lemma}
     
