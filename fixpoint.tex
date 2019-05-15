@@ -157,18 +157,18 @@
 
     Proof: Alain Frisch thesis, theorem 3.8 (p64).
 
-    \subsection{Computation of the least fixpoint}
+    \subsection{Computation of the greatest fixpoint}
 
     Let $\vec i$, $p$ and $\Gamma$ (well-formed).
 
-    The existence of a least fixpoint $\fixpoint_\Gamma (\Gaa p {\vec {i}})$ is trivial since $\Gaa p {\vec {i}}$ is extensive
-    (for the order relation $\leq$ on environments).
+    The existence of a fixed-point smaller than $\Gamma$ (for the order relation $\leq$ on environments) is trivial
+    (we can easily construct one by mapping every relevant expression to $\Empty$).
 
-    Let's prove that we can reach it in a finite number of iterations.\\
+    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa p {\vec {i}}$ a finite number of times.\\
     In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
     (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
 
-    We will show that, starting from $\Gamma$, the successive $\Gaa p {\vec {i}}$ stay in a finite set of environments.
+    We will show that, starting from $\Gamma$, successive applications of $\Gaa p {\vec {i}}$ stay in a finite set of environments.
 
     Let's consider a finite set of types $T$ such that:
     \begin{itemize}
@@ -225,6 +225,8 @@
 
     It concludes the induction.
 
-    We can deduce that there is finitely many possible environements that can be produced by the successive $\Gaa p {\vec {i}}$,
-    and so we always reach a fixpoint in a finite number of iterations.
+    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa p {\vec {i}}$.
+    As $\Gaa p {\vec {i}}$ is reductive, we always reach a fixpoint in a finite number of iterations.
+    By construction, this fixpoint is the greatest (as $\Gaa p {\vec {i}}$ is reductive and monotonic).
+
 \end{document}
