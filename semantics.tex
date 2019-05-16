@@ -22,45 +22,7 @@
 
 	\maketitle
 
-    \section{New typing system}
-
-    \[
-      \begin{array}{lrcl}
-      \textbf{Types} & t & ::= & b\alt \arrow t t\alt t\vee t \alt \neg t \alt \Empty\\
-      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\\
-      \textbf{Non-Functional Types} & t_b & ::= & b \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
-      \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
-      \end{array}
-    \]
-
-    \[
-      \norm t = \text{remove negative arrows from DNF}
-    \]
-
-    \[
-    \begin{array}{lcl}
-      \typep+\epsilon{\Gamma,e,t} & = & t\\
-      \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
-      \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
-      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-      \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_\text{if $\occ e \varpi$ is not a variable}}\\
-    \end{array}
-    \]
-
-    \begin{align*}
-      &(\Refine p {e,t} \Gamma)(e') = 
-        \left\{\begin{array}{ll}
-          \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
-          \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
-          \text{undefined} & \text{otherwise}
-        \end{array}\right.\\&\\
-      &\Gaux {\varnothing} \Gamma = \Gamma\\
-      &\Gaux {\cons {(e,t)} \tenv} \Gamma = \Gaux \tenv {\Refine p {e,t} \Gamma}\\&\\
-      &\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)
-    \end{align*}
-
-    \section{New (intermediate) semantics}
+    \section{Intermediate semantics}
 
     \[
       \begin{array}{lrcl}
@@ -114,58 +76,6 @@
           {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\not\leq \Empty}
           {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
           {}
-      \\
-      \end{mathpar}
-
-    \subsection{Recall: Type System}
-
-    \begin{mathpar}
-      
-      \Infer[Occ]
-      {
-      }
-      { \tenv,\Gamma \vdash e: \Gamma(e) }
-      { e\in\dom\Gamma}
-      \qquad
-      \Infer[Const]
-      { }
-      {\tenv,\Gamma\vdash c:\basic{c}}
-      {c\not\in\dom\Gamma}
-      \\
-      \Infer[Abs]
-      {\tenv,\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
-      {
-      \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
-      }
-      {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
-      \\
-      \Infer[App]
-      {
-        \tenv,\Gamma \vdash e_1: t_1\\
-        \tenv,\Gamma \vdash e_2: t_2\\
-        t_1 \leq \arrow \Empty \Any\\
-        t_2 \leq \dom {t_1}
-      }
-      { \tenv,\Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
-      { {e_1}{e_2}\not\in\dom\Gamma}
-      \\
-      \Infer[If]
-        {\tenv,\Gamma\vdash e:t_0\\
-        \makebox{$\begin{array}{l}
-          \left\{
-            \begin{array}{ll} %\Gamma,
-            \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
-            t_1 = \Empty & \text{ otherwise}
-          \end{array}\right.\\
-          \left\{
-            \begin{array}{ll} %\Gamma,
-            \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
-            t_2 = \Empty & \text{ otherwise}
-          \end{array}\right.
-        \end{array}$}}
-        {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
-        %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
-        {\texttt{if}\dots\not\in\dom\Gamma}
       \\
       \end{mathpar}
 
