@@ -24,6 +24,8 @@
 
     \section{Typing system}
 
+    TODO: update typeof usage (tenv should appear in it!). Forbid ite in tests?
+
     \[
       \begin{array}{lrcl}
       \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
@@ -48,7 +50,7 @@
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
       \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-      \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_\text{if $\occ e \varpi$ is not a variable}}\\
+    \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\begin{split}\text{if $\occ e \varpi$ is not a variable}&\\ \text{nor a lambda-abstraction}&\end{split}}}\\
     \end{array}
     \]
 
@@ -216,6 +218,8 @@
 
     \subsection{$\Ga {}$ definition}
 
+    TODO
+
     \subsection{Monotonicity}
     
       We proceed by induction on $e$. We suppose that, for any $e'$ strict subexpression of $e$, for any $\Gamma' \leq \Gamma$,
@@ -273,14 +277,13 @@
   
       \qed
 
-
     \subsection{$\Ga {}$ computation}
 
     Let $\Gamma$ (well-formed) and $\tenv$ (well-typed).
 
     Let's prove that we can reach $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ by applying successively the function $\Gaa \tenv$ a finite number of times.\\
-    In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
-    (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
+    In this proof, we will suppose that there is no occurence of a $\texttt{if}$ in any of the tested expressions
+    (but there can be a $\texttt{if}$ inside a lambda).
 
     We will show that, starting from $\Gamma$, successive applications of $\Gaa \tenv$ stay in a finite set of environments.
 
@@ -342,5 +345,16 @@
     So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa \tenv$.
     As $\Gaa \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
     By construction, this fixpoint is the greatest (as $\Gaa \tenv$ is reductive and monotonic).
+
+    In this proof we have assumed that there is no occurence of $\texttt{if}$ in the tests.
+    If we want to prove the general case, we should proceed by induction on the number of $\texttt{if}$ in the tests.
+    The proof above would become the base case. The inductive case would be quite similar:
+    \begin{itemize}
+      \item From the induction hypothesis, we can deduce that
+      the set of all types that can be taken by the nested $\texttt{if}$ is finite.
+      \item We must add those types in the set $T$.
+    \end{itemize}
+
+    TODO: Update once nested ite will be forbidden (or not)
 
 \end{document}

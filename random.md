@@ -38,6 +38,10 @@ but in this case :
 
 - Should "normalize" every type so that values always match their base type?
 
+- Should forbid unabstracted ite inside tests ?  
+EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)  
+    then (if x is Int then y else 0) else ...
+
 ### Adding polymorphism
 
 - In my current implementation, let are inlined. Would it still work with polymorphism?
