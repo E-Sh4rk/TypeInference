@@ -175,7 +175,7 @@
           If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
     
-        \begin{lemma}[$\Ga {} $ definition]
+        \begin{lemma}[$\Ga {} $ existence]
           Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
           If the monotonicity lemma is true for every subexpression of every test, then $\Ga {}$ is well-defined.
         \end{lemma}
@@ -196,7 +196,7 @@
         \end{corollary}
 
         \begin{theorem}[$\Ga {}$ existence]
-            If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined (and well-formed).
+            If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{theorem}
 
         \begin{property}
@@ -252,7 +252,7 @@
 
         Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
 
-        By the $\Ga {}$ definition lemma and the $\Ga {}$ well-formedness lemma, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
+        By the $\Ga {}$ existence theorem, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
 
         We can deduce that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$.
 
