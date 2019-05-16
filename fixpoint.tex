@@ -123,7 +123,40 @@
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
 
+    \subsection{Definitions}
+      
+    \begin{definition}[Well formed environment]
+      An environment $\Gamma$ is well-formed iff:
+      \begin{align*}
+        &\forall e \in \dom \Gamma.\ e \text{ is normal (it has a DNF without negative arrow)}\\
+        &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+      \end{align*}
+      In particular, this last property implies:
+      \[
+        \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
+      \]
+    \end{definition}
+
+    \begin{definition}[Environment equivalence]
+      Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
+      \begin{align*} 
+        &\forall e \in \dom \Gamma.\ \Gamma' \vdash e:\Gamma(e) \hspace{1cm} \text{and} \hspace{1cm}
+        \forall e' \in \dom {\Gamma'}.\ \Gamma \vdash e':\Gamma'(e')
+      \end{align*}
+    \end{definition}
+  
+    \begin{definition}[Environment inclusion]
+      Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
+      \begin{align*}
+        &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
+      \end{align*}
+      Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
+      We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
+    \end{definition}
+
     \section{Proofs}
+
+    TODO: Prove that Gamma is always well defined when tests are well typed and that the environment is well-formed.
 
     \begin{definition}[DNF]
       A disjonctive normal form $\tau$ is a finite set of pairs of finite sets atoms such that:

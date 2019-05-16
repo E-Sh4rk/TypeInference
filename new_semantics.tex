@@ -226,8 +226,8 @@
         Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
 
         \begin{lemma}[$\Ga {} $ well-formedness]
-          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
-          Thus, $\Genv \tenv \Gamma$ is well defined and well-formed.
+          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests.\\
+          If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
 
         \begin{lemma}[Well-formedness preservation]
@@ -243,11 +243,17 @@
         For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
         are up to alpha-renaming.
     
+        \begin{lemma}[$\Ga {} $ definition]
+          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
+          TODO
+        \end{lemma}
+
         \begin{lemma}[Monotonicity]
-          Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$. Let $e$ an expression such that $\Gamma \vdash e:t$.
+          Let $\tenv$ a (well-typed) set of tests. Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
+          Let $e$ an expression such that $\tenv, \Gamma \vdash e:t$.
           Then:\\
           \begin{align*}
-            &\Gamma' \vdash e:t' \text{ with } t' \leq t\\
+            &\tenv, \Gamma' \vdash e:t' \text{ with } t' \leq t\\
             &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
           \end{align*}
         \end{lemma}
@@ -304,7 +310,7 @@
           &\Gamma \vdash e':t' \Rightarrow \forall p \forall t'' \forall \varpi.\ \Gp p {\Gamma',e',t''} (\varpi) \leq \Gp p {\Gamma,e',t''} (\varpi)
         \end{align*}
     
-        Let $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
+        Let $\tenv$, $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
 
         First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
     
@@ -332,9 +338,12 @@
 
           Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
 
-          By the $\Ga {}$ well-formedness lemma, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
-          Using the induction hypothesis, we get $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$ (it follows from the monotonicity of $\Gp {} {}$).
-          TODO: explain this... it is due to the fact that we compute the greatest fixed-point
+          By TODO, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
+
+          %Using the induction hypothesis, we know that every $\Gp {} {}$ and $\tyof {} {}$ used in the computation of $\Gaux {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$
+          %are smaller than those used in the computation of $\Gaux {\cons {(e_0,t_{if},p)} \tenv} \Gamma$.
+
+          We can deduce that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$.
 
           Again we can conclude by applying the induction hypothesis.\\
         \end{description}
