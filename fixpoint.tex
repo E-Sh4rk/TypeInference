@@ -123,7 +123,7 @@
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
 
-    \subsection{Definitions}
+    \section{Definitions}
       
     \begin{definition}[Well formed environment]
       An environment $\Gamma$ is well-formed iff:
@@ -136,27 +136,13 @@
         \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
       \]
     \end{definition}
-
-    \begin{definition}[Environment equivalence]
-      Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
-      \begin{align*} 
-        &\forall e \in \dom \Gamma.\ \Gamma' \vdash e:\Gamma(e) \hspace{1cm} \text{and} \hspace{1cm}
-        \forall e' \in \dom {\Gamma'}.\ \Gamma \vdash e':\Gamma'(e')
-      \end{align*}
-    \end{definition}
   
     \begin{definition}[Environment inclusion]
       Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
       \begin{align*}
         &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
       \end{align*}
-      Note: this relation is a preorder (the transitivity can easily be deduced from the monotonicity lemma).
-      We also have: $\Gamma' \leq \Gamma \text{ and } \Gamma \leq \Gamma' \Leftrightarrow \Gamma \equiv \Gamma'$.
     \end{definition}
-
-    \section{Proofs}
-
-    TODO: Prove that Gamma is always well defined when tests are well typed and that the environment is well-formed.
 
     \begin{definition}[DNF]
       A disjonctive normal form $\tau$ is a finite set of pairs of finite sets atoms such that:
@@ -167,11 +153,7 @@
         \semantic \tau = \semantic {\bigvee_{(P,N)\in \tau} \left(\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A \right)}
       \]
     \end{definition}
-
-    \begin{property}
-      For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
-    \end{property}
-
+    
     \begin{definition}[Plinth]
       A plinth $S$ is a set of types such that:
       \begin{itemize}
@@ -186,20 +168,117 @@
       \end{itemize}
     \end{definition}
 
-    \begin{theorem}
-      Every finite set of types is included in a plinth.
-    \end{theorem}
+    \section{Theorems}
 
-    Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
+        \begin{lemma}[$\Ga {} $ well-formedness]
+          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests.\\
+          If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
+        \end{lemma}
+    
+        \begin{lemma}[$\Ga {} $ definition]
+          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
+          If the monotonicity lemma is true for every subexpression of every test, then $\Ga {}$ is well-defined.
+        \end{lemma}
 
-    \subsection{Computation of the greatest fixpoint}
+        \begin{lemma}[Monotonicity]
+          Let $\tenv$ a (well-typed) set of tests.
+          Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
+          Let $e$ an expression such that $\tenv, \Gamma \vdash e:t$.
+          Then:\\
+          \begin{align*}
+            &\tenv, \Gamma' \vdash e:t' \text{ with } t' \leq t\\
+            &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+          \end{align*}
+        \end{lemma}
 
-    Let $\tenv$, $p$ and $\Gamma$ (well-formed).
+        \begin{corollary}[Relation order]
+          The relation $\leq$ on environements is a preorder.
+        \end{corollary}
 
-    The existence of a fixed-point smaller than $\Gamma$ (for the order relation $\leq$ on environments) is trivial
-    (we can easily construct one by mapping every relevant expression to $\Empty$).
+        \begin{theorem}[$\Ga {}$ existence]
+            If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined (and well-formed).
+        \end{theorem}
 
-    Let's prove that we can reach the greatest such fixpoint by applying successively the function $\Gaa \tenv$ a finite number of times.\\
+        \begin{property}
+          For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
+        \end{property}
+
+        \begin{theorem}
+          Every finite set of types is included in a plinth.
+        \end{theorem}
+        Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
+
+        \begin{theorem}[$\Ga {}$ computation]
+          $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ can be reached in a finite number of iterations.
+        \end{theorem}
+
+    \section{Proofs}
+
+    \subsection{$\Ga {}$ definition}
+
+    \subsection{Monotonicity}
+    
+      We proceed by induction on $e$. We suppose that, for any $e'$ strict subexpression of $e$, for any $\Gamma' \leq \Gamma$,
+      \begin{align*}
+        &\Gamma \vdash e':t' \Rightarrow \Gamma' \vdash e':t'' \text{ with } t'' \leq t'\\
+        &\Gamma \vdash e':t' \Rightarrow \forall p \forall t'' \forall \varpi.\ \Gp p {\Gamma',e',t''} (\varpi) \leq \Gp p {\Gamma,e',t''} (\varpi)
+      \end{align*}
+  
+      Let $\tenv$, $\Gamma$, $\Gamma'$ and $e$ as in the lemma statement.
+
+      First, let's show that $\Gamma' \vdash e:t' \text{ with } t' \leq t$.
+  
+      If $e\in\dom\Gamma$, we know that $\Gamma(e)=t$ (as $\Gamma \vdash e:t$). The definition of $\Gamma' \leq \Gamma$ suffices to conclude.
+      So let's suppose $e\not\in\dom\Gamma$ (in particular, we know that $e$ is not a variable and that the last rule applied to type $\Gamma \vdash e:t$ is not $\Rule{Occ}$).
+  
+      We can also suppose $e\not\in\dom{\Gamma'}$. If it is not the case, we can just consider $\Gamma'\setminus(e:\Gamma'(e))$ instead of $\Gamma'$
+      and obtain the wanted result on $\Gamma'$ by using its well-formedness.
+
+      We now proceed by case analysis on $e$:
+      \begin{description}
+        \item[$c$] Trivial.
+        \item[$x$] Impossible case, as we have already treated the rule $\Rule{Occ}$.
+        \item[$\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
+        Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
+        For that, we just have to notice that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and we apply the induction hypothesis.
+        Note that if $x \in \dom \Gamma$ or $x \in \dom {\Gamma'}$, $\Gamma',x:s_i$ or $\Gamma,x:s_i$ could be not well-formed.
+        In this case, we must alpha-rename the current lambda-abstraction.
+
+        \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
+        We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
+        For that, we just have to apply the induction hypothesis and notice that the $\circ$ operator is monotonic.
+        \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
+        We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
+
+        Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
+
+        By the $\Ga {}$ definition lemma and the $\Ga {}$ well-formedness lemma, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
+
+        We can deduce that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$.
+
+        Again we can conclude by applying the induction hypothesis.\\
+      \end{description}
+  
+      Now, let's show that $\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$.
+  
+      Let $p\in \{+,-\}$ and $t'$ a type.
+      We proceed by induction on $\varpi$.
+      
+      The base case is straightforward:\\
+      we have $\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}$ (we just proved it)
+      and similarly $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}} \leq \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}$.\\
+      For the case $\varpi.1$, we apply the outer induction hypothesis to get $\tyof {\Gamma'} {\occ e {\varpi.0}} \leq \tyof {\Gamma} {\occ e {\varpi.0}}$.
+      We apply the induction hypothesis to get $\Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)$. We can then conclude using the monotonicity of $\worra {} {}$.\\
+      The case $\varpi.0$ follows from the previous case and the induction hypothesis.
+  
+      \qed
+
+
+    \subsection{$\Ga {}$ computation}
+
+    Let $\Gamma$ (well-formed) and $\tenv$ (well-typed).
+
+    Let's prove that we can reach $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ by applying successively the function $\Gaa \tenv$ a finite number of times.\\
     In this proof, we will suppose that there is no occurence of a $\texttt{if}$ expression in any of the tested expressions
     (but there can be a $\texttt{if}$ subexpression if it is inside a lambda).
 
