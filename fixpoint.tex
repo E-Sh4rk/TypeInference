@@ -24,11 +24,6 @@
 
     \section{Typing system}
 
-    TODO: update typeof usage (tenv should appear in it!). Forbid ite in tests?
-
-    TODO: in the end, maybe we should use a new definition for typeof: it would remove the restriction to have a deterministic typing system,
-    as well as the need for normalization. No need also to pass tenv to typeof, and it will be clearer that ite statements are not supported.
-
     \[
       \begin{array}{lrcl}
       \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
@@ -74,59 +69,43 @@
         \Infer[Occ]
             {
             }
-            { \tenv,\Gamma \vdash e: \Gamma(e) }
+            { \Gamma \tvdash e: \Gamma(e) }
             { e\in\dom\Gamma}
         \qquad
         \Infer[Const]
             { }
-            {\tenv,\Gamma\vdash c:\basic{c}}
+            {\Gamma\tvdash c:\basic{c}}
             {c\not\in\dom\Gamma}
-         \\
+        \qquad
         \Infer[Abs]
-            {\tenv,\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+            { }
             {
-            \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
+            \Gamma\tvdash\lambda^{t}x.e:t
             }
-            {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
+            {\lambda^{t}x.e\not\in\dom\Gamma}
             \\
         \Infer[App]
             {
-              \tenv,\Gamma \vdash e_1: t_1\\
-              \tenv,\Gamma \vdash e_2: t_2\\
+              \Gamma \tvdash e_1: t_1\\
+              \Gamma \tvdash e_2: t_2\\
               t_1 \leq \arrow \Empty \Any\\
               t_2 \leq \dom {t_1}
             }
-            { \tenv,\Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
-            { {e_1}{e_2}\not\in\dom\Gamma}
+            { \Gamma \tvdash {e_1}{e_2}: t_1 \circ t_2 }
+            { {e_1}{e_2}\not\in\dom\Gamma }
             \\
-        \Infer[If]
-              {\tenv,\Gamma\vdash e:t_0\\
-              \makebox{$\begin{array}{l}
-                \left\{
-                  \begin{array}{ll} %\Gamma,
-                  \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
-                  t_1 = \Empty & \text{ otherwise}
-                \end{array}\right.\\
-                \left\{
-                  \begin{array}{ll} %\Gamma,
-                  \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
-                  t_2 = \Empty & \text{ otherwise}
-                \end{array}\right.
-              \end{array}$}}
-              {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
-              %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
-              {\texttt{if}\dots\not\in\dom\Gamma}
-        \\
         \Infer[Proj]
-        {\tenv,\Gamma \vdash e:t\and t\leq\pair\Any\Any}
-        {\tenv,\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(t)}
+        {\Gamma \tvdash e:t\and t\leq\pair\Any\Any}
+        {\Gamma \tvdash \pi_i e:\bpi_{\mathbf{i}}(t)}
         {\pi_i e\not\in\dom\Gamma}
 
         \Infer[Pair]
-        {\tenv,\Gamma \vdash e_1:t_1 \and \tenv,\Gamma \vdash e_2:t_2}
-        {\tenv,\Gamma \vdash (e_1,e_2):\pair{t_1}{t_2}}
+        {\Gamma \tvdash e_1:t_1 \and \Gamma \tvdash e_2:t_2}
+        {\Gamma \tvdash (e_1,e_2):\pair{t_1}{t_2}}
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
+
+    TODO: update def, theorems, monotonicity proof
 
     \section{Definitions}
       
@@ -284,10 +263,7 @@
 
     Let $\Gamma$ (well-formed) and $\tenv$ (well-typed).
 
-    Let's prove that we can reach $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ by applying successively the function $\Gaa \tenv$ a finite number of times.\\
-    In this proof, we will suppose that there is no occurence of a $\texttt{if}$ in any of the tested expressions
-    (but there can be a $\texttt{if}$ inside a lambda).
-    TODO: remove this assumption
+    Let's prove that we can reach $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ by applying successively the function $\Gaa \tenv$ a finite number of times.
 
     We will show that, starting from $\Gamma$, successive applications of $\Gaa \tenv$ stay in a finite set of environments.
 
@@ -333,7 +309,6 @@
     $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ (with any vector $\vec s$ of elements of $S$).
 
     It can be easily proven by induction on the derivation.\\
-    The last rule can't be $\Rule{If}$.\\
     If the last rule is $\Rule{App}$, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
     Other rules are trivial.
 
