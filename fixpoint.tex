@@ -34,7 +34,7 @@
     \]
 
     \[
-      \norm t = \text{remove negative arrows from DNF}
+      \norm t = \text{DNF of } t \text{ + remove negative arrows}
     \]
 
     \[
@@ -48,7 +48,7 @@
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
       \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-    \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\begin{split}\text{if $\occ e \varpi$ is not a variable}&\\ \text{nor a lambda-abstraction}&\end{split}}}\\
+    \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
     \end{array}
     \]
 
@@ -105,26 +105,24 @@
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
 
-    TODO: update def, theorems, monotonicity proof
-
     \section{Definitions}
       
     \begin{definition}[Well formed environment]
       An environment $\Gamma$ is well-formed iff:
       \begin{align*}
         &\forall e \in \dom \Gamma.\ e \text{ is normal (it has a DNF without negative arrow)}\\
-        &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+        &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \tvdash e : t \text{ and } \Gamma(e) \leq t
       \end{align*}
       In particular, this last property implies:
       \[
-        \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
+        \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \tvdash e : t \Rightarrow \Gamma(e) \leq t
       \]
     \end{definition}
   
     \begin{definition}[Environment inclusion]
       Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
       \begin{align*}
-        &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
+        &\forall e \in \dom \Gamma.\ \Gamma' \tvdash e : t \text{ with } t \leq \Gamma(e)
       \end{align*}
     \end{definition}
 
@@ -158,26 +156,28 @@
           Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests.\\
           If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
-    
-        \begin{lemma}[$\Ga {} $ existence]
-          Let $\Gamma$ a well-formed environment. Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$.\\
-          If the monotonicity lemma is true for every subexpression of every test, then $\Ga {}$ is well-defined.
-        \end{lemma}
 
-        \begin{lemma}[Monotonicity]
-          Let $\tenv$ a (well-typed) set of tests.
+        \begin{lemma}[$\tvdash$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
-          Let $e$ an expression such that $\tenv, \Gamma \vdash e:t$.
-          Then:\\
-          \begin{align*}
-            &\tenv, \Gamma' \vdash e:t' \text{ with } t' \leq t\\
-            &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
-          \end{align*}
+          Let $e$ an expression and $t$ a type.\\
+          If $\Gamma \tvdash e : t$, then there exists $t'\leq t \text{ such that } \Gamma' \tvdash e : t'$.
         \end{lemma}
 
         \begin{corollary}[Relation order]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
+
+        \begin{lemma}[$\Gaa {} $ existence]
+          Let $\Gamma$ a well-formed environment.
+          Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$ (according to $\tvdash$).\\
+          Then $\Gaux \tenv \Gamma$ is well-defined.
+        \end{lemma}
+
+        \begin{lemma}[$\Gaa {}$ monotonicity]
+          Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
+          Let $\tenv$ a set of well-typed tests.\\
+          Then, $\Gaux \tenv {\Gamma'} \leq \Gaux \tenv \Gamma$.
+        \end{lemma}
 
         \begin{theorem}[$\Ga {}$ existence]
             If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined and well-formed.
@@ -198,12 +198,10 @@
 
     \section{Proofs}
 
-    \subsection{$\Ga {}$ definition}
-
-    TODO
-
     \subsection{Monotonicity}
     
+      TODO: update
+
       We proceed by induction on $e$. We suppose that, for any $e'$ strict subexpression of $e$, for any $\Gamma' \leq \Gamma$,
       \begin{align*}
         &\Gamma \vdash e':t' \Rightarrow \Gamma' \vdash e':t'' \text{ with } t'' \leq t'\\
