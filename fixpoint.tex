@@ -24,19 +24,14 @@
 
     \section{Typing system}
 
-    TODO: use type scheme in order to get rid of normalisation?
+    TODO: use type scheme in order to fix subject reduction (without having to normalize) (ref: sem_subtyping p45)\\
+    Need defining intersection of two type scheme!
 
     \[
       \begin{array}{lrcl}
       \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
-      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t\\
-      \textbf{Non-Functional Types} & t_b & ::= & b \alt \pair {t_b} {t_b} \alt t_b\vee t_b \alt \neg t_b \alt \Empty\\
-      \textbf{Normal Types} & \hat t & ::= & t_b \alt \arrow {\hat t} {\hat t}\alt \hat t \wedge \hat t \alt \hat t\vee \hat t
+      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t
       \end{array}
-    \]
-
-    \[
-      \norm t = \text{DNF of } t \text{ + remove negative arrows}
     \]
 
     \[
@@ -49,7 +44,7 @@
       \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & \norm {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
+      \Gp p {\Gamma,e,t} (\varpi) & = & {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
     \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
     \end{array}
     \]
@@ -236,6 +231,8 @@
       \qed
 
     \subsection{$\Ga {}$ computation}
+
+    TODO: update (no more normalization, operators on type schemes)
 
     Let $\Gamma$ (well-formed) and $\tenv$ (well-typed).
 
