@@ -87,7 +87,8 @@
 
     \[
       \begin{array}{lrcl}
-      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow {\hat t} {\hat t}}x.e \alt \ite e {\hat t} e e \alt e e\\
+      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow {\hat t} {\hat t}}x.e \alt e e \alt \ite k {\hat t} e e\\
+      \textbf{Conditions} & k & ::= & c\alt x \alt \lambda^{\bigwedge \arrow {\hat t} {\hat t}}x.e \alt k k\\
       \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow {\hat t} {\hat t}}x.e
       \end{array}
     \]

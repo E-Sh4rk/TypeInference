@@ -34,13 +34,15 @@ but in this case :
 
 - Rule "Empty" should be removed. Instead, test inclusion in the ite rule and generate a special environment bottom if necessary.
 
-- Should add contraints to types of lambda abstractions
+- Should add constraints to types of lambda abstractions and tests
 
-- Should "normalize" every type so that values always match their base type?
+- Should "normalize" every type so that values always match their base type? Or use type schemes.
 
 - Should forbid unabstracted ite inside tests ?  
 EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)  
     then (if x is Int then y else 0) else ...
+
+- Should add let statements to the target langage
 
 ### Adding polymorphism
 
