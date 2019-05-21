@@ -24,8 +24,8 @@
 
     \section{Typing system}
 
-    TODO: update typeof notation (no typing rule)
     TODO: use type scheme in order to get rid of normalisation?
+
     TODO: define precisely target language (no if in tests, etc)
 
     \[
@@ -68,7 +68,19 @@
       &\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)\qquad \text{(if defined)}
     \end{align*}
 
-    \begin{mathpar}
+    \begin{align*}
+      \begin{array}{llclr}
+        \text{if } e \in \dom \Gamma \text{, } & \tyof e \Gamma &=& \Gamma(e)\\
+      \text{Otherwise,} & \tyof c \Gamma &=& \basic{c}\\
+      &\tyof {\lambda^{t}x.e} \Gamma &=& t\\
+      &\tyof {{e_1} {e_2}} \Gamma &=& \apply {\tyof {e_1} \Gamma} {\tyof {e_2} \Gamma} & \text{(if defined)}\\
+      &\tyof {\pi_i e} \Gamma &=& \bpi_{\mathbf{i}}(\tyof e \Gamma) & \text{(if defined)}\\
+      &\tyof {(e_1,e_2)} \Gamma &=& \pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
+      \end{array}
+    \end{align*}
+
+    \comment{
+      \begin{mathpar}
 
         \Infer[Occ]
             {
@@ -108,7 +120,8 @@
         {\Gamma \tvdash (e_1,e_2):\pair{t_1}{t_2}}
         {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
-
+    }
+  
     \section{Definitions}
       
     \begin{definition}[Well formed environment]
@@ -202,8 +215,6 @@
     \section{Proofs}
 
     \subsection{$\Gaa {}$ monotonicity}
-    
-      TODO: update
 
       Let $\tenv$, $\Gamma$, $\Gamma'$ as in the lemma statement.
 
@@ -212,34 +223,16 @@
       We proceed by induction on $\varpi$. 
 
       As $\Gamma\setminus\{\occ e \varpi\}$ and $\Gamma'\setminus\{\occ e \varpi\}$ are well-formed and $\Gamma\setminus\{\occ e \varpi\} \leq \Gamma'\setminus\{\occ e \varpi\}$ (trivial),
-      we have by $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}} \leq \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}$.
-
+      we get by monotonicity $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}} \leq \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}$.
       Similarly, we have $\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}$.
 
       Now, we proceed by case analysis on $\varpi$:
       \begin{description}
-        \item[$\epsilon$] TODO: update all these cases.
-        \item[$c$] Trivial.
-        \item[$x$] Impossible case, as we have already treated the rule $\Rule{Occ}$.
-        \item[$\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e_x$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {Abs}$.
-        Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {Abs}$ as last rule.
-        For that, we just have to notice that $\forall i.\ \Gamma',x:s_i \leq \Gamma,x:s_i$ and we apply the induction hypothesis.
-        Note that if $x \in \dom \Gamma$ or $x \in \dom {\Gamma'}$, $\Gamma',x:s_i$ or $\Gamma,x:s_i$ could be not well-formed.
-        In this case, we must alpha-rename the current lambda-abstraction.
-
-        \item[$e_1\ e_2$] We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {App}$.
-        We can build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {App}$ as last rule.
-        For that, we just have to apply the induction hypothesis and notice that the $\circ$ operator is monotonic.
-        \item[$\ite {e_0} {t_{if}} {e_1} {e_2}$]
-        We know that the last rule in the typing derivation of $\Gamma \vdash e:t$ is $\Rule {If}$.
-
-        Let's build a derivation for $\Gamma' \vdash e:t'$ (with $t'\leq t$) with $\Rule {If}$ as last rule.
-
-        By the $\Ga {}$ existence theorem, we know that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'}$ is defined and well-formed.
-
-        We can deduce that $\Genv {\cons {(e_0,t_{if},p)} \tenv} {\Gamma'} \leq \Genv {\cons {(e_0,t_{if},p)} \tenv} \Gamma$.
-
-        Again we can conclude by applying the induction hypothesis.\\
+        \item[$\epsilon$] Trivial.
+        \item[$\varpi.0$] We use the induction hypothesis and the contravariance/covariance of $\arrow {} {}$.
+        \item[$\varpi.1$] We use the induction hypothesis and the monotonicity of the $\worra {} {}$ operator.
+        \item[$\varpi.l$ or $\varpi.r$] We use the induction hypothesis and the monotonicity of $\bpi_{\mathbf{i}}$.
+        \item[$\varpi.f$ or $\varpi.s$] We use the induction hypothesis and the covariance of $\pair {} {}$.
       \end{description}
     
       \qed
