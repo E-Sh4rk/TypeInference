@@ -37,6 +37,10 @@ but in this case :
 - Should add constraints to types of lambda abstractions and tests
 
 - Should "normalize" every type so that values always match their base type? Or use type schemes.
+  The two are not equivalent!  
+  EX:  
+  f=fun (Int->Int) x -> x  
+  if f is Even->Even then 0 else bottom
 
 - Should forbid unabstracted ite inside tests ?  
 EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)  
