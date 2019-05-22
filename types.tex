@@ -27,22 +27,66 @@
     \[
         \begin{array}{lrcl}
         \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
-        \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t
+        \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t\\
+        \textbf{Type schemes} & \ts & ::= & t \alt \tsfun {\arrow t t ; \cdots ; \arrow t t} \alt \ts \tstimes \ts \alt \ts \tsor \ts \alt \tsempty
         \end{array}
     \]
 
     \section{Definitions}
 
-    DNF
+    \begin{definition}[DNF]
+      A disjonctive normal form $\tau$ is a finite set of pairs of finite sets atoms such that:
+      \[ \forall (P,N)\in \tau.\ \semantic {\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A} \neq \varnothing \]
 
-    Type schemes
+      The interpretation $\semantic \tau$ of the DNF $\tau$ is the following:
+      \[
+        \semantic \tau = \semantic {\bigvee_{(P,N)\in \tau} \left(\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A \right)}
+      \]
+    \end{definition}
+
+    \begin{definition}[Interpretation of type schemes]
+      We define a function $\tsint {\_}$ that maps type schemes to set of types.
+
+      \begin{align*}
+        \begin{array}{lcl}
+        \tsint t &=& \{s\alt t \leq s\}\\
+        \tsint {\tsfunone {t_i} {s_i}_{i=1..n}} &=& \{s\alt
+        \exists s_0 = \bigwedge_{i=1..n} \arrow {t_i} {s_i}
+        \land \bigwedge_{j=1..m} \neg (\arrow {t_j'} {s_j'}).\ 
+        \Empty \not\simeq s_0 \leq s \}\\
+        \tsint {\ts_1 \tstimes \ts_2} &=& \{s\alt \exists t_1 \in \tsint {\ts_1}\ 
+        \exists t_2 \in \tsint {\ts_2}.\ \pair {t_1} {t_2} \leq s\}\\
+        \tsint {\ts_1 \tsor \ts_2} &=& \{s\alt \exists t_1 \in \tsint {\ts_1}\ 
+        \exists t_2 \in \tsint {\ts_2}.\ {t_1} \vee {t_2} \leq s\}\\
+        \tsint \tsempty &=& \varnothing
+        \end{array}
+      \end{align*}
+
+    Note that $\tsint \ts$ is closed under subsumption and intersection.
+    \end{definition}
 
     \section{Theorems}
 
-    DNF existence
+    \begin{property}
+      For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
+    \end{property}
 
-    Intersection type/type scheme
+    \begin{lemma}
+      Let $\ts$ be a type scheme and $t$ a type. We can compute a type scheme, written $t \tsand \ts$, such that:
+      \[\tsint {t \tsand \ts} = \{s \alt \exists t' \in \tsint \ts.\ t \land t' \leq s \}\]
+    \end{lemma}
+    Proof: lemma 6.40 semantic\_subtyping (p45) [TODO: ref]
 
-    Intersection type scheme/type scheme
+    \begin{lemma}[Intersection of type schemes]
+      Let $\ts_1$ and $\ts_2$ be two type schemes. We can compute a type scheme, written $\ts_1 \tsand \ts_2$, such that:
+      \[\tsint {\ts_1 \tsand \ts_2} = \{s\alt \exists t_1 \in \tsint {\ts_1}\ 
+      \exists t_2 \in \tsint {\ts_2}.\ {t_1} \land {t_2} \leq s\}\]
+    \end{lemma}
+
+    \section{Proofs}
+
+    \subsection{Intersection of type schemes}
+
+    TODO
     
 \end{document}

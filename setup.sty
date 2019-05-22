@@ -40,6 +40,7 @@
 \usepackage{heuristica}
 \usepackage[overload]{empheq}
 \usepackage{cleveref}
+\usepackage{bbm}
 \usemintedstyle{vs}
 
 \definecolor{darkblue}{rgb}{0,0.2,0.4}
@@ -154,3 +155,20 @@
 %\newcommand{\norm}[1]{\textsf{Norm}(#1)}
 \newcommand{\semantic}[1]{{\llbracket #1 \rrbracket}}
 \newcommand{\tenv}[0]{\vec \alpha}
+
+\newcommand{\make@circled}[2]{%
+  \ooalign{$\m@th#1\smallbigcirc{#1}$\cr\hidewidth$\m@th#1#2$\hidewidth\cr}%
+}
+\newcommand{\smallbigcirc}[1]{%
+  \vcenter{\hbox{\scalebox{0.77778}{$\m@th#1\bigcirc$}}}%
+}
+
+\newcommand{\tsand}{\mathbin{\mathpalette\make@circled\wedge}}
+\newcommand{\tsor}{\mathbin{\mathpalette\make@circled\vee}}
+%\newcommand{\tstimes}{\otimes}
+\newcommand{\tstimes}{\mathbin{\mathpalette\make@circled\times}}
+\newcommand{\tsempty}{\Omega}
+\newcommand{\tsfun}[1]{{[}#1]}
+\newcommand{\tsfunone}[2]{{[}\arrow {#1} {#2}]}
+\newcommand{\ts}{\mathbbm{t}}
+\newcommand{\tsint}[1]{\textbf{\{}#1\textbf{\}}}

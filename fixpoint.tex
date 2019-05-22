@@ -28,13 +28,6 @@
     Need defining intersection of two type scheme!
 
     \[
-      \begin{array}{lrcl}
-      \textbf{Types} & t & ::= & b\alt \arrow t t\alt \pair t t\alt t\vee t \alt \neg t \alt \Empty\\
-      \textbf{Atoms} & t_A & ::= & b\alt \arrow t t\alt \pair t t
-      \end{array}
-    \]
-
-    \[
     \begin{array}{lcl}
       \typep+\epsilon{\Gamma,e,t} & = & t\\
       \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
@@ -135,16 +128,6 @@
         &\forall e \in \dom \Gamma.\ \Gamma' \tvdash e : t \text{ with } t \leq \Gamma(e)
       \end{align*}
     \end{definition}
-
-    \begin{definition}[DNF]
-      A disjonctive normal form $\tau$ is a finite set of pairs of finite sets atoms such that:
-      \[ \forall (P,N)\in \tau.\ \semantic {\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A} \neq \varnothing \]
-
-      The interpretation $\semantic \tau$ of $\tau$ is the following:
-      \[
-        \semantic \tau = \semantic {\bigvee_{(P,N)\in \tau} \left(\bigwedge_{t_A \in P} t_A \land \bigwedge_{t_A \in N} \neg t_A \right)}
-      \]
-    \end{definition}
     
     \begin{definition}[Plinth]
       A plinth $S$ is a set of types such that:
@@ -191,10 +174,6 @@
         \begin{theorem}[$\Ga {}$ existence]
             If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{theorem}
-
-        \begin{property}
-          For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
-        \end{property}
 
         \begin{theorem}
           Every finite set of types is included in a plinth.
