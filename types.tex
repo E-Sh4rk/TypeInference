@@ -89,11 +89,6 @@
     \end{lemma}
     Proof: lemma 6.41 semantic\_subtyping (p46) [TODO: ref]
 
-    \begin{lemma}[Inclusion of type schemes]
-      Let $\ts_1$ and $\ts_2$ be two type schemes. We can decide the assertion $\tsint {\ts_1} \subseteq \tsint {\ts_2}$,
-      which we also write $\ts_2 \leq \ts_1$.
-    \end{lemma}
-
     \section{Proofs}
 
     \subsection{Intersection of type schemes}
@@ -115,17 +110,5 @@
       then $\ts_1 \tsand \ts_2 \simeq \ts_1 \simeq \ts_2$.
       Otherwise, $\ts_1 \tsand \ts_2 \simeq \Empty$.
     \end{description}
-
-    \subsection{Inclusion of type schemes}
-
-    Let $\ts_1$ and $\ts_2$. We proceed by an induction on $\ts_1$ and $\ts_2$.
-    Let's perform a case analysis on $\ts_1$ and $\ts_2$:
-    \begin{description}
-      \item[$\ts_1 = t$ or $\ts_2 = t$] We can conclude using the previous lemma.
-      \item[$\ts_1 = (\tsfunone {t_i} {s_i}_{i\in I})$ and $\ts_2 = (\tsfunone {t_j'} {s_j'}_{j\in J})$]
-      We have $\ts_1 \leq \ts_2$ iff $\bigwedge_{i\in I} \arrow {t_i} {s_i} \leq \bigwedge_{j\in J} \arrow {t_j'} {s_j'}$.
-    \end{description}
-
-    TODO: Case of union? Seems not to work...
     
 \end{document}
