@@ -65,6 +65,22 @@
     Note that $\tsint \ts$ is closed under subsumption and intersection.
     \end{definition}
 
+    \begin{definition}[Representant]
+      We define a function $\tsrep {\_}$ that maps any non-empty type scheme to a type (a \textit{representant}).
+
+      \begin{align*}
+        \begin{array}{lcl}
+        \tsrep t &=& t\\
+        \tsrep {\tsfunone {t_i} {s_i}_{i\in I}} &=& \bigwedge_{i\in I} \arrow {t_i} {s_i}\\
+        \tsrep {\ts_1 \tstimes \ts_2} &=& \pair {\tsrep {\ts_1}} {\tsrep {\ts_2}}\\
+        \tsrep {\ts_1 \tsor \ts_2} &=& \tsrep {\ts_1} \vee \tsrep {\ts_2}\\
+        \tsrep \tsempty && \textit{undefined}
+        \end{array}
+      \end{align*}
+
+    Note that $\tsrep \ts \in \tsint \ts$.
+    \end{definition}
+
     \section{Theorems}
 
     \begin{property}
