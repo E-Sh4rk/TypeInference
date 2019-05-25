@@ -38,7 +38,7 @@
           {c\not\in\dom\Gamma}
        \\
       \Infer[Abs]
-          {\tenv,\Gamma,x:s_i\vdash e:t_i'\\t_i'\leq t_i}
+          {\tenv,\Gamma,x:s_i\vdash e:\ts_i'\\ \ts_i'\leq t_i}
           {
           \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
           }
@@ -46,40 +46,40 @@
           \\
       \Infer[App]
           {
-            \tenv,\Gamma \vdash e_1: t_1\\
-            \tenv,\Gamma \vdash e_2: t_2\\
-            t_1 \leq \arrow \Empty \Any\\
-            t_2 \leq \dom {t_1}
+            \tenv,\Gamma \vdash e_1: \ts_1\\
+            \tenv,\Gamma \vdash e_2: \ts_2\\
+            \ts_1 \leq \arrow \Empty \Any\\
+            \ts_2 \leq \dom {\ts_1}
           }
-          { \tenv,\Gamma \vdash {e_1}{e_2}: t_1 \circ t_2 }
+          { \tenv,\Gamma \vdash {e_1}{e_2}: \ts_1 \circ \ts_2 }
           { {e_1}{e_2}\not\in\dom\Gamma}
           \\
       \Infer[If]
-            {\tenv,\Gamma\vdash e:t_0\\
+            {\tenv,\Gamma\vdash e:\ts_0\\
             \makebox{$\begin{array}{l}
               \left\{
                 \begin{array}{ll} %\Gamma,
-                \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : t_1 & \text{ if } t_0 \not\leq \neg t\\
-                t_1 = \Empty & \text{ otherwise}
+                \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
+                \ts_1 = \Empty & \text{ otherwise}
               \end{array}\right.\\
               \left\{
                 \begin{array}{ll} %\Gamma,
-                \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : t_2 & \text{ if } t_0 \not\leq t\\
-                t_2 = \Empty & \text{ otherwise}
+                \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
+                \ts_2 = \Empty & \text{ otherwise}
               \end{array}\right.
             \end{array}$}}
-            {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: t_1\vee t_2}
+            {\tenv,\Gamma\vdash \ite {e} t {e_1}{e_2}: \ts_1\tsor \ts_2}
             %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
             {\texttt{if}\dots\not\in\dom\Gamma}
       \\
       \Infer[Proj]
-      {\tenv,\Gamma \vdash e:t\and t\leq\pair\Any\Any}
-      {\tenv,\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(t)}
+      {\tenv,\Gamma \vdash e:\ts\and \ts\leq\pair\Any\Any}
+      {\tenv,\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(\ts)}
       {\pi_i e\not\in\dom\Gamma}
 
       \Infer[Pair]
-      {\tenv,\Gamma \vdash e_1:t_1 \and \tenv,\Gamma \vdash e_2:t_2}
-      {\tenv,\Gamma \vdash (e_1,e_2):\pair{t_1}{t_2}}
+      {\tenv,\Gamma \vdash e_1:\ts_1 \and \tenv,\Gamma \vdash e_2:\ts_2}
+      {\tenv,\Gamma \vdash (e_1,e_2):{\ts_1}\tstimes{\ts_2}}%\pair{t_1}{t_2}}
       {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
 
