@@ -24,28 +24,25 @@
 
     \section{Type refinement system}
 
-    TODO: use type scheme in order to fix subject reduction (without having to normalize) (ref: sem_subtyping p45)\\
-    Need defining intersection of two type scheme!
-
     \[
     \begin{array}{lcl}
       \typep+\epsilon{\Gamma,e,t} & = & t\\
       \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
       \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
-      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tyof{\occ e{\varpi.0}}\Gamma}{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tsrep {\tyof{\occ e{\varpi.0}}\Gamma}}{\Gp p {\Gamma,e,t} (\varpi)}\\
       \typep{p}{\varpi.l}{\Gamma,e,t} & = & \bpl{\Gp p {\Gamma,e,t} (\varpi)}\\
       \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & {\typep p \varpi {\Gamma,e,t} \land \tyof {\occ e \varpi} \Gamma
-    \underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \tsrep {\typep p \varpi {\Gamma,e,t} \tsand \tyof {\occ e \varpi} \Gamma}\\
+      %\underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
     \end{array}
     \]
 
     \begin{align*}
       &(\Refine p {e,t} \Gamma)(e') = 
         \left\{\begin{array}{ll}
-          \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          \tyof {e'} \Gamma \tsand \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
           \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\&\\
@@ -56,12 +53,13 @@
 
     \begin{align*}
       \begin{array}{llclr}
-        \text{if } e \in \dom \Gamma \text{, } & \tyof e \Gamma &=& \Gamma(e)\\
+      \text{if } e \in \dom \Gamma \text{, } & \tyof x \Gamma &=& \Gamma(x)\\
+      & \tyof e \Gamma &=& \Gamma(e) \tsand \tyof e {\Gamma\setminus\{e\}}\\
       \text{Otherwise,} & \tyof c \Gamma &=& \basic{c}\\
       &\tyof {\lambda^{t}x.e} \Gamma &=& t\\
       &\tyof {{e_1} {e_2}} \Gamma &=& \apply {\tyof {e_1} \Gamma} {\tyof {e_2} \Gamma} & \text{(if defined)}\\
       &\tyof {\pi_i e} \Gamma &=& \bpi_{\mathbf{i}}(\tyof e \Gamma) & \text{(if defined)}\\
-      &\tyof {(e_1,e_2)} \Gamma &=& \pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
+      &\tyof {(e_1,e_2)} \Gamma &=& \tyof {e_1} \Gamma \tstimes \tyof {e_2} \Gamma%\pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
       \end{array}
     \end{align*}
 
