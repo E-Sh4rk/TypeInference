@@ -144,29 +144,30 @@
           If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
 
-        \begin{lemma}[$\tyof {} {}$ monotonicity] TODO: update\\
+        \begin{lemma}[$\tyof {} {}$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
-          Let $e$ an expression and $t$ a type.\\
-          If $\tyof e \Gamma = t$, then $\tyof e {\Gamma'} \leq t$.
+          Let $e$ an expression.\\
+          We have $\tsint {\tyof e \Gamma} \subseteq \tsint {\tyof e {\Gamma'}}$.
         \end{lemma}
 
         \begin{corollary}[Relation order]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
 
-        \begin{lemma}[$\Gaa {} $ existence] TODO: update\\
+        \begin{lemma}[$\Gaa {} $ existence]
           Let $\Gamma$ a well-formed environment.
-          Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$ (according to $\tyof {} {}$).\\
+          Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $\tsint {\tyof e \Gamma} \neq \varnothing$
+          (we say that these tests are well-typed in $\Gamma$).\\
           Then $\Gaux \tenv \Gamma$ is well-defined.
         \end{lemma}
 
         \begin{lemma}[$\Gaa {}$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
-          Let $\tenv$ a set of well-typed tests. Then, $\Gaux \tenv {\Gamma'} \leq \Gaux \tenv \Gamma$.
+          Let $\tenv$ a set of well-typed tests in $\Gamma$. Then, $\Gaux \tenv {\Gamma'} \leq \Gaux \tenv \Gamma$.
         \end{lemma}
 
         \begin{theorem}[$\Ga {}$ existence]
-            If $\Gamma$ is well-formed and $\tenv$ is well typed, then $\Genv \tenv \Gamma$ is well defined and well-formed.
+            If $\Gamma$ is well-formed and $\tenv$ is well-typed in $\Gamma$, then $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{theorem}
 
         \begin{theorem}
@@ -180,7 +181,7 @@
 
     \section{Proofs}
 
-    \subsection{$\Gaa {}$ monotonicity}
+    \subsection{$\Gaa {}$ monotonicity} TODO: update
 
       Let $\tenv$, $\Gamma$, $\Gamma'$ as in the lemma statement.
 
