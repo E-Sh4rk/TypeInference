@@ -53,14 +53,15 @@
 
     \begin{align*}
       \begin{array}{llclr}
-      \text{if } e \in \dom \Gamma \text{, } & \tyof x \Gamma &=& \Gamma(x)\\
+      \text{If } e \in \dom \Gamma \text{, } & \tyof x \Gamma &=& \Gamma(x)\\
       & \tyof e \Gamma &=& \Gamma(e) \tsand \tyof e {\Gamma\setminus\{e\}}\\
       \text{Otherwise,} & \tyof c \Gamma &=& \basic{c}\\
       &\tyof {\lambda^{t}x.e} \Gamma &=& t\\
       &\tyof {{e_1} {e_2}} \Gamma &=& \apply {\tyof {e_1} \Gamma} {\tyof {e_2} \Gamma} & \text{(if defined)}\\
       &\tyof {\pi_i e} \Gamma &=& \bpi_{\mathbf{i}}(\tyof e \Gamma) & \text{(if defined)}\\
-      &\tyof {(e_1,e_2)} \Gamma &=& \tyof {e_1} \Gamma \tstimes \tyof {e_2} \Gamma%\pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
-      \end{array}
+      &\tyof {(e_1,e_2)} \Gamma &=& \tyof {e_1} \Gamma \tstimes \tyof {e_2} \Gamma\\%\pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
+      &\tyof {e} \Gamma &=& \tsempty & \text{(if other rules do not apply)}
+    \end{array}
     \end{align*}
 
     \comment{
@@ -108,22 +109,17 @@
   
     \section{Definitions}
       
-    \begin{definition}[Well formed environment]
+    \begin{definition}[Well-formed environment]
       An environment $\Gamma$ is well-formed iff:
       \begin{align*}
-        &\forall e \in \dom \Gamma.\ e \text{ is normal (it has a DNF without negative arrow)}\\
-        &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \tvdash e : t \text{ and } \Gamma(e) \leq t
+        &\forall e \in \dom \Gamma \text{ not a variable. } \tsint{\tyof {e} {\Gamma\setminus\{e\}}} \neq \varnothing \text{ and } \tsint {\tyof {e} {\Gamma\setminus\{e\}}} \subseteq \tsint{\Gamma(e)}
       \end{align*}
-      In particular, this last property implies:
-      \[
-        \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \tvdash e : t \Rightarrow \Gamma(e) \leq t
-      \]
     \end{definition}
   
     \begin{definition}[Environment inclusion]
       Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
       \begin{align*}
-        &\forall e \in \dom \Gamma.\ \Gamma' \tvdash e : t \text{ with } t \leq \Gamma(e)
+        &\forall e \in \dom \Gamma.\ \tsint{\Gamma(e)} \subseteq \tsint{\tyof e {\Gamma'}}
       \end{align*}
     \end{definition}
     
@@ -148,19 +144,19 @@
           If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
 
-        \begin{lemma}[$\tvdash$ monotonicity]
+        \begin{lemma}[$\tyof {} {}$ monotonicity] TODO: update\\
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
           Let $e$ an expression and $t$ a type.\\
-          If $\Gamma \tvdash e : t$, then there exists $t'\leq t \text{ such that } \Gamma' \tvdash e : t'$.
+          If $\tyof e \Gamma = t$, then $\tyof e {\Gamma'} \leq t$.
         \end{lemma}
 
         \begin{corollary}[Relation order]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
 
-        \begin{lemma}[$\Gaa {} $ existence]
+        \begin{lemma}[$\Gaa {} $ existence] TODO: update\\
           Let $\Gamma$ a well-formed environment.
-          Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$ (according to $\tvdash$).\\
+          Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $e$ is well-typed in $\Gamma$ (according to $\tyof {} {}$).\\
           Then $\Gaux \tenv \Gamma$ is well-defined.
         \end{lemma}
 
