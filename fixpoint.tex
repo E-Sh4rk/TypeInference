@@ -34,7 +34,7 @@
       \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
       \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
       \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
-      \Gp p {\Gamma,e,t} (\varpi) & = & \tsrep {\typep p \varpi {\Gamma,e,t} \tsand \tyof {\occ e \varpi} \Gamma}\\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}\\
       %\underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
     \end{array}
     \]
@@ -144,10 +144,11 @@
           If $\Genv \tenv \Gamma$ is defined, then it is well-formed.
         \end{lemma}
 
-        \begin{lemma}[$\tyof {} {}$ monotonicity]
+        \begin{lemma}[$\tyof {\_} {}$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
           Let $e$ an expression.\\
-          We have $\tsint {\tyof e \Gamma} \subseteq \tsint {\tyof e {\Gamma'}}$.
+          We have $\tsint {\tyof e \Gamma} \subseteq \tsint {\tyof e {\Gamma'}}$ and
+          $\tsrep {\tyof e {\Gamma'}} \leq \tsrep {\tyof e {\Gamma}}$ (if defined).
         \end{lemma}
 
         \begin{corollary}[Relation order]
@@ -157,17 +158,17 @@
         \begin{lemma}[$\Gaa {} $ existence]
           Let $\Gamma$ a well-formed environment.
           Let $\tenv$ a set of tests such that for each test $(e,t,p)$, $\tsint {\tyof e \Gamma} \neq \varnothing$
-          (we say that these tests are well-typed in $\Gamma$).\\
+          (we say that these tests are well-typed by $\Gamma$).\\
           Then $\Gaux \tenv \Gamma$ is well-defined.
         \end{lemma}
 
         \begin{lemma}[$\Gaa {}$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
-          Let $\tenv$ a set of well-typed tests in $\Gamma$. Then, $\Gaux \tenv {\Gamma'} \leq \Gaux \tenv \Gamma$.
+          Let $\tenv$ a set of tests well-typed by $\Gamma$. Then, $\Gaux \tenv {\Gamma'} \leq \Gaux \tenv \Gamma$.
         \end{lemma}
 
         \begin{theorem}[$\Ga {}$ existence]
-            If $\Gamma$ is well-formed and $\tenv$ is well-typed in $\Gamma$, then $\Genv \tenv \Gamma$ is well defined and well-formed.
+            If $\Gamma$ is well-formed and $\tenv$ is well-typed by $\Gamma$, then $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{theorem}
 
         \begin{theorem}
@@ -181,19 +182,24 @@
 
     \section{Proofs}
 
-    \subsection{$\Gaa {}$ monotonicity} TODO: update
+    \subsection{$\tyof {\_} {}$ monotonicity}
+    
+    TODO
+
+    \subsection{$\Gaa {}$ monotonicity}
 
       Let $\tenv$, $\Gamma$, $\Gamma'$ as in the lemma statement.
 
-      We just have to prove that for all relevant $p$, $e$, $t$ and $\varpi$, we have $\Gp p {\Gamma',e,t} (\varpi) \leq \Gp p {\Gamma,e,t} (\varpi)$.
+      We have to prove that for all relevant $p$, $e$, $t$ and $\varpi$,
+      we have $\tsint {\tyof {\occ e \varpi} {\Gamma} \tsand \Gp p {\Gamma,e,t} (\varpi)} \subseteq \tsint {\tyof {\occ e \varpi} {\Gamma'} \tsand \Gp p {\Gamma',e,t} (\varpi)}$.
 
       We proceed by induction on $\varpi$. 
 
-      As $\Gamma\setminus\{\occ e \varpi\}$ and $\Gamma'\setminus\{\occ e \varpi\}$ are well-formed and $\Gamma\setminus\{\occ e \varpi\} \leq \Gamma'\setminus\{\occ e \varpi\}$ (trivial),
-      we get by monotonicity $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}} \leq \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}$.
-      Similarly, we have $\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}$.
+      By monotonicity of $\tyof {\_} {}$, we get that
+      $\tsint {\tyof {\occ e \varpi} {\Gamma}} \subseteq \tsint {\tyof {\occ e \varpi} {\Gamma'}}$
+      and $\tsrep {\tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep {\tyof {\occ e \varpi} {\Gamma}}$.
 
-      Now, we proceed by case analysis on $\varpi$:
+      We proceed by case analysis on $\varpi$:
       \begin{description}
         \item[$\epsilon$] Trivial.
         \item[$\varpi.0$] We use the induction hypothesis and the contravariance/covariance of $\arrow {} {}$.
@@ -201,7 +207,14 @@
         First, we must show that the $\worra {} {}$ operator is monotonic for its second argument.
         It is quite trivial given its declarative definition.
 
-        Secondly, we must show that ... TODO
+        Secondly, we must show that for any function types $f_1 \leq f_2$, and for any type $t'$,
+        we have $(\worra {f_1} {t'}) \land \dom {f_2} \leq \worra {f_2} {t'}$. By the absurd, let's suppose it is not true.
+        Let's note $t'' = (\worra {f_1} {t'}) \land \dom {f_2}$.
+        Then we have $t'' \leq \dom {f_2} \leq \dom {f_1}$ and $f_2 \leq \arrow {t''} {t'}$ and
+        $f_1 \not\leq \arrow {t''} {t'}$, which contradicts $f_1 \leq f_2$.
+
+        From these two properties, we can conclude, as $\tyof {\occ e {\varpi.1}} {\Gamma'} \leq \dom {\tsrep {\tyof{\occ e{\varpi.0}}\Gamma}}$
+        (it follows from the fact that tests are well-typed by $\Gamma$).
         \item[$\varpi.l$ or $\varpi.r$] We use the induction hypothesis and the monotonicity of $\bpi_{\mathbf{i}}$.
         \item[$\varpi.f$ or $\varpi.s$] We use the induction hypothesis and the covariance of $\pair {} {}$.
       \end{description}
