@@ -47,7 +47,7 @@
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\&\\
       &\Gaux {\varnothing} \Gamma = \Gamma\\
-      &\Gaux {\cons {(e,t)} \tenv} \Gamma = \Gaux \tenv {\Refine p {e,t} \Gamma}\\&\\
+      &\Gaux {\cons {(e,t,p)} \tenv} \Gamma = \Gaux \tenv {\Refine p {e,t} \Gamma}\\&\\
       &\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)\qquad \text{(if defined)}
     \end{align*}
 
@@ -233,10 +233,10 @@
 
     Let's consider a finite set of types $T$ such that:
     \begin{itemize}
-      \item $\forall (e,t) \in \tenv$, $t \in T$
-      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
-      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
-      \item $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
+      \item $\forall (e,t,p) \in \tenv$, $t \in T$
+      \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
+      \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
+      \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
     \end{itemize}
 
     Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
@@ -252,7 +252,7 @@
     \]
 
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
-    $\forall (e,t) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then $\Gamma'(\occ e \varpi)$ has a DNF with only atoms of the form
+    $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then $\Gamma'(\occ e \varpi)$ has a DNF with only atoms of the form
     $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ (with any vector $\vec s$ of elements of $S$).
     Note that there is finitely many such atoms.
     
@@ -263,7 +263,7 @@
     For the inductive case, let's take $\Gamma'$ (well-formed) that satifies the induction hypothesis
     and show that $\Gamma'' = \Gaux \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
-    Let's fix $(e,t)$ and $\varpi$.\\
+    Let's fix $(e,t,p)$ and $\varpi$.\\
     We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
     
     We proceed by induction on $\varpi$.
