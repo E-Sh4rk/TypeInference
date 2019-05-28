@@ -1,14 +1,14 @@
 
-- Implementation part: clauses should not be empty in the DNF
-- Environment: operates up to alpha-renaming
+X- Implementation part: clauses should not be empty in the DNF
+X- Environment: operates up to alpha-renaming
 
-- Update setup.sty
+X- Update setup.sty
 
-- Update target language grammar (no ite in tests...)
-- Add a part about type schemes (def, prop, representant)
-- Update refinement rules (and typeof)
-- Update typing rules
+X- Update target language grammar (no ite in tests...)
+X- Add a part about type schemes (def, prop, representant)
+X- Update refinement rules (and typeof)
+X- Update typing rules
 
-- Add examples
 - Move pair into base language (instead of extensions)
+- Add examples and explanations (tests environment, etc)
 - Add a part about let statements
