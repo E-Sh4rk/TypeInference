@@ -177,7 +177,8 @@
         Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
 
         \begin{theorem}[$\Ga {}$ computation]
-          $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ can be reached in a finite number of iterations.
+          $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ can be computed.
+          In particular, the fixpoint can be reached in a finite number of iterations.
         \end{theorem}
 
     \section{Proofs}
@@ -223,39 +224,44 @@
 
     \subsection{$\Ga {}$ computation}
 
-    TODO: update (no more normalization, operators on type schemes)
-
     Let $\Gamma$ (well-formed) and $\tenv$ (well-typed).
 
     Let's prove that we can reach $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ by applying successively the function $\Gaa \tenv$ a finite number of times.
 
-    We will show that, starting from $\Gamma$, successive applications of $\Gaa \tenv$ stay in a finite set of environments.
+    We will prove that, starting from $\Gamma$, successive applications of $\Gaa \tenv$ stay in a finite set of environments (modulo equivalence).
 
     Let's consider a finite set of types $T$ such that:
     \begin{itemize}
       \item $\forall (e,t,p) \in \tenv$, $t \in T$
       \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a lambda abstraction $\lambda^tx.e_x$, then $t \in T$
       \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi$ is a constant $c$, then $\basic{c} \in T$
-      \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\Gamma(\occ e \varpi) \in T$
+      \item $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom \Gamma$, then $\tsrep {\Gamma(\occ e \varpi)} \in T$
     \end{itemize}
 
     Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
 
-    We define the "product context" of a type $t$ by:
+    We define the \textit{structure} of a path $\varpi$ by:
     \[
-      \texttt{pctx}(t)=\left\{
-        \begin{array}{ll}
-          \pair {\texttt{pctx}(\bpl t)} {\texttt{pctx}(\bpr t)} & \text{ if } t \leq \pair \Any \Any\\
-          {[}] & \text{ otherwise}
+      \left\{
+        \begin{array}{lcl}
+          \texttt{struct}(\epsilon) & = & {[}] \\
+          \texttt{struct}(\varpi.0) & = & \arrow {{[}]} {\texttt{struct}(\varpi)} \\
+          \texttt{struct}(\varpi.1) & = & {[}] \\
+          \texttt{struct}(\varpi.l) & = & {[}] \\
+          \texttt{struct}(\varpi.r) & = & {[}] \\
+          \texttt{struct}(\varpi.f) & = & \pair {\texttt{struct}(\varpi)} {{[}]} \\
+          \texttt{struct}(\varpi.s) & = & \pair {{[}]} {\texttt{struct}(\varpi)}
         \end{array}  
       \right.
     \]
 
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
-    $\forall (e,t,p) \in \tenv\ \forall \varpi$, if $\occ e \varpi \in \dom {\Gamma'}$, then $\Gamma'(\occ e \varpi)$ has a DNF with only atoms of the form
-    $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ (with any vector $\vec s$ of elements of $S$).
-    Note that there is finitely many such atoms.
-    
+    $\forall e' \text{ such that } \exists (e,t,p) \in \tenv \exists \varpi.\ \occ e \varpi \equiv e'$,
+    if $e' \in \dom {\Gamma'}$, then $\tsrep {\Gamma'(e')}$ has a DNF with only atoms of the form
+    $\texttt{struct}(\varpi)[\vec s]$ with $\vec s$ a vector of elements of $S$ and $\varpi$ a path such that
+    $\exists (e,t,p) \in \tenv.\ \occ e \varpi \equiv e'$.
+    Note that there is finitely many such DNF.
+        
     We prove it by induction on the number of iterations.
 
     The base case (0 iteration) is trivial.
@@ -264,13 +270,11 @@
     and show that $\Gamma'' = \Gaux \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
     Let's fix $(e,t,p)$ and $\varpi$.\\
-    We need to show that there exists $\vec s$ a vector of elements of $S$ such that $\Gp p {\Gamma'',e,t} (\varpi) = \texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$.
-    
+    We need to show that $\Gp p {\Gamma'',e,t} (\varpi)$ has a DNF with only atoms of the form described above.    
     We proceed by induction on $\varpi$.
 
-    Before treating the base case and the inductive case, we have to show that both $\tyof {\occ e \varpi} {\Gamma'}$
-    and $\tyof {\occ e \varpi} {\Gamma'\setminus\{\occ e \varpi\}}$ (if relevant) have DNF with only atoms of the form
-    $\texttt{pctx}(\tyof {\occ e \varpi} \Gamma)[\vec s]$ (with any vector $\vec s$ of elements of $S$).
+    Before treating the base case and the inductive case, we have to show that $\tyof {\occ e \varpi} {\Gamma'}$
+    has a DNF with only atoms of the form... TODO.
 
     It can be easily proven by induction on the derivation.\\
     If the last rule is $\Rule{App}$, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
@@ -280,16 +284,23 @@
 
     Here are the inductive cases:
     \begin{description}
-      \item[$\varpi.0$] Although a new arrow type is created, it is a negative one and so it will disappear after normalisation.
+      \item[$\varpi.0$] TODO
       \item[$\varpi.1$] We just have to notice that plinths are stable by $\worra {} {}$.
-      \item[$\varpi.l$ and $\varpi.r$] Trivial (as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi}) = \pair {\texttt{pctx}(\occ e {\varpi.l})} {\dots}$).
-      \item[$\varpi.f$ and $\varpi.s$] Trivial (as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi.f}) = \pair {\texttt{pctx}(\occ e {\varpi})} {\dots}$).
+      \item[$\varpi.l$ and $\varpi.r$] Trivial (TODO) %(as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi}) = \pair {\texttt{pctx}(\occ e {\varpi.l})} {\dots}$).
+      \item[$\varpi.f$ and $\varpi.s$] Trivial (TODO) %(as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi.f}) = \pair {\texttt{pctx}(\occ e {\varpi})} {\dots}$).
     \end{description}
 
     It concludes the induction.
 
-    So we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa \tenv$.
+    From this result, we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa \tenv$.
+    Indeed, for any relevant expression $e$, there is only finitely many different $\tsrep {\Gamma(e)}$ in the successive environments $\Gamma$ (up to equivalence).
+    As there is also finitely many $\tsfun {\_}$ constructions in the successive $\Gamma(e)$ (trivial), there only can be finitely many different $\Gamma(e)$.
+
     As $\Gaa \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
     By construction, this fixpoint is the greatest (as $\Gaa \tenv$ is reductive and monotonic).
+
+    Thus, in order to compute $\fixpoint_\Gamma (\Gaa \tenv)$ we can successively call $\Gaa \tenv$ until we reach a fixpoint.
+    In order to know when we have reached a fixpoint, we just have to check whether, for all $(e,t,p) \in \tenv$, for all $e'$ such that
+    $\exists \varpi. \occ e \varpi \equiv e'$, we have $\bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) \in \tsint {\tyof {e'} \Gamma}$.
 
 \end{document}
