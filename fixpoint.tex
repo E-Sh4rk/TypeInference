@@ -171,10 +171,14 @@
             If $\Gamma$ is well-formed and $\tenv$ is well-typed by $\Gamma$, then $\Genv \tenv \Gamma$ is well defined and well-formed.
         \end{theorem}
 
-        \begin{theorem}
+        \begin{lemma}
           Every finite set of types is included in a plinth.
-        \end{theorem}
+        \end{lemma}
         Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
+
+        \begin{lemma}
+          Let $t$ a type. There is finitely many different type schemes $\ts$ such that $\tsrep \ts = t$ (up to equivalence).
+        \end{lemma}
 
         \begin{theorem}[$\Ga {}$ computation]
           $\Genv \tenv \Gamma=\fixpoint_\Gamma (\Gaa \tenv)$ can be computed.
@@ -255,11 +259,22 @@
       \right.
     \]
 
+    Now, for each relevant expression that appears in a test, we define its possible structures $\texttt{structs}$ by:
+    \[
+      \left\{
+        \begin{array}{lcl}
+          \texttt{structs}(x) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv x\}} \{ \texttt{struct}(\varpi) \} \\
+          \texttt{structs}((e_1,e_2)) & = & \bigcup_{s_1\in\texttt{structs}(e_1)}\bigcup_{s_2\in\texttt{structs}(e_2)}  \{ (s_1,s_2) \} \\
+          \texttt{structs}(e_1 e_2) & = & \bigcup_{\arrow s t\in\texttt{structs}(e_1)} \{ t \} \\
+          \cdots & &
+        \end{array}  
+      \right.
+    \]
+
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
     $\forall e' \text{ such that } \exists (e,t,p) \in \tenv \exists \varpi.\ \occ e \varpi \equiv e'$,
     if $e' \in \dom {\Gamma'}$, then $\tsrep {\Gamma'(e')}$ has a DNF with only atoms of the form
-    $\texttt{struct}(\varpi)[\vec s]$ with $\vec s$ a vector of elements of $S$ and $\varpi$ a path such that
-    $\exists (e,t,p) \in \tenv.\ \occ e \varpi \equiv e'$.
+    $\text{ctx}[\vec s]$ with $\vec s$ a vector of elements of $S$ and $\text{ctx}$ an element of $\texttt{structs}(e')$.
     Note that there is finitely many such DNF.
         
     We prove it by induction on the number of iterations.
@@ -270,11 +285,11 @@
     and show that $\Gamma'' = \Gaux \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
     Let's fix $(e,t,p)$ and $\varpi$.\\
-    We need to show that $\Gp p {\Gamma'',e,t} (\varpi)$ has a DNF with only atoms of the form described above.    
+    We need to show that $\Gp p {\Gamma'',e,t} (\varpi)$ has the form described above.    
     We proceed by induction on $\varpi$.
 
-    Before treating the base case and the inductive case, we have to show that $\tyof {\occ e \varpi} {\Gamma'}$
-    has a DNF with only atoms of the form... TODO.
+    Before treating the base case and the inductive case, we have to show that $\tsrep {\tyof {\occ e \varpi} {\Gamma'}}$
+    has a DNF with only atoms of the form described above. TODO
 
     It can be easily proven by induction on the derivation.\\
     If the last rule is $\Rule{App}$, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
@@ -294,7 +309,7 @@
 
     From this result, we can deduce that there is finitely many possible environements that can be produced by the successive applications of $\Gaa \tenv$.
     Indeed, for any relevant expression $e$, there is only finitely many different $\tsrep {\Gamma(e)}$ in the successive environments $\Gamma$ (up to equivalence).
-    As there is also finitely many $\tsfun {\_}$ constructions in the successive $\Gamma(e)$ (trivial), there only can be finitely many different $\Gamma(e)$.
+    Using the previous lemma, we deduce that there is finitely many different $\Gamma(e)$ and so finitely many different environments.
 
     As $\Gaa \tenv$ is reductive, we always reach a fixpoint in a finite number of iterations.
     By construction, this fixpoint is the greatest (as $\Gaa \tenv$ is reductive and monotonic).
