@@ -251,8 +251,8 @@
           \texttt{struct}(\epsilon) & = & {[}] \\
           \texttt{struct}(\varpi.0) & = & \arrow {{[}]} {\texttt{struct}(\varpi)} \\
           \texttt{struct}(\varpi.1) & = & {[}] \\
-          \texttt{struct}(\varpi.l) & = & {[}] \\
-          \texttt{struct}(\varpi.r) & = & {[}] \\
+          \texttt{struct}(\varpi.l) & = & \bpl {\texttt{struct}(\varpi)} \text{ if defined, otherwise []} \\
+          \texttt{struct}(\varpi.r) & = & \bpr {\texttt{struct}(\varpi)} \text{ if defined, otherwise []} \\
           \texttt{struct}(\varpi.f) & = & \pair {\texttt{struct}(\varpi)} {{[}]} \\
           \texttt{struct}(\varpi.s) & = & \pair {{[}]} {\texttt{struct}(\varpi)}
         \end{array}  
@@ -263,10 +263,11 @@
     \[
       \left\{
         \begin{array}{lcl}
+          \texttt{structs}(c) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv c\}} \{ \texttt{struct}(\varpi) \} \\
           \texttt{structs}(x) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv x\}} \{ \texttt{struct}(\varpi) \} \\
+          \texttt{structs}(\lambda^tx.e) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv \lambda^tx.e\}} \{ \texttt{struct}(\varpi) \} \\
           \texttt{structs}((e_1,e_2)) & = & \bigcup_{s_1\in\texttt{structs}(e_1)}\bigcup_{s_2\in\texttt{structs}(e_2)}  \{ (s_1,s_2) \} \\
-          \texttt{structs}(e_1 e_2) & = & \bigcup_{\arrow s t\in\texttt{structs}(e_1)} \{ t \} \\
-          \cdots & &
+          \texttt{structs}(e_1 e_2) & = & \bigcup_{\arrow s t\in\texttt{structs}(e_1)} \{ t \}
         \end{array}  
       \right.
     \]
@@ -289,11 +290,11 @@
     We proceed by induction on $\varpi$.
 
     Before treating the base case and the inductive case, we have to show that $\tsrep {\tyof {\occ e \varpi} {\Gamma'}}$
-    has a DNF with only atoms of the form described above. TODO
+    has a DNF with only atoms of the form described above.
 
     It can be easily proven by induction on the derivation.\\
-    If the last rule is $\Rule{App}$, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
-    Other rules are trivial.
+    For the case of the application, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
+    Other cases are straightforward.
 
     Now, the base case of our induction (for $\varpi=\epsilon$) becomes trivial.
 
