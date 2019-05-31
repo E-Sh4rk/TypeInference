@@ -244,6 +244,10 @@
 
     Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
 
+    TODO: formula below actually not enough...
+    %f x      ---->   x: []        f: [] -> []
+    %fst x    ---->   x: ([],[])
+
     We define the \textit{structure} of a path $\varpi$ by:
     \[
       \left\{
@@ -300,10 +304,14 @@
 
     Here are the inductive cases:
     \begin{description}
-      \item[$\varpi.0$] TODO
-      \item[$\varpi.1$] We just have to notice that plinths are stable by $\worra {} {}$.
-      \item[$\varpi.l$ and $\varpi.r$] Trivial (TODO) %(as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi}) = \pair {\texttt{pctx}(\occ e {\varpi.l})} {\dots}$).
-      \item[$\varpi.f$ and $\varpi.s$] Trivial (TODO) %(as $\Gamma$ is well-formed, we have $\texttt{pctx}(\occ e {\varpi.f}) = \pair {\texttt{pctx}(\occ e {\varpi})} {\dots}$).
+      \item[$\varpi.1$] TODO %We just have to notice that plinths are stable by $\worra {} {}$
+      \item[$\varpi.0$] By induction (and using the previous case), the DNF of $\typep{p}{\varpi.1}{\Gamma,e,t}$ is composed of elements of
+      $\texttt{struct}(\varpi')$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi.1}$.\\
+      TODO\\
+      $\arrow {[]} {\texttt{struct}(\varpi')}$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi}$\\
+      $\texttt{struct}(\varpi')$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi.0}$.
+      \item[$\varpi.l$ and $\varpi.r$] Quite similar.
+      \item[$\varpi.f$ and $\varpi.s$] Quite similar.
     \end{description}
 
     It concludes the induction.
