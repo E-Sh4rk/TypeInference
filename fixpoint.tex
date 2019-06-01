@@ -249,7 +249,9 @@
     \newcommand{\structof}[2]{\texttt{structof}_{#1}(#2)}
     \newcommand{\refinestr}[2]{\texttt{RefineStr}_{#1}(#2)}
     \newcommand{\auxstr}[1]{\texttt{AuxStr}_{#1}}
-    \newcommand{\structs}[2]{\texttt{Structs}_{#1}(#2)}
+    \newcommand{\structs}[2]{\texttt{Struct}_{#1}(#2)}
+
+    -----
 
     We call \textit{structural environment} a partial function from variables, constants and lambda abstractions to sets of \textit{structural contexts}.
     For each structural environment $\struct$ and expression $e$, we define $\structof \struct e$ by:
@@ -259,9 +261,9 @@
           \structof{\struct}{c} & = & \struct(c) \\
           \structof{\struct}{x} & = & \struct(x) \\
           \structof{\struct}{\lambda^tx.e} & = & \struct(\lambda^tx.e) \\
-          \structof{\struct}{(e_1,e_2)} & = & \bigcup_{s_1\in\structof{\struct}{e_1}}\bigcup_{s_2\in\structof{\struct}{e_2}}  \{ (s_1,s_2) \} \\
+          \structof{\struct}{(e_1,e_2)} & = & \bigcup_{s_1\in\structof{\struct}{e_1}}\bigcup_{s_2\in\structof{\struct}{e_2}}  \{ \pair {s_1} {s_2} \} \\
           \structof{\struct}{e_1 e_2} & = & \bigcup_{\arrow s t\in\structof{\struct}{e_1}} \{ t \} \\
-          \cdots
+          \structof{\struct}{\bpi_i e} & = & \bigcup_{\pair {t_1} {t_2}\in\structof{\struct}{e}} \{ t_i \}
         \end{array}  
       \right.
     \]
@@ -275,18 +277,33 @@
           \pathstr{\struct,e}{\varpi.1} & = & \bigcup_{\arrow s t\in\structof{\struct}{\occ e {\varpi.0}}} \{s\}\\
           \pathstr{\struct,e}{\varpi.l} & = & \bigcup_{\pair {s_1} {s_2}\in\pathstr{\struct,e}{\varpi}} \{s_1\} \\
           \pathstr{\struct,e}{\varpi.r} & = & \bigcup_{\pair {s_1} {s_2}\in\pathstr{\struct,e}{\varpi}} \{s_2\} \\
-          TODO \pathstr{\struct,e}{\varpi.f} & = & \bigcup_{s_1\in\pathstr{\struct,e}{\varpi}} \bigcup_{s_2\in\structof{\struct}{\occ e {\varpi.s}}} \{\pair {s_1} {s_2}\} \\
-          TODO \pathstr{\struct,e}{\varpi.s} & = & \bigcup_{s_1\in\structof{\struct}{\occ e {\varpi.f}}} \bigcup_{s_2\in\pathstr{\struct,e}{\varpi}} \{\pair {s_1} {s_2}\}
+          \pathstr{\struct,e}{\varpi.f} & = & \bigcup_{s_1\in\pathstr{\struct,e}{\varpi}} \{\pair {{[}]} {s_2}\} \\
+          \pathstr{\struct,e}{\varpi.s} & = & \bigcup_{s_2\in\pathstr{\struct,e}{\varpi}} \{\pair {s_1} {{[}]}\}
         \end{array}  
       \right.
     \]
 
-    TODO
-    %f x      ---->   x: []        f: [] -> []
-    %fst x    ---->   x: ([],[])
+    \begin{align*}
+      &(\refinestr e \struct)(e') = 
+        \left\{\begin{array}{ll}
+          \text{undefined} & \text{if } e' \text{ not a variable, constant or $\lambda$-abstraction}\\
+          \struct(e') \cup \bigcup_{\{\varpi \alt \occ e \varpi \equiv e'\}} \pathstr{\struct,e}{\varpi} & \text{otherwise, if } e' \in \dom \struct\\
+          \text{undefined} & \text{otherwise}
+        \end{array}\right.\\&\\
+      &\auxstr {\varnothing} (\struct) = \struct\\
+      &\auxstr {\cons {(e,t,p)} \tenv} \struct = \auxstr \tenv (\refinestr e \struct)\\&\\
+      &\structs \tenv \struct=\textsf{lfp}_\struct (\auxstr \tenv)
+    \end{align*}
 
-    %snd (snd x)      (_,(_,_))
-    %(fst x) y        (_->_,_)
+    Let $\struct_I$ be the structural environment that map every occurence of variable, constant or $\lambda$-abstraction
+    appearing in $\tenv$ to $[]$.
+
+    $\struct = \structs \tenv {\struct_I}$ is well-defined as $\auxstr \tenv$ is monotonic (and even extensive).
+    Moreover, for any $e\in\dom\struct$, $\struct(e)$ is finite. TODO
+
+    -----
+
+    TODO: update
 
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
     $\forall e' \text{ such that } \exists (e,t,p) \in \tenv \exists \varpi.\ \occ e \varpi \equiv e'$,
