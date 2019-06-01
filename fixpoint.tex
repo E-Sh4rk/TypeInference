@@ -244,37 +244,49 @@
 
     Using the previous theorem, let $S$ by a plinth such that $T \subseteq S$. In particular we know that $S$ is finite.
 
-    TODO: formula below actually not enough...
+    \newcommand{\struct}[0]{\mathcal{S}}
+    \newcommand{\pathstr}[2]{\texttt{path\_struct}_{#1}(#2)}
+    \newcommand{\structof}[2]{\texttt{structof}_{#1}(#2)}
+    \newcommand{\refinestr}[2]{\texttt{RefineStr}_{#1}(#2)}
+    \newcommand{\auxstr}[1]{\texttt{AuxStr}_{#1}}
+    \newcommand{\structs}[2]{\texttt{Structs}_{#1}(#2)}
+
+    We call \textit{structural environment} a partial function from variables, constants and lambda abstractions to sets of \textit{structural contexts}.
+    For each structural environment $\struct$ and expression $e$, we define $\structof \struct e$ by:
+    \[
+      \left\{
+        \begin{array}{lcl}
+          \structof{\struct}{c} & = & \struct(c) \\
+          \structof{\struct}{x} & = & \struct(x) \\
+          \structof{\struct}{\lambda^tx.e} & = & \struct(\lambda^tx.e) \\
+          \structof{\struct}{(e_1,e_2)} & = & \bigcup_{s_1\in\structof{\struct}{e_1}}\bigcup_{s_2\in\structof{\struct}{e_2}}  \{ (s_1,s_2) \} \\
+          \structof{\struct}{e_1 e_2} & = & \bigcup_{\arrow s t\in\structof{\struct}{e_1}} \{ t \} \\
+          \cdots
+        \end{array}  
+      \right.
+    \]
+
+    We define the \textit{structures} of a path $\varpi$ by:
+    \[
+      \left\{
+        \begin{array}{lcl}
+          \pathstr{\struct,e}{\epsilon} & = & \structof{\struct}{e} \\
+          \pathstr{\struct,e}{\varpi.0} & = & \bigcup_{s\in\pathstr{\struct,e}{\varpi.1}} \bigcup_{t\in\pathstr{\struct,e}{\varpi}} \{\arrow {s} {t}\} \\
+          \pathstr{\struct,e}{\varpi.1} & = & \bigcup_{\arrow s t\in\structof{\struct}{\occ e {\varpi.0}}} \{s\}\\
+          \pathstr{\struct,e}{\varpi.l} & = & \bigcup_{\pair {s_1} {s_2}\in\pathstr{\struct,e}{\varpi}} \{s_1\} \\
+          \pathstr{\struct,e}{\varpi.r} & = & \bigcup_{\pair {s_1} {s_2}\in\pathstr{\struct,e}{\varpi}} \{s_2\} \\
+          TODO \pathstr{\struct,e}{\varpi.f} & = & \bigcup_{s_1\in\pathstr{\struct,e}{\varpi}} \bigcup_{s_2\in\structof{\struct}{\occ e {\varpi.s}}} \{\pair {s_1} {s_2}\} \\
+          TODO \pathstr{\struct,e}{\varpi.s} & = & \bigcup_{s_1\in\structof{\struct}{\occ e {\varpi.f}}} \bigcup_{s_2\in\pathstr{\struct,e}{\varpi}} \{\pair {s_1} {s_2}\}
+        \end{array}  
+      \right.
+    \]
+
+    TODO
     %f x      ---->   x: []        f: [] -> []
     %fst x    ---->   x: ([],[])
 
-    We define the \textit{structure} of a path $\varpi$ by:
-    \[
-      \left\{
-        \begin{array}{lcl}
-          \texttt{struct}(\epsilon) & = & {[}] \\
-          \texttt{struct}(\varpi.0) & = & \arrow {{[}]} {\texttt{struct}(\varpi)} \\
-          \texttt{struct}(\varpi.1) & = & {[}] \\
-          \texttt{struct}(\varpi.l) & = & \bpl {\texttt{struct}(\varpi)} \text{ if defined, otherwise []} \\
-          \texttt{struct}(\varpi.r) & = & \bpr {\texttt{struct}(\varpi)} \text{ if defined, otherwise []} \\
-          \texttt{struct}(\varpi.f) & = & \pair {\texttt{struct}(\varpi)} {{[}]} \\
-          \texttt{struct}(\varpi.s) & = & \pair {{[}]} {\texttt{struct}(\varpi)}
-        \end{array}  
-      \right.
-    \]
-
-    Now, for each relevant expression that appears in a test, we define its possible structures $\texttt{structs}$ by:
-    \[
-      \left\{
-        \begin{array}{lcl}
-          \texttt{structs}(c) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv c\}} \{ \texttt{struct}(\varpi) \} \\
-          \texttt{structs}(x) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv x\}} \{ \texttt{struct}(\varpi) \} \\
-          \texttt{structs}(\lambda^tx.e) & = & \bigcup_{(e,t,p)\in\tenv}\bigcup_{\{\varpi\alt\occ e \varpi \equiv \lambda^tx.e\}} \{ \texttt{struct}(\varpi) \} \\
-          \texttt{structs}((e_1,e_2)) & = & \bigcup_{s_1\in\texttt{structs}(e_1)}\bigcup_{s_2\in\texttt{structs}(e_2)}  \{ (s_1,s_2) \} \\
-          \texttt{structs}(e_1 e_2) & = & \bigcup_{\arrow s t\in\texttt{structs}(e_1)} \{ t \}
-        \end{array}  
-      \right.
-    \]
+    %snd (snd x)      (_,(_,_))
+    %(fst x) y        (_->_,_)
 
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
     $\forall e' \text{ such that } \exists (e,t,p) \in \tenv \exists \varpi.\ \occ e \varpi \equiv e'$,
