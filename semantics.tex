@@ -146,19 +146,14 @@
       \begin{definition}[Well formed environment]
         An environment $\Gamma$ is well-formed iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma.\ e \text{ is normal (it has a DNF without negative arrow)}\\
-          &\forall e \in \dom \Gamma \text{ not a variable. } \exists t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \text{ and } \Gamma(e) \leq t
+          &\forall e \in \dom \Gamma \text{ not a variable. } \exists \ts \text{ not empty}.\ \Gamma\setminus\{e\} \vdash e : \ts \text{ and } \tsint \ts \subseteq \tsint {\Gamma(e)}
         \end{align*}
-        In particular, this last property implies:
-        \[
-          \forall e \in \dom \Gamma.\ \forall t.\ \Gamma\setminus(e:\Gamma(e)) \vdash e : t \Rightarrow \Gamma(e) \leq t
-        \]
       \end{definition}
     
       \begin{definition}[Environment inclusion]
         Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : t \text{ with } t \leq \Gamma(e)
+          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : \ts \text{ with } \tsint {\Gamma(e)} \subseteq \tsint \ts
         \end{align*}
       \end{definition}
       
@@ -166,7 +161,7 @@
         Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
         \begin{align*} 
           &\forall e \in \dom \Gamma.\ \Gamma' \vdash e:\Gamma(e) \hspace{1cm} \text{and} \hspace{1cm}
-          \forall e' \in \dom {\Gamma'}.\ \Gamma \vdash e':\Gamma'(e')
+          \forall e \in \dom {\Gamma'}.\ \Gamma \vdash e:\Gamma'(e)
         \end{align*}
       \end{definition}
     
@@ -175,7 +170,7 @@
         The environment $\Gamma\rho$ is defined by:
         \begin{align*}
           &\dom {\Gamma\rho} = \dom \Gamma \rho\\
-          &\forall e' \in \dom {\Gamma\rho}, (\Gamma\rho)(e') = \bigwedge_{e'' \in \dom \Gamma \text{ s.t. } e''\rho=e'}\Gamma(e'')
+          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \tsand_{e' \in \dom \Gamma \text{ s.t. } e'\rho=e}\Gamma(e')
         \end{align*}
       \end{definition}
     
