@@ -295,20 +295,17 @@
       &\structs \tenv \struct=\textsf{lfp}_\struct (\auxstr \tenv)
     \end{align*}
 
-    Let $\struct_I$ be the structural environment that map every occurence of variable, constant or $\lambda$-abstraction
-    appearing in $\tenv$ to $[]$.
+    Let $\struct_I$ be the structural environment that maps every occurence of variable, constant or $\lambda$-abstraction
+    in $\tenv$ to $[]$.
 
     $\struct = \structs \tenv {\struct_I}$ is well-defined as $\auxstr \tenv$ is monotonic (and even extensive).
     Moreover, for any $e\in\dom\struct$, $\struct(e)$ is finite. TODO
 
     -----
 
-    TODO: update
-
     Let's prove the following invariant. After any number of iteration, the resulting environment $\Gamma'$ is such that:\\
-    $\forall e' \text{ such that } \exists (e,t,p) \in \tenv \exists \varpi.\ \occ e \varpi \equiv e'$,
-    if $e' \in \dom {\Gamma'}$, then $\tsrep {\Gamma'(e')}$ has a DNF with only atoms of the form
-    $\text{ctx}[\vec s]$ with $\vec s$ a vector of elements of $S$ and $\text{ctx}$ an element of $\texttt{structs}(e')$.
+    for any occurence $e'$ in $\tenv$ such that $e' \in \dom {\Gamma'}$, $\tsrep {\Gamma'(e')}$ can be written with a DNF with only atoms
+    of the form $\text{ctx}[\vec s]$ with $\vec s$ a vector of elements of $S$ and $\text{ctx}$ an element of $\structof{\struct}{e'}$.
     Note that there is finitely many such DNF.
         
     We prove it by induction on the number of iterations.
@@ -319,28 +316,22 @@
     and show that $\Gamma'' = \Gaux \tenv {\Gamma'}$ also satisfies the induction hypothesis.
 
     Let's fix $(e,t,p)$ and $\varpi$.\\
-    We need to show that $\Gp p {\Gamma'',e,t} (\varpi)$ has the form described above.    
+    We need to show that $\Gp p {\Gamma'',e,t} (\varpi)$ has a DNF as described above.    
     We proceed by induction on $\varpi$.
 
-    Before treating the base case and the inductive case, we have to show that $\tsrep {\tyof {\occ e \varpi} {\Gamma'}}$
-    has a DNF with only atoms of the form described above.
+    Before treating the base case and the inductive case, we must show that $\tsrep {\tyof {\occ e \varpi} {\Gamma'}}$
+    has the required form.
 
-    It can be easily proven by induction on the derivation.\\
-    For the case of the application, we proceed by induction and by noticing that plinths are stable by $\circ$.\\
-    Other cases are straightforward.
+    It can be easily proven by induction on the derivation (all cases are quite straightfoward given the form of $\structof {} {\_}$).
 
-    Now, the base case of our induction (for $\varpi=\epsilon$) becomes trivial.
+    Now, the base case of our induction (for $\varpi=\epsilon$) is trivial.
 
     Here are the inductive cases:
     \begin{description}
-      \item[$\varpi.1$] TODO %We just have to notice that plinths are stable by $\worra {} {}$
-      \item[$\varpi.0$] By induction (and using the previous case), the DNF of $\typep{p}{\varpi.1}{\Gamma,e,t}$ is composed of elements of
-      $\texttt{struct}(\varpi')$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi.1}$.\\
-      TODO\\
-      $\arrow {[]} {\texttt{struct}(\varpi')}$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi}$\\
-      $\texttt{struct}(\varpi')$ for a certain $\varpi'$ such that $\occ {e'} {\varpi'}\equiv \occ {e} {\varpi.0}$.
-      \item[$\varpi.l$ and $\varpi.r$] Quite similar.
-      \item[$\varpi.f$ and $\varpi.s$] Quite similar.
+      \item[$\varpi.1$] TODO
+      \item[$\varpi.0$] TODO
+      \item[$\varpi.l$ and $\varpi.r$] TODO
+      \item[$\varpi.f$ and $\varpi.s$] TODO
     \end{description}
 
     It concludes the induction.
