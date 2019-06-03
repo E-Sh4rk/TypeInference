@@ -21,6 +21,8 @@
 \begin{document}
 
   \maketitle
+
+    TODO: in types, fixpoint and semantics: define and use aleq operator between two type schemes
   
     \section{Typing rules}
 
@@ -143,25 +145,19 @@
 
       \subsection{Definitions}
 
-      \begin{definition}[Well formed environment]
-        An environment $\Gamma$ is well-formed iff:
+      \begin{definition}[Well formed environments]
+        A (test environment, environment) pair ($\tenv,\Gamma$) is well-formed iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma \text{ not a variable. } \exists \ts \text{ not empty}.\ \Gamma\setminus\{e\} \vdash e : \ts \text{ and } \tsint \ts \subseteq \tsint {\Gamma(e)}
+          &\tenv \text{ is well-typed}\\
+          &\forall e \in \dom \Gamma \text{ not a variable. } \exists \ts \text{ not empty}.\ \tenv,\Gamma\setminus\{e\} \vdash e : \ts \text{ and } \tsint \ts \subseteq \tsint {\Gamma(e)}
         \end{align*}
       \end{definition}
     
       \begin{definition}[Environment inclusion]
-        Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
+        Let $\tenv$ a test environment. Let $\Gamma$ and $\Gamma'$ two environments such that $(\tenv,\Gamma)$ and $(\tenv,\Gamma')$
+        are well-formed. We says that $\Gamma' \leq_{\tenv} \Gamma$ iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : \ts \text{ with } \tsint {\Gamma(e)} \subseteq \tsint \ts
-        \end{align*}
-      \end{definition}
-      
-      \begin{definition}[Environment equivalence]
-        Two well-formed environments $\Gamma$ and $\Gamma'$ are equivalent (noted $\Gamma \equiv \Gamma'$) iff:
-        \begin{align*} 
-          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e:\Gamma(e) \hspace{1cm} \text{and} \hspace{1cm}
-          \forall e \in \dom {\Gamma'}.\ \Gamma \vdash e:\Gamma'(e)
+          &\forall e \in \dom \Gamma.\ \tenv,\Gamma' \vdash e : \ts \text{ with } \tsint {\Gamma(e)} \subseteq \tsint \ts
         \end{align*}
       \end{definition}
     
@@ -191,42 +187,47 @@
         Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
 
         \begin{lemma}[Well-formedness preservation]
-          Let $\Gamma$ a well-formed environment. Let $\rho$ a substitution.
-          Then $\Gamma\rho$ is a well-formed environment.
+          Let $(\tenv,\Gamma)$ well-formed. Let $\rho$ a substitution.
+          Then $(\tenv,\Gamma\rho)$ is well-formed.
         \end{lemma}
 
         \begin{lemma}[Alpha-renaming]
           Both the type system and the semantics are invariant by alpha-renaming.
         \end{lemma}
         Proof: quite straightforward.
-        For the type system, it is a consequence of the fact that domains of environments are up to alpha-renaming.
+        For the type system, it is a consequence of the fact that environments are up to alpha-renaming.
         For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
         are up to alpha-renaming.
     
+        \begin{lemma}
+          If $\tenv,\Gamma\vdash e:\ts$ and $e$ has no occurence of $\texttt{ite}$ (except under a $\lambda$-abstraction),
+          then $\tyof {e} {\Gamma} = \ts$.
+
+          Reciprocally, if $\tyof {e} {\Gamma} = \ts$ and all occurences of $\lambda$-abstractions in $e$ are well-typed
+          with $\tenv,\Gamma$, then $\tenv,\Gamma\vdash e:\ts$.
+        \end{lemma}
+
         \begin{lemma}[Monotonicity]
           Let $\tenv$ a (well-typed) set of tests.
-          Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
-          Let $e$ an expression such that $\tenv, \Gamma \vdash e:t$.
+          Let $\Gamma$ and $\Gamma'$ two environments such that $(\tenv,\Gamma)$ and $(\tenv,\Gamma')$ are well-formed
+          and such that $\Gamma' \leq_{\tenv} \Gamma$.
+          Let $e$ an expression such that $\tenv, \Gamma \vdash e:\ts$.
           Then:\\
           \begin{align*}
-            &\tenv, \Gamma' \vdash e:t' \text{ with } t' \leq t\\
-            &\forall p \forall t' \forall \varpi.\ \Gp p {\Gamma',e,t'} (\varpi) \leq \Gp p {\Gamma,e,t'} (\varpi)
+            &\tenv, \Gamma' \vdash e:\ts' \text{ with } \tsint \ts \subseteq \tsint {\ts'}
           \end{align*}
         \end{lemma}
 
         \begin{corollary}[Relation order]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
-
-        \begin{corollary}[Equivalence]
-          If $\Gamma \vdash e:t$ and $\Gamma' \equiv \Gamma$, then $\Gamma' \vdash e:t$.
-        \end{corollary}
-        Proof: corollary of the monotonicity lemma, by noticing that $\Gamma \leq \Gamma' \text{ and } \Gamma' \leq \Gamma \Leftrightarrow \Gamma \equiv \Gamma'$.
     
         \begin{corollary}[Strengthening]
-          If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
-          $\Gamma, (x:t_1^x\land t_2^x) \vdash e:t$ with $t \leq t_1\land t_2$.
+          If $\tenv, (\Gamma, (x:\ts_1^x)) \vdash e:\ts_1$ and $\tenv, (\Gamma, (x:\ts_2^x)) \vdash e:\ts_2$, then
+          $\tenv, (\Gamma, (x:\ts_1^x\tsand \ts_2^x)) \vdash e:\ts$ with $\tsint {t_1\tsand t_2} \subseteq \tsint \ts$.
         \end{corollary}
+
+        TODO: update (tenv, etc)
     
         \begin{lemma}[Substitution]
           Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ some types.
