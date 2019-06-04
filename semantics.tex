@@ -164,7 +164,7 @@
         The environment $\Gamma\rho$ is defined by:
         \begin{align*}
           &\dom {\Gamma\rho} = \dom \Gamma \rho\\
-          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \tsand_{e' \in \dom \Gamma \text{ s.t. } e'\rho=e}\Gamma(e')
+          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \tsand_{e' \in \dom \Gamma \text{ s.t. } e'\rho\equiv e}\Gamma(e')
         \end{align*}
       \end{definition}
     
@@ -183,11 +183,6 @@
           \end{align*}
         \end{property}
         Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
-
-        \begin{lemma}[Well-formedness preservation]
-          Let $(\tenv,\Gamma)$ well-formed. Let $\rho$ a substitution.
-          Then $(\tenv,\Gamma\rho)$ is well-formed.
-        \end{lemma}
 
         \begin{lemma}[Alpha-renaming]
           Both the type system and the semantics are invariant by alpha-renaming.
@@ -225,18 +220,22 @@
           $\tenv, (\Gamma, (x:\ts_1^x\tsand \ts_2^x)) \vdash e:\ts$ with $\ts \leq t_1\tsand t_2$.
         \end{corollary}
 
-        TODO: update (tenv, etc)
-    
+        \begin{lemma}[Well-formedness preservation]
+          Let $(\tenv,\Gamma)$ well-formed. Let $\rho$ a substitution.
+          Then $(\tenv\rho,\Gamma\rho)$ is well-formed.
+        \end{lemma}
+
         \begin{lemma}[Substitution]
-          Let $\Gamma$ a well-formed environment, $e$, $e_a$ and $e_b$ some expressions, $t$, $t_a$ and $t_b$ some types.
-          If $e \in \dom \Gamma$, $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t_a$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t_b$ with $t_b \leq t_a$, then:
+          Let $\tenv$,$\Gamma$ such that $(\tenv,\Gamma)$ is well-formed. Let $e$, $e_a$ and $e_b$ some expressions, $\ts$, $\ts_a$ and $\ts_b$ some types.
+          If $e \in \dom \Gamma$, $\tenv,\Gamma \vdash e:\ts$ and $\tenv,\Gamma \vdash e_a : \ts_a$ and $\tenv\subst {e_a} {e_b},\Gamma\subst {e_a} {e_b} \vdash e_b:\ts_b$ with $\ts_b \leq \ts_a$, then:
           \begin{align*}
-            &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t' \text{ with } t'\leq t\\
-            &\forall p \forall t_{if} \forall \varpi.\ \Gp p {\Gamma\subst {e_a} {e_b},e\subst {e_a} {e_b},t_{if}} (\varpi) \leq \Gp p {\Gamma,e,t_{if}} (\varpi)
+            &\tenv\subst {e_a} {e_b}, \Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:\ts' \text{ with } \ts'\leq \ts
           \end{align*}
         \end{lemma}
+
+        % &\forall p \forall t_{if} \forall \varpi.\ \Gp p {\Gamma\subst {e_a} {e_b},e\subst {e_a} {e_b},t_{if}} (\varpi) \leq \Gp p {\Gamma,e,t_{if}} (\varpi)
     
-        TODO: beyond this point, statements and proofs must be checked/updated (a lot of changes have been made).
+        TODO: update (a lot of changes have been made: tenv, type schemes, typeof, ...).
 
         \begin{corollary}[Substitution 2]
           Let $\Gamma$ an environment, $x$ a variable that does not appear in $\dom \Gamma$, $e$ an expression, $e'$ an expression that does not contain $x$, $t$ a type and $t_x$ a type that is not $\Empty$.\\
