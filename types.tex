@@ -66,6 +66,12 @@
     
     Two type schemes are said equivalent if they have the same interpretation.
     \end{definition}
+ 
+    \begin{definition}[Order relation on type schemes]
+      Let $\ts_1$ and $\ts_2$ two type schemes.
+      We note $\ts_1\leq\ts_2$ iff $\tsint {\ts_2} \subseteq \tsint {\ts_1}$.
+      Note: This order relation may not be computable.
+    \end{definition}
 
     \begin{definition}[Representant]
       We define a function $\tsrep {\_}$ that maps any non-empty type scheme to a type (a \textit{representant}).
@@ -80,19 +86,19 @@
         \end{array}
       \end{align*}
 
-    Note that $\tsrep \ts \in \tsint \ts$. Moreover, if two type schemes are equivalent, then their representant are equivalent.
-    \end{definition}
-
-    \begin{definition}[Order relation on type schemes]
-      Let $\ts_1$ and $\ts_2$ two type schemes.
-      We note $\ts_1\leq\ts_2$ iff $\tsint {\ts_2} \subseteq \tsint {\ts_1}$.
-      Note: This order relation may not be computable.
+    Note that $\tsrep \ts \in \tsint \ts$.
     \end{definition}
 
     \section{Theorems}
 
     \begin{property}
       For every type $t$, we can compute a DNF $\tau$ such that $\semantic t = \semantic \tau$.
+    \end{property}
+
+    \begin{property}
+      Let $\ts_1$ and $\ts_2$ two non-empty type schemes.\\
+      If $\tsint {\ts_1} \simeq \tsint {\ts_2}$, then $\tsrep {\ts_1} \simeq \tsrep {\ts_2}$.\\
+      If $\ts_1 \leq \ts_2$, then $\tsrep {\ts_1} \leq \tsrep {\ts_2}$.
     \end{property}
 
     \begin{lemma}
