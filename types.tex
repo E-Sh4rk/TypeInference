@@ -83,6 +83,12 @@
     Note that $\tsrep \ts \in \tsint \ts$. Moreover, if two type schemes are equivalent, then their representant are equivalent.
     \end{definition}
 
+    \begin{definition}[Order relation on type schemes]
+      Let $\ts_1$ and $\ts_2$ two type schemes.
+      We note $\ts_1\leq\ts_2$ iff $\tsint {\ts_2} \subseteq \tsint {\ts_1}$.
+      Note: This order relation may not be computable.
+    \end{definition}
+
     \section{Theorems}
 
     \begin{property}

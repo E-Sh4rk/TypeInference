@@ -21,8 +21,6 @@
 \begin{document}
 
   \maketitle
-
-    TODO: in types, fixpoint and semantics: define and use aleq operator between two type schemes
   
     \section{Typing rules}
 
@@ -149,7 +147,7 @@
         A (test environment, environment) pair ($\tenv,\Gamma$) is well-formed iff:
         \begin{align*}
           &\tenv \text{ is well-typed}\\
-          &\forall e \in \dom \Gamma \text{ not a variable. } \exists \ts \text{ not empty}.\ \tenv,\Gamma\setminus\{e\} \vdash e : \ts \text{ and } \tsint \ts \subseteq \tsint {\Gamma(e)}
+          &\forall e \in \dom \Gamma \text{ not a variable. } \exists \ts \text{ not empty}.\ \tenv,\Gamma\setminus\{e\} \vdash e : \ts \text{ and } \Gamma(e) \leq \ts
         \end{align*}
       \end{definition}
     
@@ -157,7 +155,7 @@
         Let $\tenv$ a test environment. Let $\Gamma$ and $\Gamma'$ two environments such that $(\tenv,\Gamma)$ and $(\tenv,\Gamma')$
         are well-formed. We says that $\Gamma' \leq_{\tenv} \Gamma$ iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma.\ \tenv,\Gamma' \vdash e : \ts \text{ with } \tsint {\Gamma(e)} \subseteq \tsint \ts
+          &\forall e \in \dom \Gamma.\ \tenv,\Gamma' \vdash e : \ts \text{ with } \ts \leq \Gamma(e)
         \end{align*}
       \end{definition}
     
@@ -214,7 +212,7 @@
           Let $e$ an expression such that $\tenv, \Gamma \vdash e:\ts$.
           Then:\\
           \begin{align*}
-            &\tenv, \Gamma' \vdash e:\ts' \text{ with } \tsint \ts \subseteq \tsint {\ts'}
+            &\tenv, \Gamma' \vdash e:\ts' \text{ with } \ts' \leq \ts
           \end{align*}
         \end{lemma}
 
@@ -224,7 +222,7 @@
     
         \begin{corollary}[Strengthening]
           If $\tenv, (\Gamma, (x:\ts_1^x)) \vdash e:\ts_1$ and $\tenv, (\Gamma, (x:\ts_2^x)) \vdash e:\ts_2$, then
-          $\tenv, (\Gamma, (x:\ts_1^x\tsand \ts_2^x)) \vdash e:\ts$ with $\tsint {t_1\tsand t_2} \subseteq \tsint \ts$.
+          $\tenv, (\Gamma, (x:\ts_1^x\tsand \ts_2^x)) \vdash e:\ts$ with $\ts \leq t_1\tsand t_2$.
         \end{corollary}
 
         TODO: update (tenv, etc)

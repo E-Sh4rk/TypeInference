@@ -112,14 +112,14 @@
     \begin{definition}[Well-formed environment]
       An environment $\Gamma$ is well-formed iff:
       \begin{align*}
-        &\forall e \in \dom \Gamma \text{ not a variable. } \tsint{\tyof {e} {\Gamma\setminus\{e\}}} \neq \varnothing \text{ and } \tsint {\tyof {e} {\Gamma\setminus\{e\}}} \subseteq \tsint{\Gamma(e)}
+        &\forall e \in \dom \Gamma \text{ not a variable. } \tsint{\tyof {e} {\Gamma\setminus\{e\}}} \neq \varnothing \text{ and } \Gamma(e) \leq \tyof {e} {\Gamma\setminus\{e\}}
       \end{align*}
     \end{definition}
   
     \begin{definition}[Environment inclusion]
       Let $\Gamma$ and $\Gamma'$ two well-formed environments. We says that $\Gamma' \leq \Gamma$ iff:
       \begin{align*}
-        &\forall e \in \dom \Gamma.\ \tsint{\Gamma(e)} \subseteq \tsint{\tyof e {\Gamma'}}
+        &\forall e \in \dom \Gamma.\ \tyof e {\Gamma'} \leq \Gamma(e)
       \end{align*}
     \end{definition}
     
@@ -147,7 +147,7 @@
         \begin{lemma}[$\tyof {\_} {}$ monotonicity]
           Let $\Gamma$ and $\Gamma'$ two well-formed environments such that $\Gamma' \leq \Gamma$.
           Let $e$ an expression.\\
-          We have $\tsint {\tyof e \Gamma} \subseteq \tsint {\tyof e {\Gamma'}}$ and
+          We have $\tyof e {\Gamma'} \leq \tyof e \Gamma$ and
           $\tsrep {\tyof e {\Gamma'}} \leq \tsrep {\tyof e {\Gamma}}$ (if defined).
         \end{lemma}
 
@@ -196,12 +196,12 @@
       Let $\tenv$, $\Gamma$, $\Gamma'$ as in the lemma statement.
 
       We have to prove that for all relevant $p$, $e$, $t$ and $\varpi$,
-      we have $\tsint {\tyof {\occ e \varpi} {\Gamma} \tsand \Gp p {\Gamma,e,t} (\varpi)} \subseteq \tsint {\tyof {\occ e \varpi} {\Gamma'} \tsand \Gp p {\Gamma',e,t} (\varpi)}$.
+      we have $\tyof {\occ e \varpi} {\Gamma'} \tsand \Gp p {\Gamma',e,t} (\varpi) \leq \tyof {\occ e \varpi} {\Gamma} \tsand \Gp p {\Gamma,e,t} (\varpi)$.
 
       We proceed by induction on $\varpi$. 
 
       By monotonicity of $\tyof {\_} {}$, we get that
-      $\tsint {\tyof {\occ e \varpi} {\Gamma}} \subseteq \tsint {\tyof {\occ e \varpi} {\Gamma'}}$
+      $\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}$
       and $\tsrep {\tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep {\tyof {\occ e \varpi} {\Gamma}}$.
 
       We proceed by case analysis on $\varpi$:
