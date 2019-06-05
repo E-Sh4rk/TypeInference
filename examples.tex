@@ -1,0 +1,113 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Some difficulties...}
+\author{}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+
+  \newcommand{\id} {\textsf{id}}
+  
+    \section{Utility of $\tenv$}
+
+    Note: the use of $\tenv$ and the use of a fixpoint come together.
+    Using $\tenv$ is useless if we don't use a fixpoint with it.
+    Indeed, all the examples below can be rewritten with only one test, using pairs:
+    \begin{align*}
+      &\ite {e_1} {t_1} {(\ite {e_2} {t_2} {e} {\bot})} {\bot}\\
+      \to& \ite {(e_1,e_2)} {(\pair {t_1} {t_2})} {e} {\bot}
+    \end{align*}
+
+    \subsection{Subject reduction}
+
+    \begin{align*}
+      &\ite {(x,\id y)} {\pair \Any \Any}
+      {
+        (\ite x \Int {\bpi_1 (x,y)} 0)
+      } 0\\
+      \leadsto
+      &\ite {(x,y)} {\pair \Any \Any}
+      {
+        (\ite x \Int {\bpi_1 (x,y)} 0)
+      } 0
+    \end{align*}
+
+    Explanation (without $\tenv$):
+    \begin{itemize}
+      \item The first expression has type $\Int$.
+      \item The second expression has type $\Any$, as $(x,y) \in \dom\Gamma$ in the then branch.
+    \end{itemize}
+
+    Possible fix (without $\tenv$):
+    \begin{itemize}
+      \item Non-algorithmic typing rules such that we can choose to look at $\Gamma$ or not.\\
+      We would still need type schemes.\\
+      We need to write this new type system in an algorithmic way,
+      otherwise we would still need an independent deterministic typeof (it would only move the problem).
+      \item Somehow "repair" $\Gamma$ after/during refinements without needing $\tenv$ (just with the informations in $\Gamma$).
+      It would need to check all elements in $\Gamma$ and strenghten them if needed.
+      Would not be well-founded in the case of a ite statement in a test. So it seems more complicated and it does not solve any problem.
+    \end{itemize}
+
+    \subsection{Precision}
+
+    \begin{align*}
+      &\ite {(x,y)} {(\pair \Int \Int) \vee (\pair \Bool \Bool)}
+      {
+        (\ite x \Int y 0)
+      } 0
+    \end{align*}
+
+    Explanation (without $\tenv$):
+    \begin{itemize}
+      \item This expression has type $\Int \vee \Bool$, altough we could expect it to be $\Int$.
+      The reason for that is that relation between $x$ and $y$ after the first test (in the then branch) is lost,
+      because we never give importance again to the fact that $(x,y)\in(\pair \Int \Int)\vee(\pair \Bool \Bool)$ during refinements.
+    \end{itemize}
+
+    Possible fix (without $\tenv$):
+    \begin{itemize}
+      \item ???
+    \end{itemize}
+    
+    \section{Why we can't handle nested if statements precisely with $\tenv$}
+
+    \begin{align*}
+      \ite {((x,y), &\ite x \Int y 0)}
+      {\pair {((\pair \Int \Int) \vee (\pair \Bool \Bool))} {(\Int \vee \Bool)}\\}
+      {&(\ite x \Int y 0)\\} {&0}
+    \end{align*}
+
+    Explanation:
+    \begin{itemize}
+      \item If, during the refinement of the first test, we try to type the nested $\texttt{if}$ using the new $\tenv$ (the one that contains the current test itself),
+      it would not be well-founded.
+      \item If, at the opposite, we type the nested if with the old $\tenv$, then:
+      \begin{enumerate}
+        \item During the refinement, the nested $\texttt{if}$ will be typed without knowing that $(x,y)\in(\pair \Int \Int)\vee(\pair \Bool \Bool)$.
+        So, its type will be equivalent to $\Gamma(y) \vee \Int$.
+        \item In the same time, $\Gamma(y)$ will be refined to $\Int \vee \Bool$.
+        \item In the end (after the fixpoint), the nested $\texttt{if}$ will be associated to the type $\Int \vee \Bool$.
+        \item Now, if we try to retype the $\texttt{if}$ in the then branch (by forgetting the value that we computed earlier),
+        we obtain the type $\Int$ (so a strictly stronger type).
+        That's because, this time, $(x,y)\in(\pair \Int \Int)\vee(\pair \Bool \Bool)$ is in $\tenv$.
+      \end{enumerate}
+    \end{itemize}
+    
+\end{document}
