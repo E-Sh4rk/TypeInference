@@ -56,7 +56,7 @@
       \text{If } e \in \dom \Gamma \text{, } & \tyof x \Gamma &=& \Gamma(x)\\
       & \tyof e \Gamma &=& \Gamma(e) \tsand \tyof e {\Gamma\setminus\{e\}}\\
       \text{Otherwise,} & \tyof c \Gamma &=& \basic{c}\\
-      &\tyof {\lambda^{t}x.e} \Gamma &=& t\\
+      &\tyof {\lambda^{\bigwedge_{i\in I} \arrow {s_i} {t_i}}x.e} \Gamma &=& \tsfun {\arrow {s_i} {t_i}}_{i\in I}\\
       &\tyof {{e_1} {e_2}} \Gamma &=& \apply {\tyof {e_1} \Gamma} {\tyof {e_2} \Gamma} & \text{(if defined)}\\
       &\tyof {\pi_i e} \Gamma &=& \bpi_{\mathbf{i}}(\tyof e \Gamma) & \text{(if defined)}\\
       &\tyof {(e_1,e_2)} \Gamma &=& \tyof {e_1} \Gamma \tstimes \tyof {e_2} \Gamma\\%\pair{\tyof {e_1} \Gamma}{\tyof {e_2} \Gamma}
@@ -81,7 +81,7 @@
         \Infer[Abs]
             { }
             {
-            \Gamma\tvdash\lambda^{t}x.e:t
+            \Gamma\tvdash\lambda^{t}x.e: \tsfun t
             }
             {\lambda^{t}x.e\not\in\dom\Gamma}
             \\

@@ -40,7 +40,7 @@
       \Infer[Abs]
           {\tenv,\Gamma,x:s_i\vdash e:\ts_i'\\ \ts_i'\leq t_i}
           {
-          \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\bigwedge_{i\in I}\arrow {s_i} {t_i}
+          \tenv,\Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle \tsfun {\arrow {s_i} {t_i}}_{i\in I}
           }
           {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
           \\
@@ -87,8 +87,8 @@
 
     \[
       \begin{array}{lrcl}
-      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \ite k t e e\\
-      \textbf{Conditions} & k & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt k k\\
+      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \ite e t e e\\
+      \textbf{Annoted expressions} & a & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt a a \alt \aite e t e e t\\
       \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e
       \end{array}
     \]
