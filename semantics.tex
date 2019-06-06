@@ -55,16 +55,19 @@
           { {e_1}{e_2}\not\in\dom\Gamma}
           \\
       \Infer[If]
-            {\tenv,\Gamma\vdash e:\ts_0\\
+            {\makebox{$\begin{array}{l}
+              \tenv,\Gamma\vdash e:\ts_0\\
+              \text{annot: } e \rightarrow e_a
+            \end{array}$}\\
             \makebox{$\begin{array}{l}
               \left\{
                 \begin{array}{ll} %\Gamma,
-                \cons {(e,t,+)} \tenv,\Genv {\cons {(e,t,+)} \tenv} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
+                \cons {(e_a,t,+)} \tenv,\Genv {\cons {(e_a,t,+)} \tenv} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
                 \ts_1 = \Empty & \text{ otherwise}
               \end{array}\right.\\
               \left\{
                 \begin{array}{ll} %\Gamma,
-                \cons {(e,t,-)} \tenv,\Genv {\cons {(e,t,-)} \tenv} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
+                \cons {(e_a,t,-)} \tenv,\Genv {\cons {(e_a,t,-)} \tenv} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
                 \ts_2 = \Empty & \text{ otherwise}
               \end{array}\right.
             \end{array}$}}
@@ -88,7 +91,7 @@
     \[
       \begin{array}{lrcl}
       \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \ite e t e e\\
-      \textbf{Annoted expressions} & a & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt a a \alt \aite e t e e t\\
+      \textbf{Annoted expressions} & a & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt a a \alt \aite e t e e \ts\\
       \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e
       \end{array}
     \]
