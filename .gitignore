@@ -5,4 +5,4 @@
 *.fdb_latexmk
 *.log
 *.synctex(busy)
-_minted-formalisation
+*_minted-formalisation
