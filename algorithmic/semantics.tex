@@ -1,0 +1,141 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Type inference - M2 Internship}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+  
+    \section{Typing rules}
+
+    \begin{mathpar}
+      \Infer[Occ]
+          { \Gamma\setminus\{e\} \vdash e : t }
+          { \Gamma \vdash e: \Gamma(e) \tsand t }
+          { e\in\dom\Gamma}
+      \qquad
+      \Infer[Const]
+          { }
+          {\Gamma\vdash c:\basic{c}}
+          {c\not\in\dom\Gamma}
+       \\
+      \Infer[Abs]
+          {\Gamma,x:s_i\vdash e:\ts_i'\\ \ts_i'\leq t_i}
+          {
+          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle\tsfun {\arrow {s_i} {t_i}}_{i\in I}
+          }
+          {\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e\not\in\dom\Gamma}
+          \\
+      \Infer[App]
+          {
+            \Gamma \vdash e_1: \ts_1\\
+            \Gamma \vdash e_2: \ts_2\\
+            \ts_1 \leq \arrow \Empty \Any\\
+            \ts_2 \leq \dom {\ts_1}
+          }
+          { \Gamma \vdash {e_1}{e_2}: \ts_1 \circ \ts_2 }
+          { {e_1}{e_2}\not\in\dom\Gamma}
+          \\
+      \Infer[If]
+            {\Gamma\vdash e:\ts_0\\
+            \makebox{$\begin{array}{l}
+              \left\{
+                \begin{array}{ll} %\Gamma,
+                \Refine + {e,t} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
+                \ts_1 = \Empty & \text{ otherwise}
+              \end{array}\right.\\
+              \left\{
+                \begin{array}{ll} %\Gamma,
+                \Refine - {e,t} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
+                \ts_2 = \Empty & \text{ otherwise}
+              \end{array}\right.
+            \end{array}$}}
+            {\Gamma\vdash \ite {e} t {e_1}{e_2}: \ts_1\tsor \ts_2}
+            %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
+            {\texttt{if}\dots\not\in\dom\Gamma}
+      \\
+      \Infer[Proj]
+      {\Gamma \vdash e:\ts\and \ts\leq\pair\Any\Any}
+      {\Gamma \vdash \pi_i e:\bpi_{\mathbf{i}}(\ts)}
+      {\pi_i e\not\in\dom\Gamma}
+  
+      \Infer[Pair]
+      {\Gamma \vdash e_1:\ts_1 \and \Gamma \vdash e_2:\ts_2}
+      {\Gamma \vdash (e_1,e_2):{\ts_1}\tstimes{\ts_2}}%\pair{t_1}{t_2}}
+      {(e_1,e_2)\not\in\dom\Gamma}
+    \end{mathpar}
+
+    \section{Intermediate semantics}
+
+    \[
+      \begin{array}{lrcl}
+      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \ite e t e e\\
+      \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e
+      \end{array}
+    \]
+
+    \[
+      \begin{array}{lrcl}
+      \textbf{Context} & C[] & ::= & e [] \alt [] v
+      \end{array}
+    \]
+
+    For convenience, we denote $E\xleadsto{E\mapsto E'}E'$ by $E\idleadsto E'$.
+
+    \begin{mathpar}
+      \Infer[Ctx]
+      {e \xleadsto{E\mapsto E'} e'}
+      {C[e] \xleadsto{E\mapsto E'} C[e']}
+      {}
+      \qquad
+      \Infer[App]
+      { }
+      {(\lambda^tx.e) v \idleadsto e\subst x v}
+      {}\\
+      \Infer[TestCtx]
+      {e \xleadsto{E\mapsto E'} e'}
+      {\ite e t {e_1} {e_2} \idleadsto \ite {e'} t {e_1\subst E {E'}} {e_2\subst E {E'}}}
+      {}\\
+      \Infer[Ite]
+      {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
+      {\ite v t {e_1} {e_2} \idleadsto e_i}
+      {}
+    \end{mathpar}
+
+    \[\valsemantic t = \{v \alt \vvdash v : t\}\]
+
+    \begin{mathpar}
+      \Infer[Subsum]
+          {\vvdash v:t'\\t'\leq t}
+          {\vvdash v:t}
+          {}
+      \qquad
+      \Infer[Const]
+          { }
+          {\vvdash c:\basic{c}}
+          {}
+      \\
+      \Infer[Abs]
+          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\not\leq \Empty}
+          {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
+          {}
+      \\
+      \end{mathpar}
+
+\end{document}

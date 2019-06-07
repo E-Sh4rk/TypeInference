@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Type inference - M2 Internship}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Type refinement system}
+
+  \[
+    \begin{array}{lcl}
+      \typep+\epsilon{\Gamma,e,t} & = & t\\
+      \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
+      \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
+      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tsrep {\tyof{\occ e{\varpi.0}}\Gamma}}{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.l}{\Gamma,e,t} & = & \bpl{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
+      \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}\\
+      %\underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
+    \end{array}
+    \]
+
+    \begin{align*}
+      &(\Refine p {e,t} \Gamma)(e') = 
+        \left\{\begin{array}{ll}
+          \tyof {e'} \Gamma \tsand \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
+          \text{undefined} & \text{otherwise}
+        \end{array}\right.\\
+        \text{optionally, add fixpoint}
+    \end{align*}
+
+\end{document}
