@@ -5,8 +5,8 @@
 \hypersetup{pdfstartview=XYZ}%         zoom par defaut
 
 \setlength{\droptitle}{-5em}   % This is your set screw
-\title{\vspace{1.5cm}Type inference - M2 Internship}
-\author{Mickael LAURENT}
+\title{\vspace{1.5cm}Descriptive type system}
+\author{}
 \date{\vspace{-5ex}}
 
 \pagenumbering{gobble}
@@ -64,8 +64,8 @@
           \\
       \Infer[If]
             {\Gamma\vdash e:t_0\\
-            t_0\not\leq \neg t \Rightarrow \cdots \vdash e_1:t'\\
-            t_0\not\leq t \Rightarrow \cdots \vdash e_2:t'}
+            t_0\not\leq \neg t \Rightarrow \Gamma \cvdash + e t e_1:t'\\
+            t_0\not\leq t \Rightarrow \Gamma \cvdash - e t e_2:t'}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
             { }
       \\
@@ -79,6 +79,82 @@
       {\Gamma \vdash (e_1,e_2):\pair {t_1} {t_2}}
       { }
     \end{mathpar}
+
+    \begin{center} \line(1,0){450} \end{center}
+
+    \begin{mathpar}
+      \Infer[Typeof]
+          { \Gamma \vdash e':t' }
+          { \Gamma \cvdash p e t e':t' }
+          { }
+          \qquad
+      \Infer[Path]
+          { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma,(\occ e \varpi:t_1) \cvdash p e t e':t_2 }
+          { \Gamma \cvdash p e t e':t_2 }
+          { }
+    \end{mathpar}
+
+    \begin{center} \line(1,0){450} \end{center}
+
+    \begin{mathpar}
+      \Infer[Typeof]
+          { \Gamma \vdash \occ e \varpi:t' }
+          { \pvdash \Gamma p e t \varpi:t' }
+          { }
+          \qquad
+      \Infer[Intersect]
+          { \pvdash \Gamma p e t \varpi:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
+          { \pvdash \Gamma p e t \varpi:t_1\land t_2 }
+          { }
+          \qquad
+      \Infer[Subs]
+          { \pvdash \Gamma p e t \varpi:t_1 \\ t_1\leq t_2 }
+          { \pvdash \Gamma p e t \varpi:t_2 }
+          { }
+          \\
+      \Infer[Eps+]
+          { }
+          { \pvdash \Gamma + e t \epsilon:t }
+          { }
+          \qquad
+      \Infer[Eps-]
+          { }
+          { \pvdash \Gamma - e t \epsilon:\neg t }
+          { }
+          \\
+      \Infer[AppL]
+          { \pvdash \Gamma p e t \varpi.1:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
+          { \pvdash \Gamma p e t \varpi.0:\neg (\arrow {t_1} {\neg t_2}) }
+          { }
+          \qquad
+      \Infer[AppR]
+          { \pvdash \Gamma p e t \varpi.0:\arrow{t_1}{t_2} \\ \pvdash \Gamma p e t \varpi:t_2' \\ t_2\land t_2' \simeq \Empty }
+          { \pvdash \Gamma p e t \varpi.1:\neg t_1 }
+          { }
+          \\
+      \Infer[PairL]
+          { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
+          { \pvdash \Gamma p e t \varpi.l:t_1 }
+          { }
+          \qquad
+      \Infer[PairR]
+          { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
+          { \pvdash \Gamma p e t \varpi.r:t_2 }
+          { }
+          \qquad
+      \Infer[Fst]
+          { \pvdash \Gamma p e t \varpi:t' }
+          { \pvdash \Gamma p e t \varpi.f:\pair {t'} \Any }
+          { }
+          \qquad
+      \Infer[Snd]
+          { \pvdash \Gamma p e t \varpi:t' }
+          { \pvdash \Gamma p e t \varpi.s:\pair \Any {t'} }
+          { }
+          \qquad
+    \end{mathpar}
+
+    \newpage
 
     \section{Intermediate semantics}
 
