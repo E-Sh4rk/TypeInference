@@ -66,8 +66,12 @@
     
         \begin{lemma}[Monotonicity]
           Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$.
-          Let $e$ an expression and $t$ a type such that $\Gamma \vdash e:t$.
-          Then, we have $\Gamma' \vdash e:t$.
+          Then, we have:
+          \begin{align*}
+            \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma' \vdash e:t\\
+            \forall e,t,p,e',t'.\ &\Gamma \cvdash p e t e':t' \Rightarrow \Gamma' \cvdash p e t e':t'\\
+            \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \Rightarrow \pvdash {\Gamma'} p e t \varpi:t'
+          \end{align*}
         \end{lemma}
 
         \begin{corollary}[Relation order]
@@ -83,8 +87,8 @@
         \begin{lemma}[Substitution] TODO: Add constraints...\\
           Let $\Gamma$ an environment. Let $e$, $e_a$ and $e_b$ some expressions. Let $t$, $t'$ two types.
 
-          If $e \in \dom \Gamma$, $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t'$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
-          Then:
+          Let's suppose that $e_a \in \dom \Gamma$, $\Gamma \vdash e:t$, $\Gamma \vdash e_a : t'$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+          Then, we have:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t
           \end{align*}
@@ -93,5 +97,18 @@
         \section{Proofs}
 
         \subsection{Monotonicity lemma}
+
+        Let $\Gamma$ and $\Gamma'$ such that $\Gamma' \leq \Gamma$.
+
+        We proceed by induction on the typing derivation of the judgment (left-side of the implication).
+
+        We proceed by case analysis:
+        
+        \begin{description}
+          \item[\Rule{Occ}] We use the definition of $\Gamma' \leq \Gamma$.
+          \item[TODO] 
+        \end{description}
+
+        \subsection{Substitution lemma}
 
 \end{document}

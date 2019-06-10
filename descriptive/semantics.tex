@@ -83,7 +83,7 @@
     \begin{center} \line(1,0){450} \end{center}
 
     \begin{mathpar}
-      \Infer[Typeof]
+      \Infer[Base]
           { \Gamma \vdash e':t' }
           { \Gamma \cvdash p e t e':t' }
           { }
@@ -97,57 +97,57 @@
     \begin{center} \line(1,0){450} \end{center}
 
     \begin{mathpar}
-      \Infer[Typeof]
+      \Infer[PTypeof]
           { \Gamma \vdash \occ e \varpi:t' }
           { \pvdash \Gamma p e t \varpi:t' }
           { }
           \qquad
-      \Infer[Intersect]
+      \Infer[PIntersect]
           { \pvdash \Gamma p e t \varpi:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
           { \pvdash \Gamma p e t \varpi:t_1\land t_2 }
           { }
           \qquad
-      \Infer[Subs]
+      \Infer[PSubs]
           { \pvdash \Gamma p e t \varpi:t_1 \\ t_1\leq t_2 }
           { \pvdash \Gamma p e t \varpi:t_2 }
           { }
           \\
-      \Infer[Eps+]
+      \Infer[PEps+]
           { }
           { \pvdash \Gamma + e t \epsilon:t }
           { }
           \qquad
-      \Infer[Eps-]
+      \Infer[PEps-]
           { }
           { \pvdash \Gamma - e t \epsilon:\neg t }
           { }
           \\
-      \Infer[AppL]
+      \Infer[PAppL]
           { \pvdash \Gamma p e t \varpi.1:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
           { \pvdash \Gamma p e t \varpi.0:\neg (\arrow {t_1} {\neg t_2}) }
           { }
           \qquad
-      \Infer[AppR]
+      \Infer[PAppR]
           { \pvdash \Gamma p e t \varpi.0:\arrow{t_1}{t_2} \\ \pvdash \Gamma p e t \varpi:t_2' \\ t_2\land t_2' \simeq \Empty }
           { \pvdash \Gamma p e t \varpi.1:\neg t_1 }
           { }
           \\
-      \Infer[PairL]
+      \Infer[PPairL]
           { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
           { \pvdash \Gamma p e t \varpi.l:t_1 }
           { }
           \qquad
-      \Infer[PairR]
+      \Infer[PPairR]
           { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
           { \pvdash \Gamma p e t \varpi.r:t_2 }
           { }
           \qquad
-      \Infer[Fst]
+      \Infer[PFst]
           { \pvdash \Gamma p e t \varpi:t' }
           { \pvdash \Gamma p e t \varpi.f:\pair {t'} \Any }
           { }
           \qquad
-      \Infer[Snd]
+      \Infer[PSnd]
           { \pvdash \Gamma p e t \varpi:t' }
           { \pvdash \Gamma p e t \varpi.s:\pair \Any {t'} }
           { }
