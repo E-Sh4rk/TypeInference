@@ -1,0 +1,97 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Descriptive type system}
+\author{}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+  
+    \section{Definitions}
+
+      \begin{definition}[Environment inclusion]
+        Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leq \Gamma$ iff:
+        \begin{align*}
+          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : \Gamma(e)
+        \end{align*}
+      \end{definition}
+    
+      \begin{definition}[Environment substitution]
+        Let $\Gamma$ an environment and $\rho$ a substitution from variables to expressions.
+        The environment $\Gamma\rho$ is defined by:
+        \begin{align*}
+          &\dom {\Gamma\rho} = \dom \Gamma \rho\\
+          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \bigwedge_{\{e' \in \dom \Gamma \alt e'\rho\equiv e\}}\Gamma(e')
+        \end{align*}
+      \end{definition}
+    
+      \begin{definition}[Ordinary environments]
+        We say that an environment $\Gamma$ is ordinary iff its domain only contains variables.
+      \end{definition}
+
+    \section{Theorems}
+
+        \begin{property}[$\valsemantic \_$ properties]
+          \begin{align*}
+            &\forall s.\ \forall t.\ \valsemantic s \subseteq \valsemantic t \Leftrightarrow s \leq t\\
+            &\valsemantic \Empty = \varnothing\\
+            &\forall t.\ \valsemantic {\neg t} = \values \setminus \valsemantic t\\
+            &\forall s.\ \forall t.\ \valsemantic {s\vee t} = \valsemantic s \cup \valsemantic t
+          \end{align*}
+        \end{property}
+        Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
+
+        \begin{lemma}[Alpha-renaming]
+          Both the type system and the semantics are invariant by alpha-renaming.
+        \end{lemma}
+        Proof: quite straightforward.
+        For the type system, it is a consequence of the fact that environments are up to alpha-renaming.
+        For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
+        are up to alpha-renaming.
+    
+        \begin{lemma}[Monotonicity]
+          Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$.
+          Let $e$ an expression and $t$ a type such that $\Gamma \vdash e:t$.
+          Then, we have $\Gamma' \vdash e:t$.
+        \end{lemma}
+
+        \begin{corollary}[Relation order]
+          The relation $\leq$ on environements is a preorder.
+        \end{corollary}
+    
+        \begin{corollary}[Strengthening]
+          If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
+          $\Gamma, (x:t_1^x \land t_2^x) \vdash e:t_1\land t_2$.
+        \end{corollary}
+        Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
+
+        \begin{lemma}[Substitution] TODO: Add constraints...\\
+          Let $\Gamma$ an environment. Let $e$, $e_a$ and $e_b$ some expressions. Let $t$, $t'$ two types.
+
+          If $e \in \dom \Gamma$, $\Gamma \vdash e:t$ and $\Gamma \vdash e_a : t'$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+          Then:
+          \begin{align*}
+            &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t
+          \end{align*}
+        \end{lemma}
+
+        \section{Proofs}
+
+        \subsection{Monotonicity lemma}
+
+\end{document}

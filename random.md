@@ -50,12 +50,9 @@ EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)
 
 ------
 
-- Conditions for "well-formation" preservation when substituting environments  
+- Conditions for the substitution lemma...  
   EX: f x->y    if x is Int then f x else ...  
   Even if closed: f (id 3) -> y     if id 3 is Int then f (id 3) else ...
-
-- Target language not stable by reduction  
-  EX: if (fun x. if ...) 0 is Any then ... else ...
 
 ### Adding polymorphism
 

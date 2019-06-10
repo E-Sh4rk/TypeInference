@@ -156,7 +156,7 @@
     
       \begin{definition}[Environment inclusion]
         Let $\tenv$ a test environment. Let $\Gamma$ and $\Gamma'$ two environments such that $(\tenv,\Gamma)$ and $(\tenv,\Gamma')$
-        are well-formed. We says that $\Gamma' \leq_{\tenv} \Gamma$ iff:
+        are well-formed. We say that $\Gamma' \leq_{\tenv} \Gamma$ iff:
         \begin{align*}
           &\forall e \in \dom \Gamma.\ \tenv,\Gamma' \vdash e : \ts \text{ with } \ts \leq \Gamma(e)
         \end{align*}
@@ -167,7 +167,7 @@
         The environment $\Gamma\rho$ is defined by:
         \begin{align*}
           &\dom {\Gamma\rho} = \dom \Gamma \rho\\
-          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \tsand_{e' \in \dom \Gamma \text{ s.t. } e'\rho\equiv e}\Gamma(e')
+          &\forall e \in \dom {\Gamma\rho}, (\Gamma\rho)(e) = \tsand_{\{e' \in \dom \Gamma \alt e'\rho\equiv e\}}\Gamma(e')
         \end{align*}
       \end{definition}
     
@@ -213,7 +213,7 @@
             &\tenv, \Gamma' \vdash e:\ts' \text{ with } \ts' \leq \ts
           \end{align*}
         \end{lemma}
-
+        
         \begin{corollary}[Relation order]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
