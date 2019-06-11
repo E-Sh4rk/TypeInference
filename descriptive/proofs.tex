@@ -84,10 +84,23 @@
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
-        \begin{lemma}[Substitution] TODO: Add constraints...\\
-          Let $\Gamma$ an environment. Let $e$, $e_a$ and $e_b$ some expressions. Let $t$, $t'$ two types.
+        \begin{lemma}
+          Let $v$ a value and $\Gamma$ an environment such that $v$ is well-typed in $\Gamma$ (we can derive a type for $v$).
+          Then, for any expression $e$, type $t$ and for any $p\in\{+,-\}$, we have:
+          \[\forall t',\ \Gamma \vdash v:t' \Leftrightarrow \Gamma \cvdash p e t v:t'\]
+          In other words, a test cannot strictly refine the type of a value.
+        \end{lemma}
 
-          Let's suppose that $e_a \in \dom \Gamma$, $\Gamma \vdash e:t$, $\Gamma \vdash e_a : t'$ and $\Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+        \begin{lemma}[Substitution]
+          Let $\Gamma$ an environment. Let $e$, $e_a$ and $e_b$ some expressions. Let $t$ a type.
+
+          Let's suppose that $e_a \in \dom \Gamma$ and that $e_a$ has one of the following form:
+          \begin{itemize}
+            \item $x$ (variable)
+            \item $v$ (value)
+            \item $v v$ (value applied to a value)
+          \end{itemize}
+          Let's also suppose that $\Gamma \vdash e:t$ and $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
           Then, we have:
           \begin{align*}
             &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t
@@ -100,7 +113,7 @@
 
         Let $\Gamma$ and $\Gamma'$ such that $\Gamma' \leq \Gamma$.
 
-        We proceed by induction on the typing derivation of the judgment (left-side of the implication).
+        We proceed by induction on the last rule of the typing derivation of the judgment (left-side of the implication).
 
         We proceed by case analysis:
         
@@ -110,5 +123,20 @@
         \end{description}
 
         \subsection{Substitution lemma}
+
+        Let $\Gamma$, $e$, $e_a$, $e_b$ and $t$ as in the statement.
+
+        We note $\rho$ the substitution $\subst {e_a} {e_b}$.
+
+        We proceed by induction on the last rule of the derivation of the judgment $\Gamma \vdash e : t$.
+
+        \begin{description}
+          \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom\Gamma\rho$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
+          Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Occ} and \Rule{Subst}.
+          \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Const}] Trivial.
+          \item[\Rule{Abs}] Trivial (by using the induction hypothesis).
+        \end{description}
 
 \end{document}
