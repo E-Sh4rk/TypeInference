@@ -84,23 +84,25 @@
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
-        \begin{lemma}
+        \begin{lemma}[Value typing]
           Let $v$ a value and $\Gamma$ an environment such that $v$ is well-typed in $\Gamma$ (we can derive a type for $v$).
           Then, for any expression $e$, type $t$ and for any $p\in\{+,-\}$, we have:
           \[\forall t',\ \Gamma \vdash v:t' \Leftrightarrow \Gamma \cvdash p e t v:t'\]
           In other words, a test cannot strictly refine the type of a value.
+
+          A consequence is that for any derivable judgement, we can construct a derivation that
+          never use the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
         \end{lemma}
 
         \begin{lemma}[Substitution]
-          Let $\Gamma$ an environment. Let $e_a$ and $e_b$ some expressions.
+          Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
 
-          Let's suppose that $e_a \in \dom \Gamma$ and that $e_a$ has one of the following form:
+          Let's suppose that $e_b$ is a closed term and that $e_a$ has one of the following form:
           \begin{itemize}
             \item $x$ (variable)
             \item $v$ (value)
             \item $v v$ (value applied to a value)
           \end{itemize}
-          and that $e_b$ is a closed term. 
           Let's also suppose that $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
           
           Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
@@ -132,7 +134,14 @@
 
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
-        We proceed by induction on the last rule of the derivation of the judgment. %$\Gamma \vdash e : t$
+        We proceed by induction on the last rule of the derivation of the judgment.
+
+        By using the value typing lemma, we can assume without loss of generality that this derivation
+        never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
+        % TODO: remove comment below
+        %We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
+        %$\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
+        %we can transform the derivation using \Rule{PTypeof}, \Rule{PIntersect} and \Rule{Subs}).
 
         \begin{description}
           \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom\Gamma\rho$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
@@ -153,14 +162,34 @@
 
           Similarly, if we have $t_0\not\leq t$, we can get a derivation for $\Gamma\rho\cvdash - {e\rho} t e_2\rho:t'$.
           \item[\Rule{Base}] Trivial (by using the induction hypothesis).
-          \item[\Rule{Path}] There are two cases:
+          \item[\Rule{Path}] There are three cases:
           \begin{itemize}
-            \item $\occ {e\rho} \varpi$ is defined. In this case, we have by using the induction hypothesis
-            $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
+            \item $\occ e \varpi$ is a strict subexpression of $e_a$. In this case, it means that among its three possible forms,
+            $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
+            It contradicts the assumption we made on the derivation.
+
+            \item $\occ e \varpi = e_a$ TODO
+
+            \item $\occ e \varpi$ is not a subexpression of $e_a$.
+            
+            In this case, we know that $\occ {e\rho} \varpi$ is defined.
+            We have by using the induction hypothesis $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
 
             Let's show that $\forall t'.\ \Gamma,(\occ e \varpi:t_1) \vdash e_a : t' \Rightarrow (\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$.
-            TODO
-            \item $\occ {e\rho} \varpi$ is not defined. TODO
+            
+            Let $t'$ such that $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$.
+
+            As $\occ e \varpi$ is not a subexpression of $e_a$, the derivation of
+            $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$ never uses the rule \Rule{Occ} on $(\occ e \varpi:t_1)$,
+            and so we can easily transform this derivation into a valid derivation for $\Gamma \vdash e_a : t'$.
+ 
+            Thus, we get $\Gamma\rho \vdash e_b : t'$. TODO: introduce [LSubs] rule and lemma. Use it here.
+
+            As $\Gamma\rho,(\occ {e\rho} \varpi:t_1) = (\Gamma,(\occ e \varpi:t_1))\rho$,
+            we deduce $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$.
+
+            Now, we use the induction hypothesis on $\Gamma,(\occ e \varpi:t_1) \vdash e' : t_2$
+            and we obtain $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e' : t_2$.
           \end{itemize} 
         \end{description}
 
