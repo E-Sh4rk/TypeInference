@@ -92,7 +92,7 @@
         \end{lemma}
 
         \begin{lemma}[Substitution]
-          Let $\Gamma$ an environment. Let $e$, $e_a$ and $e_b$ some expressions. Let $t$ a type.
+          Let $\Gamma$ an environment. Let $e_a$ and $e_b$ some expressions.
 
           Let's suppose that $e_a \in \dom \Gamma$ and that $e_a$ has one of the following form:
           \begin{itemize}
@@ -100,10 +100,14 @@
             \item $v$ (value)
             \item $v v$ (value applied to a value)
           \end{itemize}
-          Let's also suppose that $\Gamma \vdash e:t$ and $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
-          Then, we have:
+          and that $e_b$ is a closed term. 
+          Let's also suppose that $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+          
+          Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
           \begin{align*}
-            &\Gamma \subst {e_a} {e_b} \vdash e \subst {e_a} {e_b}:t
+            \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
+            \forall e,t,p,e',t'.\ &\Gamma \cvdash p {e} {t} e':t' \Rightarrow \Gamma\rho \cvdash p {e\rho} {t} e'\rho:t'\\
+            \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \text{ and }\occ {e\rho} \varpi\text{ is defined} \Rightarrow \pvdash {\Gamma\rho} p {e\rho} t \varpi:t'
           \end{align*}
         \end{lemma}
 
@@ -113,7 +117,7 @@
 
         Let $\Gamma$ and $\Gamma'$ such that $\Gamma' \leq \Gamma$.
 
-        We proceed by induction on the last rule of the typing derivation of the judgment (left-side of the implication).
+        We proceed by induction on the last rule of the derivation of the judgment.
 
         We proceed by case analysis:
         
@@ -128,7 +132,7 @@
 
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
-        We proceed by induction on the last rule of the derivation of the judgment $\Gamma \vdash e : t$.
+        We proceed by induction on the last rule of the derivation of the judgment. %$\Gamma \vdash e : t$
 
         \begin{description}
           \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom\Gamma\rho$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
@@ -136,7 +140,28 @@
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
           \item[\Rule{Const}] Trivial.
-          \item[\Rule{Abs}] Trivial (by using the induction hypothesis).
+          \item[\Rule{App}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Abs}] By alpha-renaming, we can suppose that the variable $x$ of the $\lambda$-abstraction
+          is a new fresh variable that does not appear in $e_a$ nor $e_b$ ($e_b$ is closed).
+          
+          We can thus use the induction hypothesis on all the judgements $\Gamma, x:s_i \vdash e:t_i$.
+          \item[\Rule{If}] We apply the induction hypothesis on the judgement $\Gamma\vdash e:t_0$.
+          We get that $\Gamma\rho\vdash e\rho:t_0$.
+
+          If we have $t_0\not\leq\neg t$, we can apply the induction hypothesis on the judgment $\Gamma\cvdash + e t e_1:t'$.
+          It gives us a derivation for $\Gamma\rho\cvdash + {e\rho} t e_1\rho:t'$.
+
+          Similarly, if we have $t_0\not\leq t$, we can get a derivation for $\Gamma\rho\cvdash - {e\rho} t e_2\rho:t'$.
+          \item[\Rule{Base}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Path}] There are two cases:
+          \begin{itemize}
+            \item $\occ {e\rho} \varpi$ is defined. In this case, we have by using the induction hypothesis
+            $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
+
+            Let's show that $\forall t'.\ \Gamma,(\occ e \varpi:t_1) \vdash e_a : t' \Rightarrow (\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$.
+            TODO
+            \item $\occ {e\rho} \varpi$ is not defined. TODO
+          \end{itemize} 
         \end{description}
 
 \end{document}
