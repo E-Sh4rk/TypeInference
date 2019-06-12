@@ -177,11 +177,11 @@
           \item[\Rule{Base}] Trivial (by using the induction hypothesis).
           \item[\Rule{Path}] There are three cases:
           \begin{itemize}
-            \item $\occ e \varpi$ is a strict subexpression of $e_a$. In this case, it means that among its three possible forms,
+            \item $\occ e \varpi$ is a strict subexpression of $e_a$.
+            
+            In this case, it means that among its three possible forms,
             $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
             It contradicts an assumption we made on the derivation.
-
-            \item $\occ e \varpi = e_a$ TODO
 
             \item $\occ e \varpi$ is not a subexpression of $e_a$.
             
@@ -205,7 +205,35 @@
             We obtain $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e'\rho : t_2$.
             Together with $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$, it allows us to construct the wanted derivation using the
             \Rule{Path} rule.
-          \end{itemize} 
+
+            \item $\occ e \varpi = e_a$
+            
+            This case is similar to the previous.
+            The only difference is the way to deduce $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$ from $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$.
+
+            Indeed, we can't derive $\Gamma \vdash e_a : t'$ from $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$ because $\occ e \varpi (= e_a)$
+            is not a strict subexpression of $e_a$ and thus the rule \Rule{Occ} could be used on $\occ e \varpi (= e_a)$ in the initial derivation.
+
+            However, the rule \Rule{Occ} can only be used on $e_a$ at the bottom of the derivation of $\Gamma,(e_a:t_1) \vdash e_a : t'$:
+            there can't be any \Rule{App}, \Rule{Abs} or \Rule{If} after because the premises of these rules only contain strict subexpressions of their
+            consequence. The only rules that can appear in a branch containing a \Rule{Occ} applied on $e_a$ are \Rule{Occ}, \Rule{Subs} and \Rule{Intersect}.
+
+            Thus, we can (temporarily) remove from the derivation all these branchs
+            (for each \Rule{Occ} we want to remove, we go down until we have an \Rule{Intersect} rule,
+            we remove this \Rule{Intersect} rule and replace it by its other premise).
+
+            It gives us a derivation for $\Gamma,(e_a:t_1) \vdash e_a : t''$ such that $t''\land t_1 \leq t'$ and without any \Rule{Occ} applied to $e_a$.
+            Thus, we can transform it into a derivation of $\Gamma \vdash e_a : t''$ and we get $\Gamma\rho \vdash e_b : t''$ (from the hypotheses of the lemma).
+
+            Using the monotonicity lemma, we get a derivation for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t''$.
+            We can then append at the end of this derivation an \Rule{Intersect} with a \Rule{Occ} (applied to $e_b$).
+            As $((\Gamma,(e_a:t_1))\rho)(e_b) \leq t_1$, we obtain a derivation
+            for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
+            
+          \end{itemize}
+
+          \item[\Rule{PTypeof}] Trivial (by using the induction hypothesis).
+          \item[\Rule{P$\cdots$}] All the remaining rules are trivial.
         \end{description}
 
 \end{document}
