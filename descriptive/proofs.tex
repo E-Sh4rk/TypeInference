@@ -113,6 +113,12 @@
           \end{align*}
         \end{lemma}
 
+        \begin{theorem}[Subject reduction]
+          Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
+
+          If $\Gamma\vdash e:t$ and $e\leadsto e'$, then $\Gamma\vdash e':t$.
+        \end{theorem}
+
         \section{Proofs}
 
         \subsection{Monotonicity lemma}
@@ -143,7 +149,7 @@
         $\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
         we can transform the derivation using \Rule{PIntersect}, \Rule{PTypeof}, \Rule{Occ} and \Rule{Subs}).
 
-        We now proceed by induction on the derivation.
+        We now proceed by induction on this derivation in order to produce the required derivation.
         
         If the last judgement is of the form $\Gamma \vdash e_a: t$, then we can directly conclude with the hypotheses of the lemma.
         Thus, we can suppose it is not the case.
@@ -151,8 +157,8 @@
         There are many cases depending on the last rule:
 
         \begin{description}
-          \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom\Gamma\rho$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
-          Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Occ} and \Rule{Subst}.
+          \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
+          Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Occ} and \Rule{Subs}.
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
           \item[\Rule{Const}] In this case, $c\rho = c$ (because $c \neq e_a$). So it is trivial.
@@ -234,6 +240,21 @@
 
           \item[\Rule{PTypeof}] Trivial (by using the induction hypothesis).
           \item[\Rule{P$\cdots$}] All the remaining rules are trivial.
+        \end{description}
+
+        \subsection{Subject reduction}
+
+        Let $\Gamma$, $e$, $e'$ and $t$ as in the statement.
+
+        We construct a derivation for $\Gamma \vdash e':t$ by induction on the derivation of $\Gamma \vdash e:t$.
+
+        We proceed by case analysis on the last rule of the derivation:
+        
+        \begin{description}
+          \item[\Rule{Occ}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
+          It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
+          \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
         \end{description}
 
 \end{document}
