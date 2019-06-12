@@ -137,7 +137,11 @@
         We consider a derivation of the judgement in the hypotheses (left-side of the implications).
 
         By using the value typing lemma, we can assume without loss of generality that this derivation
-        never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value. 
+        never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
+
+        We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
+        $\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
+        we can transform the derivation using \Rule{PIntersect}, \Rule{PTypeof}, \Rule{Occ} and \Rule{Subs}).
 
         We now proceed by induction on the derivation.
         
@@ -175,41 +179,31 @@
           \begin{itemize}
             \item $\occ e \varpi$ is a strict subexpression of $e_a$. In this case, it means that among its three possible forms,
             $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
-            It contradicts the assumption we made on the derivation.
+            It contradicts an assumption we made on the derivation.
 
             \item $\occ e \varpi = e_a$ TODO
 
             \item $\occ e \varpi$ is not a subexpression of $e_a$.
             
-            In this case, we know that $\occ {e\rho} \varpi$ is defined. We have by using the induction hypothesis $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
+            In this case, we know that $\occ {e\rho} \varpi$ is defined.
+            We have by using the induction hypothesis $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
 
-            Let's note $t_1' = t_1\land (\Gamma\rho)(\occ {e\rho} \varpi)$ if $\occ {e\rho} \varpi \in\dom {\Gamma\rho}$ and $t_1' = t_1$ otherwise.
+            Let's show that $\forall t'.\ \Gamma,(\occ e \varpi:t_1) \vdash e_a : t' \Rightarrow (\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$.
             
-            TODO: $t_1'$ not necessary!
-
-            We can easily construct a derivation for $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1'$.
-            Indeed, we start from the derivation of $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$ and if $\occ {e\rho} \varpi \in\dom {\Gamma\rho}$,
-            we can easily transform it by appending a rule \Rule{PIntersect} with a \Rule{PTypeof} as premise.
-
-            Now, let's show that $\forall t'.\ \Gamma,(\occ e \varpi:t_1') \vdash e_a : t' \Rightarrow (\Gamma,(\occ e \varpi:t_1'))\rho \vdash e_b:t'$.
-            
-            Let $t'$ such that $\Gamma,(\occ e \varpi:t_1') \vdash e_a : t'$.
+            Let $t'$ such that $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$.
 
             As $\occ e \varpi$ is not a subexpression of $e_a$, the derivation of
-            $\Gamma,(\occ e \varpi:t_1') \vdash e_a : t'$ never uses the rule \Rule{Occ} on the expression $\occ e \varpi$,
+            $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$ never uses the rule \Rule{Occ} on the expression $\occ e \varpi$,
             and so we can easily transform this derivation into a valid derivation for $\Gamma \vdash e_a : t'$.
  
-            Thus, we get $\Gamma\rho \vdash e_b : t'$ (by using an hypothesis of this lemma).
-            As $(\Gamma,(\occ e \varpi:t_1'))\rho \leq \Gamma\rho$,
-            we can derive $(\Gamma,(\occ e \varpi:t_1'))\rho\vdash e_b : t'$.
+            Thus, we get $\Gamma\rho \vdash e_b : t'$ (by using the hypotheses of this lemma).
+            Moreover, we have $(\Gamma,(\occ e \varpi:t_1))\rho \leq \Gamma\rho$
+            (we made the assumption that $t_1 \leq \Gamma(\occ e \varpi)$ for all rules \Rule{Path}).
+            Thus, we can derive $(\Gamma,(\occ e \varpi:t_1))\rho\vdash e_b : t'$ using the monotonicity lemma.
 
-            Finally, as we have a derivation for $\Gamma,(\occ e \varpi:t_1) \vdash e' : t_2$, we can easily construct one for
-            $\Gamma,(\occ e \varpi:t_1') \vdash e' : t_2$ just by adding some rules \Rule{Subs} just after \Rule{Occ} when necessary.
-            It does not change the structure of the derivation (except for the added \Rule{Subs}, but it has no impact),
-            so we can apply the induction hypothesis on this derivation.
-
-            We obtain $(\Gamma,(\occ e \varpi:t_1'))\rho \vdash e' : t_2$.
-            Together with $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1'$, it allows us to construct the wanted derivation using the
+            Now, we can apply the induction hypothesis on the derivation of $\Gamma,(\occ e \varpi:t_1) \vdash e' : t_2$.
+            We obtain $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e'\rho : t_2$.
+            Together with $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$, it allows us to construct the wanted derivation using the
             \Rule{Path} rule.
           \end{itemize} 
         \end{description}
