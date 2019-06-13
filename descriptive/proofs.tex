@@ -63,6 +63,13 @@
         For the type system, it is a consequence of the fact that environments are up to alpha-renaming.
         For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
         are up to alpha-renaming.
+
+        \begin{lemma}[$\vvdash$ and $\vdash$ relations]Let $v$ a value, $t$ a type and $\Gamma$ an environment.
+
+          If $\vvdash v:t$ and $v$ is well-typed in $\Gamma$, then $\Gamma\vdash v:t$.
+
+          If $\Gamma \vdash v:t$, then $\vvdash v:t$.
+        \end{lemma}
     
         \begin{lemma}[Monotonicity]
           Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$.
@@ -266,6 +273,8 @@
             \item Both $e_1$ and $e_2$ are values. This is the difficult case.
             We have $e_1\equiv \lambda^{\bigwedge_{i\in I}\arrow{s_i}{t_i}}x.e_x$
             with $\bigwedge_{i\in I}\arrow{s_i}{t_i} \leq \arrow{s}{t}$ and $\Gamma \vdash e_2:s$.
+            We can suppose that $x$ is a new fresh variable that does not appear in our environment
+            (if it is not the case, we can alpha-rename $e_1$).
 
             This means that $s\leq \bigvee_{i\in I} s_i$ and that for any non-empty $I'$ such that
             $s\not\leq \bigvee_{i\in I\setminus I'} s_i$, we have $\bigwedge_{i\in I'} t_i \leq t$
@@ -277,7 +286,17 @@
             As a consequence, we get $\bigwedge_{i\in I'} t_i \leq t$.
 
             Now, let's prove that $\Gamma \vdash e':\bigwedge_{i\in I'} t_i$ (which, by subsumption,
-            yields $\Gamma \vdash e': t$).
+            yields $\Gamma \vdash e': t$). For that, we show that for any $i\in I'$, $\Gamma \vdash e':t_i$
+            (it is then easy to conclude by using the \Rule{Intersect} rule).
+
+            Let $i\in I'$. We have $\vvdash e_2:s_i$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
+            As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule $\Rule{Abs}$
+            which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$. Let's note $\Gamma'=\Gamma,(x:s_i)$.
+            We can deduce, using the substitution lemma, that $\Gamma'\subst x {e_2} \vdash e_x\subst x {e_2}: t_i$.
+           
+            Moreover, $\Gamma'\subst x {e_2} = \Gamma,(e_2:s_i)$ and $\Gamma \leq \Gamma,(e_2:s_i)$.
+            Thus, by the monotonicity lemma, we deduce $\Gamma \vdash e_x\subst x {e_2}: t_i$,
+            that is $\Gamma \vdash e': t_i$.
           \end{itemize}
         \end{description}
 
