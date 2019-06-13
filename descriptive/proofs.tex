@@ -255,6 +255,30 @@
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Const}] Impossible case (no reduction).
+          \item[\Rule{App}] In this case, $e\equiv e_1 e_2$.
+          There is three possible cases:
+          \begin{itemize}
+            \item $e_2$ is not a value. In this case, we must have $e_2\leadsto e_2'$
+            and $e'\equiv e_1 e_2'$. We can easily conclude using the induction hypothesis.
+            \item $e_2$ is a value and $e_1$ is not. In this case, we must have $e_1\leadsto e_1'$
+            and $e'\equiv e_1' e_2$. We can easily conclude using the induction hypothesis.
+            \item Both $e_1$ and $e_2$ are values. This is the difficult case.
+            We have $e_1\equiv \lambda^{\bigwedge_{i\in I}\arrow{s_i}{t_i}}x.e_x$
+            with $\bigwedge_{i\in I}\arrow{s_i}{t_i} \leq \arrow{s}{t}$ and $\Gamma \vdash e_2:s$.
+
+            This means that $s\leq \bigvee_{i\in I} s_i$ and that for any non-empty $I'$ such that
+            $s\not\leq \bigvee_{i\in I\setminus I'} s_i$, we have $\bigwedge_{i\in I'} t_i \leq t$
+            (TODO: ref lemma 6.8 semantic subtyping). Let's take $I'=\{i\in I\alt \vvdash e_2:s_i\}$.
+            We have $I'$ not empty: $\vvdash e_2:s$ and $s\leq \bigvee_{i\in I} s_i$, so according to
+            $\valsemantic \_$ properties we have at least one $i$ such that $\vvdash e_2:s_i$.
+            We also have $s\not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise there would be a $i\not\in I$
+            such that $\vvdash e_2: s_i$ (contradiction with the definition of $I'$).
+            As a consequence, we get $\bigwedge_{i\in I'} t_i \leq t$.
+
+            Now, let's prove that $\Gamma \vdash e':\bigwedge_{i\in I'} t_i$ (which, by subsumption,
+            yields $\Gamma \vdash e': t$).
+          \end{itemize}
         \end{description}
 
 \end{document}
