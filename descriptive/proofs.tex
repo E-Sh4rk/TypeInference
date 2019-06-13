@@ -92,9 +92,14 @@
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
         \begin{lemma}[Value typing]
+          TODO: Fix the lemma. It is not true because a value could be typed to $\Empty$.
+
           Let $v$ a value and $\Gamma$ an environment such that $v$ is well-typed in $\Gamma$ (we can derive a type for $v$).
           Then, for any expression $e$, type $t$ and for any $p\in\{+,-\}$, we have:
-          \[\forall t',\ \Gamma \vdash v:t' \Leftrightarrow \Gamma \cvdash p e t v:t'\]
+          \begin{align*}
+            \forall t'.\ &\Gamma \vdash v:t' \Leftrightarrow \Gamma \cvdash p e t v:t'\\
+            \forall \varpi \text{ s.t. }\occ e \varpi = v, \forall t'.\ &\Gamma \vdash v:t' \Leftrightarrow \pvdash \Gamma p e t \varpi:t'
+          \end{align*}
           In other words, a test cannot strictly refine the type of a value.
 
           A consequence is that for any derivable judgement, we can construct a derivation that
@@ -262,7 +267,7 @@
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
-          \item[\Rule{Const}] Impossible case (no reduction).
+          \item[\Rule{Const}] Impossible case (no reduction possible).
           \item[\Rule{App}] In this case, $e\equiv e_1 e_2$.
           There is three possible cases:
           \begin{itemize}
@@ -297,6 +302,16 @@
             Moreover, $\Gamma'\subst x {e_2} = \Gamma,(e_2:s_i)$ and $\Gamma \leq \Gamma,(e_2:s_i)$.
             Thus, by the monotonicity lemma, we deduce $\Gamma \vdash e_x\subst x {e_2}: t_i$,
             that is $\Gamma \vdash e': t_i$.
+          \end{itemize}
+          \item[\Rule{Abs}] Impossible case (no reduction possible).
+          \item[\Rule{If}] In this case, $e\equiv \ite {e_0} {t_{if}} {e_1} {e_2}$. There are three possible cases:
+          \begin{itemize}
+            \item $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$. In this case we have $e' \equiv e_1$.
+            We have a derivation for $\Gamma \vdash e_0: t_0$, and as $e_0 \in \valsemantic{t_{if}}$, we know
+            that $t_0 \not\leq \neg t_{if}$. Thus, we have a derivation for $\Gamma \cvdash + {e_0} {t_{if}} e_1 : t$.
+            According to the value typing lemma, we can deduce a derivarion for $\Gamma \vdash e_1: t$ (because $e_0$ is a value).
+            \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
+            \item $e_0$ is not a value. TODO
           \end{itemize}
         \end{description}
 

@@ -5,7 +5,7 @@
 \hypersetup{pdfstartview=XYZ}%         zoom par defaut
 
 \setlength{\droptitle}{-5em}   % This is your set screw
-\title{\vspace{1.5cm}Descriptive type system}
+\title{\vspace{1.5cm}Declarative type system}
 \author{}
 \date{\vspace{-5ex}}
 
@@ -171,12 +171,12 @@
       \end{array}
     \]
 
-    For convenience, we denote $E\xleadsto{E\mapsto E'}E'$ by $E\idleadsto E'$.
+    For convenience, we denote $e\xleadsto{e\mapsto e'}e'$ by $e\idleadsto e'$.
 
     \begin{mathpar}
       \Infer[Ctx]
-      {e \xleadsto{E\mapsto E'} e'}
-      {C[e] \xleadsto{E\mapsto E'} C[e']}
+      {e \xleadsto{e_r\mapsto e_r'} e'}
+      {C[e] \xleadsto{e_r\mapsto e_r'} C[e']}
       {}
       \qquad
       \Infer[App]
@@ -184,8 +184,8 @@
       {(\lambda^tx.e) v \idleadsto e\subst x v}
       {}\\
       \Infer[TestCtx]
-      {e \xleadsto{E\mapsto E'} e'}
-      {\ite e t {e_1} {e_2} \idleadsto \ite {e'} t {e_1\subst E {E'}} {e_2\subst E {E'}}}
+      {e \xleadsto{e_r\mapsto e_r'} e'}
+      {\ite e t {e_1} {e_2} \idleadsto \ite {e'} t {e_1\subst {e_r} {e_r'}} {e_2\subst {e_r} {e_r'}}}
       {}\\
       \Infer[Ite]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
