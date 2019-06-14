@@ -53,6 +53,15 @@ EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)
 - Empty could appear in the then branch, even if we can't exclude this branch 'a priori':  
   if ((if x is Int then 0 else false), x) is (Int,Bool) then ... else ...
 
+- SR counterexample:  
+  f: Int->Int  
+  g:  (Bool->Bool & Int->Int) | (Bool->Bool & Int->Bool)  
+  
+  if (g 0, g (f 0)) is (Int, Bool) then 0 else bottom  
+  
+  f 0 -----------> 5  
+  Empty -------> Int
+
 ### Adding polymorphism
 
 - In my current implementation, let are inlined. Would it still work with polymorphism?
