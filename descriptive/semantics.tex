@@ -28,7 +28,7 @@
       \Infer[Occ]
           { }
           { \Gamma \vdash e: \Gamma(e) }
-          { e\in\dom\Gamma}
+          { e\in\dom\Gamma }
       \qquad
       \Infer[Intersect]
           { \Gamma \vdash e:t_1\\\Gamma \vdash e:t_2 }
@@ -64,10 +64,17 @@
           \\
       \Infer[If]
             {\Gamma\vdash e:t_0\\
-            t_0\not\leq \neg t \Rightarrow \Gamma \cvdash + e t e_1:t'\\
-            t_0\not\leq t \Rightarrow \Gamma \cvdash - e t e_2:t'}
+            t_0\not\leq \neg t \Rightarrow
+            \Gamma \cvdash + e t e_1:t'\\
+            t_0\not\leq t \Rightarrow
+            \Gamma \cvdash - e t e_2:t'}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
             { }
+      \qquad
+      \Infer[Empty]
+      { }
+      { \Gamma, (e:\Empty) \vdash e': \Empty }
+      { }
       \\
       \Infer[Proj]
       {\Gamma \vdash e:(t_1,t_2)}
