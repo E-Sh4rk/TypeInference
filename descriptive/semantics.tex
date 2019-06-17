@@ -62,18 +62,26 @@
           }
           { }
           \\
-      \Infer[If]
+%      \Infer[If]
+%            {\Gamma\vdash e:t_0\\
+%            %t_0\not\leq \neg t \Rightarrow
+%            \Gamma \cvdash + e t e_1:t'\\
+%            %t_0\not\leq t \Rightarrow
+%            \Gamma \cvdash - e t e_2:t'}
+%            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
+%            { }
+        \Infer[If]
             {\Gamma\vdash e:t_0\\
-            t_0\not\leq \neg t \Rightarrow
-            \Gamma \cvdash + e t e_1:t'\\
-            t_0\not\leq t \Rightarrow
-            \Gamma \cvdash - e t e_2:t'}
+            %t_0\not\leq \neg t \Rightarrow
+            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \cvdash + e t e_1:t'\\
+            %t_0\not\leq t \Rightarrow
+            \Gamma \evdash - e t \Gamma^- \\ \Gamma^- \vdash e_2:t'}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
             { }
       \qquad
-      \Infer[Empty]
+      \Infer[EFQ]
       { }
-      { \Gamma, (e:\Empty) \vdash e': \Empty }
+      { \Gamma, (e:\Empty) \vdash e': t }
       { }
       \\
       \Infer[Proj]
@@ -90,14 +98,23 @@
     \begin{center} \line(1,0){450} \end{center}
 
     \begin{mathpar}
+%        \Infer[Base]
+%            { \Gamma \vdash e':t' }
+%            { \Gamma \cvdash p e t e':t' }
+%            { }
+%            \qquad
+%        \Infer[Path]
+%            { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma,(\occ e \varpi:t_1) \cvdash p e t e':t_2 }
+%            { \Gamma \cvdash p e t e':t_2 }
+%            { }
         \Infer[Base]
-            { \Gamma \vdash e':t' }
-            { \Gamma \cvdash p e t e':t' }
+            { }
+            { \Gamma \evdash p e t \Gamma }
             { }
             \qquad
         \Infer[Path]
-            { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma,(\occ e \varpi:t_1) \cvdash p e t e':t_2 }
-            { \Gamma \cvdash p e t e':t_2 }
+            { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma \evdash p e t \Gamma' }
+            { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t_1) }
             { }
     \end{mathpar}
 
@@ -161,35 +178,6 @@
             \qquad
     \end{mathpar}
     
-    \newpage
-
-    \section{Typing rules (alternative)}
-
-    \begin{mathpar}
-      \Infer[If]
-            {\Gamma\vdash e:t_0\\
-            t_0\not\leq \neg t \Rightarrow
-            (\Gamma \evdash + e t \Gamma^+ \text{ and } \Gamma^+ \cvdash + e t e_1:t')\\
-            t_0\not\leq t \Rightarrow
-            (\Gamma \evdash - e t \Gamma^- \text{ and } \Gamma^- \vdash e_2:t')}
-            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
-            { }
-    \end{mathpar}
-
-    \begin{center} \line(1,0){450} \end{center}
-
-    \begin{mathpar}
-      \Infer[Base]
-          { }
-          { \Gamma \evdash p e t \Gamma }
-          { }
-          \qquad
-      \Infer[Path]
-          { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma \evdash p e t \Gamma' }
-          { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t_1) }
-          { }
-    \end{mathpar}
-
     \newpage
 
     \section{Intermediate semantics}
