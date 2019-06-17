@@ -96,7 +96,7 @@
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
-        \begin{lemma}[Value strengthening]
+        \begin{lemma}[Value refinement]
           For any derivable judgement of the form $\Gamma \vdash \cdots$, we can construct a derivation that
           never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
         \end{lemma}
@@ -151,7 +151,7 @@
 
         We consider a derivation of the judgement in the hypotheses (left-side of the implications).
 
-        By using the value strengthening lemma, we can assume without loss of generality that this derivation
+        By using the value refinement lemma, we can assume without loss of generality that this derivation
         never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
 
         We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
@@ -308,7 +308,8 @@
             that $t_0 \not\leq \neg t_{if}$. Thus, we have a derivation for $\Gamma \cvdash + {e_0} {t_{if}} e_1 : t$.
 
             As $e_0$ is a value, the \Rule{Path} rules that end the derivation must satisfy $\occ {e_1} \varpi \simeq e_0$ (= value).
-            According to the value strengthening lemma, we can thus deduce a derivarion for $\Gamma \vdash e_1: t$. TODO: can't directly apply the lemma.
+            As $t_0 \not\leq \neg t_{if}$, the type of the value $e_0$ can't be strictly refined (it can't be refined to $\Empty$, see the value refinement lemma).
+            Thus, we can deduce a derivarion for $\Gamma \vdash e_1: t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
             \item $e_0$ is not a value. TODO
           \end{itemize}
