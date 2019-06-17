@@ -122,6 +122,12 @@
           \end{align*}
         \end{lemma}
 
+        \begin{lemma}[Test reduction]
+          Let $\Gamma$ an ordinary environment. Let $e$ and $e'$ two expressions, $t_{if}$ a type and $p \in \{+,-\}$.
+          If $e \leadsto e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
+          then $\forall e_c,t.\ \Gamma \cvdash p e {t_{if}} e_c:t \Rightarrow \Gamma \cvdash p {e'} {t_{if}} e_c:t$.
+        \end{lemma}
+
         \begin{theorem}[Subject reduction]
           Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
 
@@ -293,7 +299,8 @@
 
             Let $i\in I'$. We have $\vvdash e_2:s_i$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
             As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule $\Rule{Abs}$
-            which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$. Let's note $\Gamma'=\Gamma,(x:s_i)$.
+            which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$ (recall that $\Gamma$ is ordinary so there is no abstraction in $\dom\Gamma$).
+            Let's note $\Gamma'=\Gamma,(x:s_i)$.
             We can deduce, using the substitution lemma, that $\Gamma'\subst x {e_2} \vdash e_x\subst x {e_2}: t_i$.
            
             Moreover, $\Gamma'\subst x {e_2} = \Gamma,(e_2:s_i)$ and $\Gamma \leq \Gamma,(e_2:s_i)$.
