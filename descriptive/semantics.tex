@@ -73,7 +73,7 @@
         \Infer[If]
             {\Gamma\vdash e:t_0\\
             %t_0\not\leq \neg t \Rightarrow
-            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \cvdash + e t e_1:t'\\
+            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \vdash e_1:t'\\
             %t_0\not\leq t \Rightarrow
             \Gamma \evdash - e t \Gamma^- \\ \Gamma^- \vdash e_2:t'}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
