@@ -21,10 +21,6 @@
 \begin{document}
 
   \maketitle
-
-  TODO: update (no more guards)
-
-  TODO: update (alternative type system)
   
     \section{Definitions}
 
@@ -34,9 +30,9 @@
     \end{definition}
 
       \begin{definition}[(Pre)order on environments]
-        Let $\Gamma$ and $\Gamma'$ two non-bottom environments. We say that $\Gamma' \leq \Gamma$ iff:
+        Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leq \Gamma$ iff:
         \begin{align*}
-          &\forall e \in \dom \Gamma.\ \Gamma' \vdash e : \Gamma(e)
+          &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \Gamma' \vdash e : \Gamma(e))
         \end{align*}
       \end{definition}
     
@@ -54,6 +50,8 @@
       \end{definition}
 
     \section{Theorems}
+
+    TODO: update: no more guards, alternative type system, rule empty (in particular environments can be bottom)
 
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
@@ -100,12 +98,6 @@
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
-        \begin{lemma}[Value refinement]
-          For any derivable judgement of the form $\Gamma \vdash \cdots$, we can construct a derivation that
-          never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
-        \end{lemma}
-        Proof: if the type of a value is strictly strengthened, then its new type is $\Empty$.
-
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
 
@@ -129,7 +121,7 @@
         \begin{lemma}[Test reduction]
           Let $\Gamma$ an ordinary environment. Let $e$ and $e'$ two expressions, $t_{if}$ a type and $p \in \{+,-\}$.
           If $e \leadsto e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-          then $\forall e_c,t.\ \Gamma \cvdash p e {t_{if}} e_c:t \Rightarrow \Gamma \cvdash p {e'} {t_{if}} e_c:t$.
+          then TODO. %$\forall e_c,t.\ \Gamma \cvdash p e {t_{if}} e_c:t \Rightarrow \Gamma \cvdash p {e'} {t_{if}} e_c:t$.
         \end{lemma}
 
         \begin{theorem}[Subject reduction]
@@ -160,9 +152,6 @@
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
         We consider a derivation of the judgement in the hypotheses (left-side of the implications).
-
-        By using the value refinement lemma, we can assume without loss of generality that this derivation
-        never uses the rule \Rule{Path} with $\occ e \varpi$ refering to a value.
 
         We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
         $\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
@@ -207,6 +196,8 @@
             In this case, it means that among its three possible forms,
             $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
             It contradicts an assumption we made on the derivation.
+
+            TODO: no more such assumption
 
             \item $\occ e \varpi$ is not a subexpression of $e_a$.
             
@@ -319,8 +310,10 @@
             that $t_0 \not\leq \neg t_{if}$. Thus, we have a derivation for $\Gamma \cvdash + {e_0} {t_{if}} e_1 : t$.
 
             As $e_0$ is a value, the \Rule{Path} rules that end the derivation must satisfy $\occ {e_1} \varpi \simeq e_0$ (= value).
-            As $t_0 \not\leq \neg t_{if}$, the type of the value $e_0$ can't be strictly refined (it can't be refined to $\Empty$, see the value refinement lemma).
+            As $t_0 \not\leq \neg t_{if}$, the type of the value $e_0$ can't be strictly refined (it can't be refined to $\Empty$).
             Thus, we can deduce a derivarion for $\Gamma \vdash e_1: t$.
+
+            TODO (no more guard)
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
             \item $e_0$ is not a value. TODO
           \end{itemize}
