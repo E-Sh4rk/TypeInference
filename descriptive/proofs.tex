@@ -85,6 +85,8 @@
             \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \Rightarrow \pvdash {\Gamma'} p e t \varpi:t'
           \end{align*}
         \end{lemma}
+        Proof: this is trivial. We just have to replace every \Rule{Occ} rule in the derivation with $\Gamma$
+        by the relevant derivation with $\Gamma'$.
 
         \begin{corollary}[Preorder relation]
           The relation $\leq$ on environements is a preorder.
@@ -150,32 +152,21 @@
 
         TODO: update: no more guards, alternative type system, rule empty (in particular environments can be bottom)
 
-        \subsection{Monotonicity lemma}
-
-        Let $\Gamma$ and $\Gamma'$ such that $\Gamma' \leq \Gamma$.
-
-        We proceed by induction on the derivation of the judgment.
-
-        We proceed by case analysis on the last rule of the derivation:
-        
-        \begin{description}
-          \item[\Rule{Occ}] We use the definition of $\Gamma' \leq \Gamma$.
-          \item[TODO] 
-        \end{description}
-
         \subsection{Substitution lemma}
 
         Let $\Gamma$, $e_a$, $e_b$ as in the statement.
 
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
-        We consider a derivation of the judgement in the hypotheses (left-side of the implications).
+        We consider a derivation of a judgement as in the hypotheses (left-side of the implications).
 
-        By using the value refinement lemma, we can assume without loss of generality that TODO.
+        By using the value refinement lemma, we can assume without loss of generality that our derivation does not contain
+        any rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
 
-        We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
-        $\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
-        we can transform the derivation using \Rule{PIntersect}, \Rule{PTypeof}, \Rule{Occ} and \Rule{Subs}).
+        We can also assume w.l.o.g. that every \Rule{If} rule is such that $\Gamma^p \leq \Gamma$. If it is not the case,
+        we can easily transform the derivation by intersecting the $t'$ of every $\pvdash \Gamma p e t \varpi:t'$ in a \Rule{Path} rule with $\Gamma(\occ e \varpi)$
+        (if $\occ e \varpi \in \dom \Gamma$)
+        using the rules \Rule{PIntersect}, \Rule{PTypeof} and \Rule{Occ}. The rest of the derivation can easily be adapted by adding some \Rule{Subs} rules when needed.
 
         We now proceed by induction on this derivation in order to produce the required derivation.
         
@@ -187,6 +178,8 @@
         \begin{description}
           \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
           Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Occ} and \Rule{Subs}.
+          \item[\Rule{EFQ}] If there exists $e\in\dom\Gamma$ such that $\Gamma(e)=\Empty$, then $(\Gamma\rho)(e\rho)=\Empty$
+          so we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{EFQ}.
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
           \item[\Rule{Const}] In this case, $c\rho = c$ (because $c \neq e_a$). So it is trivial.
@@ -199,25 +192,69 @@
           
           We can thus use the induction hypothesis on all the judgements $\Gamma, x:s_i \vdash e:t_i$.
           \item[\Rule{If}]
-          We have $(\ite e t {e_1} {e_2})\rho = \ite {e\rho} t {e_1\rho} {e_2\rho}$ (because $\ite e t {e_1} {e_2} \neq e_a$).
+          We have $(\ite e {t_{if}} {e_1} {e_2})\rho = \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}$ (because $\ite e {t_{if}} {e_1} {e_2} \neq e_a$).
 
-          We apply the induction hypothesis on the judgement $\Gamma\vdash e:t_0$.
-          We get that $\Gamma\rho\vdash e\rho:t_0$.
+          We apply the induction hypothesis on the judgements $\Gamma\vdash e:t_0$ and $\Gamma\evdash + e {t_{if}} \Gamma^+$.
+          We get $\Gamma\rho\vdash e\rho:t_0$ and $\Gamma\rho\evdash + {e\rho} {t_{if}} \Gamma^+\rho$.
 
-          If we have $t_0\not\leq\neg t$, we can apply the induction hypothesis on the judgment $\Gamma\cvdash + e t e_1:t'$.
-          It gives us a derivation for $\Gamma\rho\cvdash + {e\rho} t e_1\rho:t'$.
+          Now we want to apply the induction hypothesis on $\Gamma^+\vdash e_1:t$ in order to have $\Gamma^+\rho\vdash e_1\rho:t$.
+          However, we must show before that $\forall t'.\ \Gamma^+\vdash e_a:t'\Rightarrow \Gamma^+\rho\vdash e_b:t'$.
 
-          Similarly, if we have $t_0\not\leq t$, we can get a derivation for $\Gamma\rho\cvdash - {e\rho} t e_2\rho:t'$.
-          \item[\Rule{Base}] Trivial (by using the induction hypothesis).
-          \item[\Rule{Path}] There are three cases:
+          Let $t'$ such that $\Gamma^+\vdash e_a:t'$.
+          If $\Gamma^+ = \bot$, then $\Gamma^+\rho = \bot$ so we are done. So lets's suppose that $\Gamma^+ \neq \bot$.
+
+          Let's separate the proof in two cases:
+          \begin{itemize}
+            \item If $e_a\not\in\dom{\Gamma^+}$. In this case, let's show that we have  $\Gamma\vdash e_a:t'$.
+            Indeed, in the typing derivation of $\Gamma^+\vdash e_a:t'$, the \Rule{Occ} rule can only be applied on
+            strict subexpressions of $e_a$. Among them, the only that can differ between $\Gamma$ and $\Gamma^+$ are
+            the strict subexpression $e'$ of $e_a$ such that there exists $\varpi$ such that $\occ e \varpi \equiv e'$.
+
+            Given the possible forms of $e_a$, the only such candidates are values. Moreover, as $\Gamma^+ \neq \bot$,
+            $\forall v\in\dom{\Gamma^+}.\ \Gamma\vdash v : \Gamma^+(v)$. Thus we can derive $\Gamma\vdash e_a:t'$
+            just by replacing every \Rule{Occ} rule applied to such values in the derivation of $\Gamma^+\vdash e_a:t'$
+            by the relevant derivation.
+
+            So we have $\Gamma\vdash e_a:t'$. Using the hypotheses of this lemma, we get $\Gamma\rho\vdash e_b:t'$.
+            As $\Gamma^+\leq\Gamma$ (according to the assumptions we made on the derivation beginning of this proof)
+            and $\dom{\Gamma}\subseteq\dom{\Gamma^+}$, we have $\Gamma^+\rho\leq\Gamma\rho$ and thus, by monotonicity,
+            $\Gamma^+\rho\vdash e_b:t'$.
+
+            \item If $e_a\in\dom{\Gamma^+}$. Let's note $t_a=\Gamma^+(e_a)$. This time,
+            we can't derive $\Gamma \vdash e_a:t'$ from $\Gamma^+\vdash e_a:t'$ because the rule \Rule{Occ}
+            could be used on $e_a$ (which may not be a value).
+
+            However, the rule \Rule{Occ} can only be used on $e_a$ at the bottom of the derivation of $\Gamma^+\vdash e_a:t'$:
+            there can't be any \Rule{App}, \Rule{Abs} or \Rule{If} after because the premises of these rules only contain strict subexpressions of their
+            consequence. The only rules that can appear in a branch containing a \Rule{Occ} applied on $e_a$ are \Rule{Occ}, \Rule{Subs} and \Rule{Intersect}
+            (not \Rule{EFQ} as $\Gamma^+ \neq \bot$).
+
+            Thus, we can (temporarily) remove from the derivation all these branchs
+            (for each \Rule{Occ} we want to remove, we go down until we have an \Rule{Intersect} rule,
+            we remove this \Rule{Intersect} rule and replace it by its other premise).
+
+            It gives us a derivation for $\Gamma^+ \vdash e_a : t''$ such that $t''\land t_a \leq t'$ and without any \Rule{Occ} applied to $e_a$.
+            Thus, we can transform it into a derivation of $\Gamma \vdash e_a : t''$ as in the previous point, and we get $\Gamma\rho \vdash e_b : t''$
+            (from the hypotheses of the lemma). Still as before, we get a derivation for $\Gamma^+\rho\vdash e_b : t''$ by monotonicity.
+            
+            Now, we can append at the end of this derivation a rule \Rule{Intersect} with a rule \Rule{Occ} applied to $e_b$.
+            As $(\Gamma^+\rho)(e_b) \leq \Gamma^+(e_a) = t_a$, we obtain by monotonicity a derivation for $\Gamma^+\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
+          \end{itemize}
+
+          We have just shown that $\forall t'.\ \Gamma^+\vdash e_a:t'\Rightarrow \Gamma^+\rho\vdash e_b\rho:t'$,
+          thus we can apply the induction hypothesis on $\Gamma^+\vdash e_1:t$ and get $\Gamma^+\rho\vdash e_1\rho:t$.
+
+          We proceed similarly on the judgments $\Gamma\evdash - e {t_{if}} \Gamma^-$ and $\Gamma^-\vdash e_1:t$, and so we have all the premises
+          to apply the \Rule{If} rule in order to get $\Gamma\rho \vdash \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}:t'$. 
+          \item[\Rule{Base}] Trivial.
+          \item[\Rule{Path}] TODO There are three cases:
           \begin{itemize}
             \item $\occ e \varpi$ is a strict subexpression of $e_a$.
             
             In this case, it means that among its three possible forms,
             $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
-            It contradicts an assumption we made on the derivation.
-
-            TODO: no more such assumption
+            According to the assumptions we made on the derivation, it implies that $\varpi=\epsilon$.
+            Hence, $e$ does not contain any occurence of $e_a$, so it is easy to conclude.
 
             \item $\occ e \varpi$ is not a subexpression of $e_a$.
             
@@ -235,7 +272,7 @@
             Thus, we get $\Gamma\rho \vdash e_b : t'$ (by using the hypotheses of this lemma).
             Moreover, we have $(\Gamma,(\occ e \varpi:t_1))\rho \leq \Gamma\rho$
             (we made the assumption that $t_1 \leq \Gamma(\occ e \varpi)$ for all rules \Rule{Path}).
-            Thus, we can derive $(\Gamma,(\occ e \varpi:t_1))\rho\vdash e_b : t'$ using the monotonicity lemma.
+            Thus, we can derive $(\Gamma,(\occ e \varpi:t_1))\rho\vdash e_b : t'$ by monotonicity.
 
             Now, we can apply the induction hypothesis on the derivation of $\Gamma,(\occ e \varpi:t_1) \vdash e' : t_2$.
             We obtain $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e'\rho : t_2$.
@@ -261,7 +298,7 @@
             It gives us a derivation for $\Gamma,(e_a:t_1) \vdash e_a : t''$ such that $t''\land t_1 \leq t'$ and without any \Rule{Occ} applied to $e_a$.
             Thus, we can transform it into a derivation of $\Gamma \vdash e_a : t''$ and we get $\Gamma\rho \vdash e_b : t''$ (from the hypotheses of the lemma).
 
-            Using the monotonicity lemma, we get a derivation for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t''$.
+            By monotonicity, we get a derivation for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t''$.
             We can then append at the end of this derivation an \Rule{Intersect} with a \Rule{Occ} (applied to $e_b$).
             As $((\Gamma,(e_a:t_1))\rho)(e_b) \leq t_1$, we obtain a derivation
             for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
@@ -321,7 +358,7 @@
             We can deduce, using the substitution lemma, that $\Gamma'\subst x {e_2} \vdash e_x\subst x {e_2}: t_i$.
            
             Moreover, $\Gamma'\subst x {e_2} = \Gamma,(e_2:s_i)$ and $\Gamma \leq \Gamma,(e_2:s_i)$.
-            Thus, by the monotonicity lemma, we deduce $\Gamma \vdash e_x\subst x {e_2}: t_i$,
+            Thus, by monotonicity, we deduce $\Gamma \vdash e_x\subst x {e_2}: t_i$,
             that is $\Gamma \vdash e': t_i$.
           \end{itemize}
           \item[\Rule{Abs}] Impossible case (no reduction possible).
@@ -331,7 +368,7 @@
             We have derivations for $\Gamma \vdash e_0: t_0$, $\Gamma \evdash + {e_0} {t_{if}} \Gamma'$ and $\Gamma'\vdash e_1:t$.
             
             As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$by using the value testing lemma.
-            Thus, by using the monotonicity lemma, we have $\Gamma\vdash e_1:t$.
+            Thus, by monotonicity, we have $\Gamma\vdash e_1:t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
             \item $e_0$ is not a value. TODO
           \end{itemize}
