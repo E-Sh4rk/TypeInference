@@ -96,11 +96,23 @@
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
-        \begin{lemma}[Value refinement]
+        \begin{lemma}[Value refinement 1]
+          For any derivable judgement of the form $\pvdash \Gamma p e t \varpi.x:\Empty$ with $x\in\{0,1\}$ and $\occ e \varpi = v$ a value,
+          we have $\pvdash \Gamma p e t \varpi:\Empty$.
+        \end{lemma}
+        Proof: TODO.
+
+        \begin{corollary}[Value refinement 2]
           For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
           never uses the rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
-        \end{lemma}
+        \end{corollary}
         Proof: if the type of a value is strictly strengthened, then its new type is $\Empty$. TODO
+
+        \begin{lemma}[Value testing]
+          For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$, if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
+          then we have $\Gamma\leq\Gamma'$.
+        \end{lemma}
+        Proof: TODO.
 
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
@@ -270,6 +282,8 @@
         
         \begin{description}
           \item[\Rule{Occ}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
+          It contradicts the fact that $e$ reduces to $e'$ so this case is impossible.
+          \item[\Rule{EFQ}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
@@ -314,14 +328,10 @@
           \item[\Rule{If}] In this case, $e\equiv \ite {e_0} {t_{if}} {e_1} {e_2}$. There are three possible cases:
           \begin{itemize}
             \item $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$. In this case we have $e' \equiv e_1$.
-            We have a derivation for $\Gamma \vdash e_0: t_0$, and as $e_0 \in \valsemantic{t_{if}}$, we know
-            that $t_0 \not\leq \neg t_{if}$. Thus, we have a derivation for $\Gamma \cvdash + {e_0} {t_{if}} e_1 : t$.
-
-            As $e_0$ is a value, the \Rule{Path} rules that end the derivation must satisfy $\occ {e_1} \varpi \simeq e_0$ (= value).
-            As $t_0 \not\leq \neg t_{if}$, the type of the value $e_0$ can't be strictly refined (it can't be refined to $\Empty$).
-            Thus, we can deduce a derivarion for $\Gamma \vdash e_1: t$.
-
-            TODO (no more guard)
+            We have derivations for $\Gamma \vdash e_0: t_0$, $\Gamma \evdash + {e_0} {t_{if}} \Gamma'$ and $\Gamma'\vdash e_1:t$.
+            
+            As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$by using the value testing lemma.
+            Thus, by using the monotonicity lemma, we have $\Gamma\vdash e_1:t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
             \item $e_0$ is not a value. TODO
           \end{itemize}
