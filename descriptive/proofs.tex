@@ -51,8 +51,6 @@
 
     \section{Theorems}
 
-    TODO: update: no more guards, alternative type system, rule empty (in particular environments can be bottom)
-
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
             &\forall s.\ \forall t.\ \valsemantic s \subseteq \valsemantic t \Leftrightarrow s \leq t\\
@@ -75,7 +73,7 @@
 
           If $\vvdash v:t$ and $v$ is well-typed in $\Gamma$, then $\Gamma\vdash v:t$.
 
-          If $\Gamma \vdash v:t$, then $\vvdash v:t$.
+          If $\Gamma \vdash v:t$ and $\Gamma\neq\bot$, then $\vvdash v:t$.
         \end{lemma}
     
         \begin{lemma}[Monotonicity]
@@ -83,7 +81,7 @@
           Then, we have:
           \begin{align*}
             \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma' \vdash e:t\\
-            \forall e,t,p,e',t'.\ &\Gamma \cvdash p e t e':t' \Rightarrow \Gamma' \cvdash p e t e':t'\\
+            \forall e,t,p,\Gamma^p.\ &\Gamma \evdash p e t \Gamma^p \Rightarrow \exists {\Gamma^p}'\leq \Gamma^p.\ \Gamma' \evdash p e t {\Gamma^p}'\\
             \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \Rightarrow \pvdash {\Gamma'} p e t \varpi:t'
           \end{align*}
         \end{lemma}
@@ -97,6 +95,12 @@
           $\Gamma, (x:t_1^x \land t_2^x) \vdash e:t_1\land t_2$.
         \end{corollary}
         Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
+
+        \begin{lemma}[Value refinement]
+          For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
+          never uses the rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
+        \end{lemma}
+        Proof: if the type of a value is strictly strengthened, then its new type is $\Empty$. TODO
 
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
@@ -113,15 +117,15 @@
           Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
           \begin{align*}
             \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
-            \forall e,t,p,e',t'.\ &\Gamma \cvdash p {e} {t} e':t' \Rightarrow \Gamma\rho \cvdash p {e\rho} {t} e'\rho:t'\\
+            \forall e,t,p,\Gamma^p.\ &\Gamma \evdash p {e} {t} \Gamma^p \Rightarrow \Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho\\
             \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \text{ and }\occ {e\rho} \varpi\text{ is defined} \Rightarrow \pvdash {\Gamma\rho} p {e\rho} t \varpi:t'
           \end{align*}
         \end{lemma}
 
         \begin{lemma}[Test reduction]
           Let $\Gamma$ an ordinary environment. Let $e$ and $e'$ two expressions, $t_{if}$ a type and $p \in \{+,-\}$.
-          If $e \leadsto e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-          then TODO. %$\forall e_c,t.\ \Gamma \cvdash p e {t_{if}} e_c:t \Rightarrow \Gamma \cvdash p {e'} {t_{if}} e_c:t$.
+          If $e \xleadsto{\rho} e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
+          then $\forall \Gamma^p.\ \Gamma \evdash p e {t_{if}} \Gamma^p \Rightarrow \Gamma \evdash p {e'} {t_{if}} \Gamma^p\rho$.
         \end{lemma}
 
         \begin{theorem}[Subject reduction]
@@ -131,6 +135,8 @@
         \end{theorem}
 
         \section{Proofs}
+
+        TODO: update: no more guards, alternative type system, rule empty (in particular environments can be bottom)
 
         \subsection{Monotonicity lemma}
 
@@ -152,6 +158,8 @@
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
         We consider a derivation of the judgement in the hypotheses (left-side of the implications).
+
+        By using the value refinement lemma, we can assume without loss of generality that TODO.
 
         We can also assume w.l.o.g. that all rules \Rule{Path} satisfy
         $\occ e \varpi \in\dom\Gamma \Rightarrow t_1 \leq \Gamma(\occ e \varpi)$ (if it is not the case,
