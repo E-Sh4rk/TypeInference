@@ -108,7 +108,7 @@
           For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
           never uses the rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
         \end{corollary}
-        Proof: if the type of a value is strictly strengthened, then its new type is $\Empty$. TODO
+        Proof: if the refined type of a value was not already derivable, then we can also refine this value to $\Empty$. TODO
 
         \begin{lemma}[Value testing]
           For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$, if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
@@ -151,8 +151,6 @@
 
         \section{Proofs}
 
-        TODO: update: no more guards, alternative type system, rule empty (in particular environments can be bottom)
-
         \subsection{Substitution lemma}
 
         Let $\Gamma$, $e_a$, $e_b$ as in the statement.
@@ -168,6 +166,10 @@
         we can easily transform the derivation by intersecting the $t'$ with $\Gamma'(\occ e \varpi)$
         using the rules \Rule{PIntersect}, \Rule{PTypeof} and \Rule{Occ}.
         The rest of the derivation can easily be adapted by adding some \Rule{Subs} rules when needed.
+
+        Finally, we can assume that, in any environment appearing in the derivation, if the environnement is not bottom,
+        then a value $v$ can only be mapped to a type $t$ such that $v\in\valsemantic{t}$. If it is not the case, then we just have to modify the
+        \Rule{Path} rule that introduced $(v:t)$ in the environment and add $(v:\Empty)$ instead by using the rules \Rule{PIntersect} and \Rule{PTypeof}.
 
         We now proceed by induction on this derivation in order to produce the required derivation.
         
@@ -251,8 +253,8 @@
             in the derivation of $\Gamma^p\vdash e_a:t'$ and thus we can easily derive $\Gamma'\vdash e_a:t'$.
 
             If $\occ e \varpi$, is a strict subexpression of $e_a$, it must be a value (given the possible forms of $e_a$).
-            Moreover, as $\Gamma^p \neq \bot$, we have $\forall v\in\dom{\Gamma^p}.\ \Gamma'\vdash v : \Gamma^p(v)$.
-            TODO: clarify this point and every point that states that values can only be strictly refined by Empty (actually they could take any typein the env).
+            Moreover, as $\Gamma^p \neq \bot$, we have $\forall v\in\dom{\Gamma^p}.\ v\in\valsemantic{\Gamma^p(v)}$ (recall the assumptions at the beginning of the proof)
+            and thus $\forall v\in\dom{\Gamma^p}.\ \Gamma'\vdash v : \Gamma^p(v)$.
             Thus we can derive $\Gamma'\vdash e_a:t'$ just by replacing every \Rule{Occ} rule applied to $\occ e \varpi$ in the derivation of $\Gamma^p\vdash e_a:t'$
             by the relevant derivation.
 
@@ -345,7 +347,7 @@
             \item $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$. In this case we have $e' \equiv e_1$.
             We have derivations for $\Gamma \vdash e_0: t_0$, $\Gamma \evdash + {e_0} {t_{if}} \Gamma'$ and $\Gamma'\vdash e_1:t$.
             
-            As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$by using the value testing lemma.
+            As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$ by using the value testing lemma.
             Thus, by monotonicity, we have $\Gamma\vdash e_1:t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
             \item $e_0$ is not a value. TODO
