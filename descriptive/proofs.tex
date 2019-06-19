@@ -130,9 +130,10 @@
           
           Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
           \begin{align*}
-            \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
-            \forall e,t,p,\Gamma^p.\ &\Gamma \evdash p {e} {t} \Gamma^p \Rightarrow \Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho\\
-            \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \text{ and }\occ {e\rho} \varpi\text{ is defined} \Rightarrow \pvdash {\Gamma\rho} p {e\rho} t \varpi:t'
+            &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
+            &\forall e,t,p,\Gamma^p.\ \Gamma \evdash p {e} {t} \Gamma^p \Rightarrow \Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho
+            \text{ and we still have } \forall t'.\ \Gamma^p \vdash e_a : t' \Rightarrow \Gamma^p\rho \vdash e_b:t'\\
+            &\forall e,t,p,\varpi,t'.\ \pvdash \Gamma p e t \varpi:t' \text{ and }\occ {e\rho} \varpi\text{ is defined} \Rightarrow \pvdash {\Gamma\rho} p {e\rho} t \varpi:t'
           \end{align*}
         \end{lemma}
 
@@ -200,6 +201,8 @@
           Now we want to apply the induction hypothesis on $\Gamma^+\vdash e_1:t$ in order to have $\Gamma^+\rho\vdash e_1\rho:t$.
           However, we must show before that $\forall t'.\ \Gamma^+\vdash e_a:t'\Rightarrow \Gamma^+\rho\vdash e_b:t'$.
 
+          TODO: move it in the Path case.
+
           Let $t'$ such that $\Gamma^+\vdash e_a:t'$.
           If $\Gamma^+ = \bot$, then $\Gamma^+\rho = \bot$ so we are done. So lets's suppose that $\Gamma^+ \neq \bot$.
 
@@ -247,7 +250,9 @@
           We proceed similarly on the judgments $\Gamma\evdash - e {t_{if}} \Gamma^-$ and $\Gamma^-\vdash e_1:t$, and so we have all the premises
           to apply the \Rule{If} rule in order to get $\Gamma\rho \vdash \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}:t'$. 
           \item[\Rule{Base}] Trivial.
-          \item[\Rule{Path}] TODO There are three cases:
+          \item[\Rule{Path}] First, let's show that we can derive $\Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho$.
+          
+          There are two cases:
           \begin{itemize}
             \item $\occ e \varpi$ is a strict subexpression of $e_a$.
             
@@ -256,10 +261,23 @@
             According to the assumptions we made on the derivation, it implies that $\varpi=\epsilon$.
             Hence, $e$ does not contain any occurence of $e_a$, so it is easy to conclude.
 
-            \item $\occ e \varpi$ is not a subexpression of $e_a$.
+            \item $\occ e \varpi$ is not a strict subexpression of $e_a$.
             
             In this case, we know that $\occ {e\rho} \varpi$ is defined.
-            We have by using the induction hypothesis $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$.
+            We have by using the induction hypothesis $\Gamma\rho \evdash p {e\rho} t \Gamma'\rho$
+            and $\forall t''.\ \Gamma' \vdash e_a : t'' \Rightarrow \Gamma'\rho \vdash e_b:t''$.
+
+            Thus we can also apply the induction hypothesis on $\pvdash {\Gamma'} p {e} t \varpi:t'$.
+            It gives $\pvdash {\Gamma'\rho} p {e\rho} t \varpi:t'$.
+            If $\occ {e\rho}\varpi \in\dom{\Gamma'\rho}$, and $(\Gamma'\rho)(\occ {e\rho}\varpi)=t''\not\geq t'$,
+            then we can derive $\pvdash {\Gamma'\rho} p {e\rho} t \varpi:t'\land t''$ just by using the rules
+            \Rule{PIntersect}, \Rule{PTypoef} and \Rule{Occ}.
+
+            Using this last judgement together with $\Gamma \evdash p e t \Gamma'$, we can derive with the rule \Rule{Path}
+            the wanted $\Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho$.
+          \end{itemize}
+
+          Now, let's show that $\forall t''.\ \Gamma^p \vdash e_a : t'' \Rightarrow \Gamma^p\rho \vdash e_b:t''$. TODO
 
             Let's show that $\forall t'.\ \Gamma,(\occ e \varpi:t_1) \vdash e_a : t' \Rightarrow (\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$.
             
@@ -278,32 +296,7 @@
             We obtain $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e'\rho : t_2$.
             Together with $\pvdash {\Gamma\rho} p {e\rho} t \varpi:t_1$, it allows us to construct the wanted derivation using the
             \Rule{Path} rule.
-
-            \item $\occ e \varpi = e_a$
-            
-            This case is similar to the previous.
-            The only difference is the way to deduce $(\Gamma,(\occ e \varpi:t_1))\rho \vdash e_b:t'$ from $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$.
-
-            Indeed, we can't derive $\Gamma \vdash e_a : t'$ from $\Gamma,(\occ e \varpi:t_1) \vdash e_a : t'$ because $\occ e \varpi (= e_a)$
-            is not a strict subexpression of $e_a$ and thus the rule \Rule{Occ} could be used on $\occ e \varpi (= e_a)$ in the initial derivation.
-
-            However, the rule \Rule{Occ} can only be used on $e_a$ at the bottom of the derivation of $\Gamma,(e_a:t_1) \vdash e_a : t'$:
-            there can't be any \Rule{App}, \Rule{Abs} or \Rule{If} after because the premises of these rules only contain strict subexpressions of their
-            consequence. The only rules that can appear in a branch containing a \Rule{Occ} applied on $e_a$ are \Rule{Occ}, \Rule{Subs} and \Rule{Intersect}.
-
-            Thus, we can (temporarily) remove from the derivation all these branchs
-            (for each \Rule{Occ} we want to remove, we go down until we have an \Rule{Intersect} rule,
-            we remove this \Rule{Intersect} rule and replace it by its other premise).
-
-            It gives us a derivation for $\Gamma,(e_a:t_1) \vdash e_a : t''$ such that $t''\land t_1 \leq t'$ and without any \Rule{Occ} applied to $e_a$.
-            Thus, we can transform it into a derivation of $\Gamma \vdash e_a : t''$ and we get $\Gamma\rho \vdash e_b : t''$ (from the hypotheses of the lemma).
-
-            By monotonicity, we get a derivation for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t''$.
-            We can then append at the end of this derivation an \Rule{Intersect} with a \Rule{Occ} (applied to $e_b$).
-            As $((\Gamma,(e_a:t_1))\rho)(e_b) \leq t_1$, we obtain a derivation
-            for $(\Gamma,(e_a:t_1))\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
-            
-          \end{itemize}
+          
 
           \item[\Rule{PTypeof}] Trivial (by using the induction hypothesis).
           \item[\Rule{P$\cdots$}] All the remaining rules are trivial.

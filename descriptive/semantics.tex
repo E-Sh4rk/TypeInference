@@ -113,8 +113,13 @@
             { }
             \qquad
         \Infer[Path]
-            { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma \evdash p e t \Gamma' }
-            { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t_1) }
+            { \pvdash \Gamma p e t \varpi:t' \\ \Gamma \evdash p e t \Gamma' }
+            { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t') }
+            { }
+            \qquad
+        \Infer[Path(fixpoint)]
+            { \pvdash {\Gamma'} p e t \varpi:t' \\ \Gamma \evdash p e t \Gamma' }
+            { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t') }
             { }
     \end{mathpar}
 
