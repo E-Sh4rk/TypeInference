@@ -21,6 +21,9 @@
 \begin{document}
 
   \maketitle
+
+  In the following, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
+  For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
   
     \section{Definitions}
 
@@ -119,7 +122,7 @@
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
 
-          Let's suppose that $e_b$ is a closed term and that $e_a$ has one of the following form:
+          Let's suppose that $e_b$ is closed and that $e_a$ has one of the following form:
           \begin{itemize}
             \item $x$ (variable)
             \item $\ite e t {e_1} {e_2}$ (if expression)
@@ -350,7 +353,8 @@
             As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$ by using the value testing lemma.
             Thus, by monotonicity, we have $\Gamma\vdash e_1:t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
-            \item $e_0$ is not a value. TODO
+            \item $e_0$ is not a value. In this case, we must have $e_0\xleadsto{\rho} e_0'$ and $e'\equiv \ite {e_0'} {t_{if}} {e_1\rho} {e_2\rho}$.
+            Moreover, by construction of the semantics, we know that $e_0'=e_0\rho$. TODO (not yet true)
           \end{itemize}
         \end{description}
 

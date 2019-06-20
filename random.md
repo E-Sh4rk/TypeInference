@@ -53,7 +53,7 @@ EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)
 - Empty could appear in the then branch, even if we can't exclude this branch 'a priori':  
   if ((if x is Int then 0 else false), x) is (Int,Bool) then ... else ...
 
-- SR counterexample:  
+- SR counterexample (fixed with the new EFQ rule):  
   f: Int->Int  
   g:  (Bool->Bool & Int->Int) | (Bool->Bool & Int->Bool)  
   
@@ -61,6 +61,10 @@ EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)
   
   f 0 -----------> 5  
   Empty -------> Int
+
+  - SR counterexample (fixed with the updated Ctx rule in the semantics):  
+    if (id 3, id 3) is (int, bool) then id 3  
+    ----> if (id 3, 3) is (int, bool) then 3
 
 ### Adding polymorphism
 
