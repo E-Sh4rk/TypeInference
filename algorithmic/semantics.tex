@@ -25,6 +25,11 @@
     \section{Typing rules}
 
     \begin{mathpar}
+      \Infer[EFQ]
+      { }
+      { \Gamma, (e:\Empty) \vdash e': \Empty }
+      { \text{With priority over other rules} }
+      \\
       \Infer[Occ]
           { \Gamma\setminus\{e\} \vdash e : t }
           { \Gamma \vdash e: \Gamma(e) \tsand t }
@@ -54,18 +59,20 @@
           \\
       \Infer[If]
             {\Gamma\vdash e:\ts_0\\
-            \makebox{$\begin{array}{l}
-              \left\{
-                \begin{array}{ll} %\Gamma,
-                \Refine + {e,t} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
-                \ts_1 = \Empty & \text{ otherwise}
-              \end{array}\right.\\
-              \left\{
-                \begin{array}{ll} %\Gamma,
-                \Refine - {e,t} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
-                \ts_2 = \Empty & \text{ otherwise}
-              \end{array}\right.
-            \end{array}$}}
+            %\makebox{$\begin{array}{l}
+            %  \left\{
+            %    \begin{array}{ll} %\Gamma,
+            %    \Refine + {e,t} \Gamma \vdash e_1 : \ts_1 & \text{ if } \ts_0 \not\leq \neg t\\
+            %    \ts_1 = \Empty & \text{ otherwise}
+            %  \end{array}\right.\\
+            %  \left\{
+            %    \begin{array}{ll} %\Gamma,
+            %    \Refine - {e,t} \Gamma \vdash e_2 : \ts_2 & \text{ if } \ts_0 \not\leq t\\
+            %    \ts_2 = \Empty & \text{ otherwise}
+            %  \end{array}\right.
+            %\end{array}$}
+            \Refine + {e,t} \Gamma \vdash e_1 : \ts_1\\
+            \Refine - {e,t} \Gamma \vdash e_2 : \ts_2}
             {\Gamma\vdash \ite {e} t {e_1}{e_2}: \ts_1\tsor \ts_2}
             %{\ite {e} t {e_1}{e_2}\not\in\dom\Gamma}
             {\texttt{if}\dots\not\in\dom\Gamma}
@@ -80,6 +87,33 @@
       {\Gamma \vdash (e_1,e_2):{\ts_1}\tstimes{\ts_2}}%\pair{t_1}{t_2}}
       {(e_1,e_2)\not\in\dom\Gamma}
     \end{mathpar}
+
+    \[
+    \begin{array}{lcl}
+      \typep+\epsilon{\Gamma,e,t} & = & t\\
+      \typep-\epsilon{\Gamma,e,t} & = & \neg t\\
+      \typep{p}{\varpi.0}{\Gamma,e,t} & = & \neg(\arrow{\Gp p{\Gamma,e,t}{(\varpi.1)}}{\neg \Gp p {\Gamma,e,t} (\varpi)})\\
+      \typep{p}{\varpi.1}{\Gamma,e,t} & = & \worra{\tsrep {\tyof{\occ e{\varpi.0}}\Gamma}}{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.l}{\Gamma,e,t} & = & \bpl{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.r}{\Gamma,e,t} & = & \bpr{\Gp p {\Gamma,e,t} (\varpi)}\\
+      \typep{p}{\varpi.f}{\Gamma,e,t} & = & \pair{\Gp p {\Gamma,e,t} (\varpi)}\Any\\
+      \typep{p}{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\Gp p {\Gamma,e,t} (\varpi)}\\ \\
+      \Gp p {\Gamma,e,t} (\varpi) & = & \typep p \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}\\
+      %\underbrace{\land \tyof {\occ e \varpi} {\Gamma\setminus\{\occ e \varpi\}}}_{\text{if $\occ e \varpi$ is not a variable}}}\\
+    \end{array}
+    \]
+
+    \begin{align*}
+      &(\RefineStep p {e,t} (\Gamma))(e') = 
+        \left\{\begin{array}{ll}
+          \tyof {e'} \Gamma \tsand \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
+          \text{undefined} & \text{otherwise}
+        \end{array}\right.\\
+      &\Refine p {e,t} \Gamma=\fixpoint_\Gamma (\RefineStep p {e,t})\qquad \text{(for the order $\leq$ on environments, defined in the proofs section)}
+    \end{align*}
+
+    \newpage
 
     \section{Intermediate semantics}
 
