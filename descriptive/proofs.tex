@@ -140,12 +140,6 @@
           \end{align*}
         \end{lemma}
 
-        \begin{lemma}[Test reduction]
-          Let $\Gamma$ an ordinary environment. Let $e$ and $e'$ two expressions, $t_{if}$ a type and $p \in \{+,-\}$.
-          If $e \xleadsto{\rho} e'$ and if the subject reduction lemma holds for every subexpression of $e$ that satisfies its hypotheses,
-          then $\forall \Gamma^p.\ \Gamma \evdash p e {t_{if}} \Gamma^p \Rightarrow \Gamma \evdash p {e'} {t_{if}} \Gamma^p\rho$.
-        \end{lemma}
-
         \begin{theorem}[Subject reduction]
           Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
 
@@ -353,8 +347,20 @@
             As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$ by using the value testing lemma.
             Thus, by monotonicity, we have $\Gamma\vdash e_1:t$.
             \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
-            \item $e_0$ is not a value. In this case, we must have $e_0\xleadsto{\rho} e_0'$ and $e'\equiv \ite {e_0'} {t_{if}} {e_1\rho} {e_2\rho}$.
-            Moreover, by construction of the semantics, we know that $e_0'=e_0\rho$. TODO (not yet true)
+            \item $e_0$ is not a value.
+            In this case, we have $e_0\xleadsto{\rho} e_0'$ and $e'\equiv \ite {e_0\rho} {t_{if}} {e_1\rho} {e_2\rho}\equiv e\rho$.
+            
+            First, let's notice that if we note $\rho=\subst{e_a}{e_b}$, we have $e_b$ closed (only closed expressions are reducible),
+            and $e_a$ has one of the following forms (it can be easily proved by induction on the reduction step derivation):
+            \begin{itemize}
+              \item $\ite e t {e_1} {e_2}$ (if expression)
+              \item $v v$ (value applied to a value)
+            \end{itemize}
+
+            Secondly, as $e_a\leadsto e_b$ and as the derivation of this reduction is a strict subderivation of that of $e\leadsto e'$,
+            we can use the induction hypothesis on $e_a\leadsto e_b$ and we obtain $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+            
+            Thus, we can conclude directly by using the substitution lemma on $e$ and $\rho$.
           \end{itemize}
         \end{description}
 

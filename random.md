@@ -62,7 +62,7 @@ EX: if ((x,y), (if x is Int then y else 0)) is ((Int,Int)|(Bool,Bool), Int|Bool)
   f 0 -----------> 5  
   Empty -------> Int
 
-  - SR counterexample (fixed with the updated Ctx rule in the semantics):  
+  - SR counterexample (fixed with the updated TestCtx rule in the semantics):  
     if (id 3, id 3) is (int, bool) then id 3  
     ----> if (id 3, 3) is (int, bool) then 3
 
