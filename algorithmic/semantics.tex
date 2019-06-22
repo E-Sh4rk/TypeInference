@@ -31,15 +31,15 @@
       { \text{With priority over other rules} }
       \\
       \Infer[Occ]
-          { \Gamma\setminus\{e\} \vdash e : t }
-          { \Gamma \vdash e: \Gamma(e) \tsand t }
+          { \Gamma\setminus\{e\} \vdash e : \ts }
+          { \Gamma \vdash e: \Gamma(e) \tsand \ts }
           { e\in\dom\Gamma}
       \qquad
       \Infer[Const]
           { }
           {\Gamma\vdash c:\basic{c}}
           {c\not\in\dom\Gamma}
-       \\
+      \\
       \Infer[Abs]
           {\Gamma,x:s_i\vdash e:\ts_i'\\ \ts_i'\leq t_i}
           {
@@ -106,7 +106,9 @@
     \begin{align*}
       &(\RefineStep p {e,t} (\Gamma))(e') = 
         \left\{\begin{array}{ll}
-          \tyof {e'} \Gamma \tsand \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}} \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
+          %\tyof {e'} \Gamma \tsand
+          \bigwedge_{\{\varpi \alt \occ e \varpi \equiv e'\}}
+          \Gp p {\Gamma,e,t} (\varpi) & \text{if } \exists \varpi.\ \occ e \varpi \equiv e' \\
           \Gamma(e') & \text{otherwise, if } e' \in \dom \Gamma\\
           \text{undefined} & \text{otherwise}
         \end{array}\right.\\
