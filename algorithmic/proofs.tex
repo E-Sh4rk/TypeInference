@@ -38,6 +38,20 @@
     \end{align*}
     \end{definition}
 
+    \begin{definition}[Plinth]
+      A plinth $S$ is a set of types such that:
+      \begin{itemize}
+        \item $S$ is finite.
+        \item $\Empty \in S$ and $S$ is stable by $\neg, \land, \vee$. 
+        \item If $\tau$ is a DNF of $t\in S$, let's introduce $A=\{t_a \alt \exists (P,N) \in \tau \text{ s.t. } t_a \in P \text{ or } t_a \in N \}$. Thus:
+        \begin{itemize}
+          \item For all $t_a \in A$, we have $t_a \in S$.
+          \item For all $t_1$, $t_2$ such that $\arrow {t_1} {t_2} \in A$ or $\pair {t_1} {t_2} \in A$,
+          we have $t_1 \in S$ and $t_2 \in S$.
+        \end{itemize}
+      \end{itemize}
+    \end{definition}
+
   \section{Theorems}
 
   \begin{lemma}[Monotonicity and well-definedness of $\Refine p {e,t} \Gamma$]
@@ -47,5 +61,15 @@
       &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \Gamma \vdash e:\ts_0 \neq \tsempty \Rightarrow \Refine p {e,t} {\Gamma'} \leq \Refine p {e,t} \Gamma\\
     \end{align*}
   \end{lemma}
+
+  \begin{lemma}
+    Every finite set of types is included in a plinth.
+  \end{lemma}
+  Proof: Alain Frisch thesis, theorem 3.8 (p64) [TODO: ref].
+
+  \begin{theorem}[$\Ga {}$ computation]
+    The fixpoint $\fixpoint_\Gamma (\RefineStep p {e,t})$ can be reached in a finite number of iterations.
+  \end{theorem}
+
 
 \end{document}

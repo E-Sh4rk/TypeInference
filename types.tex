@@ -107,11 +107,11 @@
     \end{lemma}
     Proof: lemma 6.40 semantic\_subtyping (p45) [TODO: ref]
 
-    \begin{lemma}[Intersection of type schemes]
-      Let $\ts_1$ and $\ts_2$ be two type schemes. We can compute a type scheme, written $\ts_1 \tsand \ts_2$, such that:
-      \[\tsint {\ts_1 \tsand \ts_2} = \{s\alt \exists t_1 \in \tsint {\ts_1}\ 
-      \exists t_2 \in \tsint {\ts_2}.\ {t_1} \land {t_2} \leq s\}\]
-    \end{lemma}
+    %\begin{lemma}[Intersection of type schemes]
+    %  Let $\ts_1$ and $\ts_2$ be two type schemes. We can compute a type scheme, written $\ts_1 \tsand \ts_2$, such that:
+    %  \[\tsint {\ts_1 \tsand \ts_2} = \{s\alt \exists t_1 \in \tsint {\ts_1}\ 
+    %  \exists t_2 \in \tsint {\ts_2}.\ {t_1} \land {t_2} \leq s\}\]
+    %\end{lemma}
 
     \begin{lemma}
       Let $\ts$ be a type scheme and $t$ a type. We can decide the assertion $t \in \tsint \ts$,
@@ -119,26 +119,26 @@
     \end{lemma}
     Proof: lemma 6.41 semantic\_subtyping (p46) [TODO: ref]
 
-    \section{Proofs}
+    %\section{Proofs}
 
-    \subsection{Intersection of type schemes}
+    %\subsection{Intersection of type schemes}
 
-    Let $\ts_1$ and $\ts_2$. We proceed by an induction on $\ts_1$ and $\ts_2$.
-    Let's perform a case analysis on $\ts_1 \tsand \ts_2$ (modulo commutativity):
-    \begin{description}
-      \item[$\tsempty \tsand \ts$] We have $\ts_1 \tsand \ts_2 \simeq \tsempty$.
-      \item[$t \tsand \ts$] We can conclude using the previous lemma.
-      \item[$(\ts_1' \tsor \ts_2') \tsand \ts$] We have
-      $(\ts_1' \tsor \ts_2') \tsand \ts \simeq (\ts_1' \tsand \ts) \tsor (\ts_2' \tsand \ts)$
-      so we can conclude by induction.
-      \item[$(\ts_1' \tstimes \ts_2') \tsand (\ts_1'' \tstimes \ts_2'')$] We have
-      $(\ts_1' \tstimes \ts_2') \tsand (\ts_1'' \tstimes \ts_2'') \simeq (\ts_1' \tsand \ts_1'') \tstimes (\ts_2' \tsand \ts_2'')$
-      so we can conclude by induction.
-      \item[$(\ts_1' \tstimes \ts_2') \tsand (\tsfunone {t_i} {s_i}_{i=1..n})$] We have $\ts_1 \tsand \ts_2 \simeq \Empty$.
-      \item[$(\tsfunone {t_i} {s_i}_{i\in I}) \tsand (\tsfunone {t_j'} {s_j'}_{j\in J})$]
-      If $\bigwedge_{i\in I} \arrow {t_i} {s_i} \simeq \bigwedge_{j\in J} \arrow {t_j'} {s_j'}$,
-      then $\ts_1 \tsand \ts_2 \simeq \ts_1 \simeq \ts_2$.
-      Otherwise, $\ts_1 \tsand \ts_2 \simeq \Empty$.
-    \end{description}
+    %Let $\ts_1$ and $\ts_2$. We proceed by an induction on $\ts_1$ and $\ts_2$.
+    %Let's perform a case analysis on $\ts_1 \tsand \ts_2$ (modulo commutativity):
+    %\begin{description}
+    %  \item[$\tsempty \tsand \ts$] We have $\ts_1 \tsand \ts_2 \simeq \tsempty$.
+    %  \item[$t \tsand \ts$] We can conclude using the previous lemma.
+    %  \item[$(\ts_1' \tsor \ts_2') \tsand \ts$] We have
+    %  $(\ts_1' \tsor \ts_2') \tsand \ts \simeq (\ts_1' \tsand \ts) \tsor (\ts_2' \tsand \ts)$
+    %  so we can conclude by induction.
+    %  \item[$(\ts_1' \tstimes \ts_2') \tsand (\ts_1'' \tstimes \ts_2'')$] We have
+    %  $(\ts_1' \tstimes \ts_2') \tsand (\ts_1'' \tstimes \ts_2'') \simeq (\ts_1' \tsand \ts_1'') \tstimes (\ts_2' \tsand \ts_2'')$
+    %  so we can conclude by induction.
+    %  \item[$(\ts_1' \tstimes \ts_2') \tsand (\tsfunone {t_i} {s_i}_{i=1..n})$] We have $\ts_1 \tsand \ts_2 \simeq \Empty$.
+    %  \item[$(\tsfunone {t_i} {s_i}_{i\in I}) \tsand (\tsfunone {t_j'} {s_j'}_{j\in J})$]
+    %  If $\bigwedge_{i\in I} \arrow {t_i} {s_i} \simeq \bigwedge_{j\in J} \arrow {t_j'} {s_j'}$,
+    %  then $\ts_1 \tsand \ts_2 \simeq \ts_1 \simeq \ts_2$.
+    %  Otherwise, $\ts_1 \tsand \ts_2 \simeq \Empty$.
+    %\end{description}
     
 \end{document}
