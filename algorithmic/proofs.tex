@@ -1,0 +1,51 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Type inference - M2 Internship}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+
+  \section{Definitions}
+
+  TODO: use functional notation for the algorithmic type system?
+
+    \begin{definition}[Bottom environment]
+      Let $\Gamma$ an environment.\\
+      $\Gamma$ is bottom (noted $\Gamma = \bot$) iff $\exists e\in\dom\Gamma.\ \Gamma(e)\simeq\Empty$.
+    \end{definition}
+
+    \begin{definition}[(Pre)order on environments]
+    Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leq \Gamma$ iff:
+    \begin{align*}
+        &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \exists \ts\leq \Gamma(e).\ \Gamma' \vdash e : \ts)
+    \end{align*}
+    \end{definition}
+
+  \section{Theorems}
+
+  \begin{lemma}[Monotonicity and well-definedness of $\Refine p {e,t} \Gamma$]
+    \begin{align*}
+      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \Gamma \vdash e:\ts \Rightarrow \exists \ts'\leq \ts.\ \Gamma' \vdash e:\ts'\\
+      &\forall e,t,\Gamma.\ \Gamma \vdash e:\ts_0 \neq \tsempty \Rightarrow \Refine p {e,t} \Gamma \text{ well-defined}\\
+      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \Gamma \vdash e:\ts_0 \neq \tsempty \Rightarrow \Refine p {e,t} {\Gamma'} \leq \Refine p {e,t} \Gamma\\
+    \end{align*}
+  \end{lemma}
+
+\end{document}
