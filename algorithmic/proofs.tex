@@ -22,9 +22,16 @@
 
   \maketitle
 
-  \section{Definitions}
+  We define $\tyof e \Gamma$ as follows:
+  \begin{align*}
+    \tyof e \Gamma = 
+    \left\{\begin{array}{ll}
+      \ts & \text{if } \Gamma \vdash e:\ts \\
+      \tsempty & \text{otherwise}
+    \end{array}\right.
+  \end{align*}
 
-  TODO: use functional notation for the algorithmic type system?
+  \section{Definitions}
 
     \begin{definition}[Bottom environment]
       Let $\Gamma$ an environment.\\
@@ -34,7 +41,7 @@
     \begin{definition}[(Pre)order on environments]
     Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leq \Gamma$ iff:
     \begin{align*}
-        &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \exists \ts\leq \Gamma(e).\ \Gamma' \vdash e : \ts)
+        &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \tyof e \Gamma \leq \Gamma(e))
     \end{align*}
     \end{definition}
 
@@ -56,9 +63,9 @@
 
   \begin{lemma}[Monotonicity and well-definedness of $\Refine p {e,t} \Gamma$]
     \begin{align*}
-      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \Gamma \vdash e:\ts \Rightarrow \exists \ts'\leq \ts.\ \Gamma' \vdash e:\ts'\\
-      &\forall e,t,\Gamma.\ \Gamma \vdash e:\ts_0 \neq \tsempty \Rightarrow \Refine p {e,t} \Gamma \text{ well-defined}\\
-      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \Gamma \vdash e:\ts_0 \neq \tsempty \Rightarrow \Refine p {e,t} {\Gamma'} \leq \Refine p {e,t} \Gamma\\
+      &\forall e,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \Rightarrow \tyof e {\Gamma'} \leq \tyof e {\Gamma}\\
+      &\forall e,\Gamma.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Refine p {e,t} \Gamma \text{ is well-defined}\\
+      &\forall e,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \tyof e \Gamma \neq \tsempty \Rightarrow \Refine p {e,t} {\Gamma'} \leq \Refine p {e,t} \Gamma\\
     \end{align*}
   \end{lemma}
 
