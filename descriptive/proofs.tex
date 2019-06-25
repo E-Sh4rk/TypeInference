@@ -25,6 +25,8 @@
   In the following, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
   For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
   
+  The environements also operate up to alpha-renaming.
+
   TODO: add rules for pairs.
 
     \section{Definitions}
@@ -98,21 +100,19 @@
         \end{corollary}
 
         \begin{lemma}[Value refinement 1]
-          For any derivable judgement of the form $\pvdash \Gamma p e t \varpi.x:\Empty$ with $x\in\{0,1\}$ and $\occ e \varpi = v$ a value,
-          we have $\pvdash \Gamma p e t \varpi:\Empty$.
+          For any derivable judgement of the form $\pvdash \Gamma p e t \varpi.x:t'$ with $x\in\{0,1\}$ such that $\forall y.\ \occ e {\varpi.y}$ is a value
+          and $v = \occ e {\varpi.x} \not\in \valsemantic{t'}$, we have $\pvdash \Gamma p e t \varpi:\Empty$.
         \end{lemma}
 
         \begin{corollary}[Value refinement 2]
           For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
-          never uses the rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
+          never uses the rule \Rule{Path} with $\varpi = \varpi'.x$ and such that $\forall y.\ \occ e {\varpi'.y}$ refers to a value.
         \end{corollary}
 
         \begin{lemma}[Value testing]
           For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$ (with $v$ a value), if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
           then we have $\Gamma\leq\Gamma'$.
         \end{lemma}
-        Proof: As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$. Moreover, as $v \in \valsemantic{t} \Leftrightarrow p=+$,
-        for any $t'$ such that $\pvdash \Gamma p v t \varpi:t'$ we can derive $\Gamma \vdash v:t'$.
 
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
@@ -145,11 +145,59 @@
 
         \subsection{Value refinement 1}
 
-        TODO
+        We proceed by induction on the derivation of $\pvdash \Gamma p e t \varpi.x:t'$.
+
+        We perform a case analysis on the last rule:
+        \begin{description}
+          \item[\Rule{PTypeof}] In this case we have $\Gamma \vdash \occ e {\varpi.x} : t'$. As $v \not\in \valsemantic{t'}$,
+          we can derive $\Gamma \vdash \occ e {\varpi.x} : \Empty$ by using the rule \Rule{Intersect} and the rule \Rule{Abs} or \Rule{Const}.
+          Thus, we also have $\Gamma \vdash \occ e \varpi : \Empty$ (as $x\in\{0,1\}$, we know that $\occ e \varpi$ is an application).
+          Hence we can derive $\Gamma \vdash \occ e \varpi : \Empty$.
+          \item[\Rule{PIntersect}] We must have $v \not\in \valsemantic{t_1 \land t_2}$. It implies $v \not\in \valsemantic{t_1} \cap \valsemantic{t_2}$
+          and thus $v \not\in \valsemantic{t_1}$ or $v \not\in \valsemantic{t_2}$. Hence, we can apply the induction hypothesis.
+          \item[\Rule{PSubs}] Trivial (we use the induction hypothesis).
+          \item[\Rule{PEps+} and \Rule{PEps-}] This case is impossible.
+          \item[\Rule{PAppL}] We have $v \not\in \valsemantic{\neg (\arrow {t_1} {\neg t_2})}$. Thus, we have $v \in \valsemantic{\arrow {t_1} {\neg t_2}}$
+          and in consequence we can derive $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$.
+
+          Recall that $\occ e {\varpi.1}$ is necessarily a value (by hypothesis).
+          By using the induction hypothesis on $\pvdash \Gamma p e t \varpi.1:t_1$, we can suppose $\occ e {\varpi.1} \in \valsemantic{t_1}$ (otherwise we can conclude directly).
+          Thus, we can derive $\Gamma \vdash \occ e {\varpi.1}: t_1$.
+
+          From $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$ and $\Gamma \vdash \occ e {\varpi.1}: t_1$, we can derive $\Gamma \vdash \occ e {\varpi}: \neg t_2$
+          using the rule \Rule{App}.
+
+          Now, by starting from $\pvdash \Gamma p e t \varpi:t_2$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
+          $\pvdash \Gamma p e t \varpi:\Empty$.
+        
+          \item[\Rule{PAppR}] We have $v \not\in \valsemantic{\neg t_1}$. Thus, we have $v \in \valsemantic{t_1}$ and in consequence
+          we can derive $\Gamma \vdash v:t_1$. 
+
+          Recall that $\occ e {\varpi.2}$ is necessarily a value (by hypothesis).
+          By using the induction hypothesis on $\pvdash \Gamma p e t \varpi.0:\arrow {t_1} {t_2}$, we can suppose $\occ e {\varpi.0} \in \valsemantic{\arrow {t_1} {t_2}}$ (otherwise we can conclude directly).
+          Thus, we can derive $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$.
+
+          From $\Gamma \vdash v:t_1$ and $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$, we can derive $\Gamma \vdash \occ e {\varpi}: t_2$
+          using the rule \Rule{App}.
+
+          Now, by starting from $\pvdash \Gamma p e t \varpi:t_2'$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
+          $\pvdash \Gamma p e t \varpi:\Empty$.
+        \end{description}
 
         \subsection{Value refinement 2}
 
         If the refined type of a value was not already derivable, then we can also refine this value to $\Empty$. TODO
+
+        \subsection{Value testing}
+
+        As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$.
+        Moreover, as $v \in \valsemantic{t} \Leftrightarrow p=+$:
+        \begin{itemize}
+          \item If $p=+$, any derivation $\pvdash \Gamma p v t \varpi:t'$ can only contains the rules \Rule{PTypeof}, \Rule{PIntersect}, \Rule{PSubs}
+          and \Rule{PEps+} with $v \in \valsemantic{t}$. Thus we can easily derive $\Gamma \vdash v:t'$.
+          \item Similarly, if $p=-$, we can derive $\Gamma \vdash v:t'$ for any $t'$ such that $\pvdash \Gamma p v t \varpi:t'$.
+        \end{itemize}
+        We can thus conclude that $\Gamma \leq \Gamma'$.
 
         \subsection{Substitution lemma}
 
@@ -160,7 +208,7 @@
         We consider a derivation of a judgement as in the hypotheses (left-side of the implications).
 
         By using the value refinement lemma, we can assume without loss of generality that our derivation does not contain
-        any rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
+        any rule \Rule{Path} with $\varpi = \varpi'.x$ and such that $\forall y.\ \occ e {\varpi'.y}$ refers to a value.
 
         We can also assume w.l.o.g. that every \Rule{Path} rule is such that $\Gamma',(\occ e \varpi:t') \leq \Gamma'$. If it is not the case,
         we can easily transform the derivation by intersecting the $t'$ with $\Gamma'(\occ e \varpi)$
@@ -213,7 +261,7 @@
             \item $\occ e \varpi$ is a strict subexpression of $e_a$.
             
             In this case, it means that among its three possible forms,
-            $e_a$ is of the form $v v$. Thus, $\occ e \varpi$ is a value.
+            $e_a$ is of the form $v v$.
             According to the assumptions we made on the derivation, it implies that $\varpi=\epsilon$.
             Hence, $e$ does not contain any occurence of $e_a$, so it is easy to conclude.
 
