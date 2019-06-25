@@ -31,5 +31,6 @@
                 "%DOCFILE%"
             ]
         }
-    ]
+    ],
+    "FSharp.fsacRuntime": "net"
 }

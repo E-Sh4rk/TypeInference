@@ -67,6 +67,9 @@
       &\forall e,\Gamma.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Refine p {e,t} \Gamma \text{ is well-defined}\\
       &\forall e,\Gamma,\Gamma'.\ \Gamma'\leq\Gamma \text{ and } \tyof e \Gamma \neq \tsempty \Rightarrow \Refine p {e,t} {\Gamma'} \leq \Refine p {e,t} \Gamma\\
     \end{align*}
+  Moreover, the greatest fixpoint $\fixpoint_\Gamma (\RefineStep p {e,t})$ can be computed by iterating
+  the application of $\RefineStep p {e,t}$ starting from $\gamma$, until a fixed point is reached.
+  The termination will be proved later.
   \end{lemma}
 
   \begin{lemma}
@@ -78,5 +81,12 @@
     The fixpoint $\fixpoint_\Gamma (\RefineStep p {e,t})$ can be reached in a finite number of iterations.
   \end{theorem}
 
+  \begin{theorem}[Soundness of the algorithm]
+    \begin{align*}
+      &\forall \Gamma, e, t.\ t\in\tyof e \Gamma \Rightarrow \Gamma \vdash e:t\text{ is derivable}\\
+      &\forall \Gamma, \Gamma', p, e, t.\ \Refine p {e,t} \Gamma = \Gamma' \Rightarrow \Gamma \evdash p e t \Gamma' \text{ is derivable}\\
+      &\forall \Gamma, p, e, t, t', \varpi.\ \Gp p {\Gamma,e,t} (\varpi) = t' \Rightarrow \pvdash \Gamma p e t \varpi:t' \text{ is derivable}
+    \end{align*}
+  \end{theorem}
 
 \end{document}

@@ -25,6 +25,8 @@
   In the following, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
   For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
   
+  TODO: add rules for pairs.
+
     \section{Definitions}
 
     \begin{definition}[Bottom environment]
@@ -94,30 +96,23 @@
         \begin{corollary}[Preorder relation]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
-    
-        \begin{corollary}[Strengthening]
-          If $\Gamma, (x:t_1^x) \vdash e:t_1$ and $\Gamma, (x:t_2^x) \vdash e:t_2$, then
-          $\Gamma, (x:t_1^x \land t_2^x) \vdash e:t_1\land t_2$.
-        \end{corollary}
-        Proof: use the \Rule{Intersect} rule and the monotonicity lemma.
 
         \begin{lemma}[Value refinement 1]
           For any derivable judgement of the form $\pvdash \Gamma p e t \varpi.x:\Empty$ with $x\in\{0,1\}$ and $\occ e \varpi = v$ a value,
           we have $\pvdash \Gamma p e t \varpi:\Empty$.
         \end{lemma}
-        Proof: TODO.
 
         \begin{corollary}[Value refinement 2]
           For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
           never uses the rule \Rule{Path} with $\varpi\neq\epsilon$ and $\occ e \varpi$ refering to a value.
         \end{corollary}
-        Proof: if the refined type of a value was not already derivable, then we can also refine this value to $\Empty$. TODO
 
         \begin{lemma}[Value testing]
-          For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$, if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
+          For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$ (with $v$ a value), if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
           then we have $\Gamma\leq\Gamma'$.
         \end{lemma}
-        Proof: TODO.
+        Proof: As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$. Moreover, as $v \in \valsemantic{t} \Leftrightarrow p=+$,
+        for any $t'$ such that $\pvdash \Gamma p v t \varpi:t'$ we can derive $\Gamma \vdash v:t'$.
 
         \begin{lemma}[Substitution]
           Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
@@ -147,6 +142,14 @@
         \end{theorem}
 
         \section{Proofs}
+
+        \subsection{Value refinement 1}
+
+        TODO
+
+        \subsection{Value refinement 2}
+
+        If the refined type of a value was not already derivable, then we can also refine this value to $\Empty$. TODO
 
         \subsection{Substitution lemma}
 
