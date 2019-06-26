@@ -105,9 +105,12 @@
         \end{lemma}
 
         \begin{corollary}[Value refinement 2]
-          For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation that
-          never uses the rule \Rule{Path} with $\varpi = \varpi'.x$ and such that $\forall y.\ \occ e {\varpi'.y}$ refers to a value.
+          For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation of $\Gamma \evdash p e t \Gamma''$ with $\Gamma''\leq\Gamma'$
+          that never uses the rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
         \end{corollary}
+        Proof: We can easily remove every such rule from the derivation. If $\occ e {\varpi.x} \in \valsemantic{t'}$, the \Rule{Path} rule is useless
+        and we can freely remove it. Otherwise, if $\occ e {\varpi.x} \not\in \valsemantic{t'}$, we can use the previous lemma to
+        replace it with a \Rule{Path} rule on $\varpi$.
 
         \begin{lemma}[Value testing]
           For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$ (with $v$ a value), if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
@@ -184,10 +187,6 @@
           $\pvdash \Gamma p e t \varpi:\Empty$.
         \end{description}
 
-        \subsection{Value refinement 2}
-
-        If the refined type of a value was not already derivable, then we can also refine this value to $\Empty$. TODO
-
         \subsection{Value testing}
 
         As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$.
@@ -208,7 +207,7 @@
         We consider a derivation of a judgement as in the hypotheses (left-side of the implications).
 
         By using the value refinement lemma, we can assume without loss of generality that our derivation does not contain
-        any rule \Rule{Path} with $\varpi = \varpi'.x$ and such that $\forall y.\ \occ e {\varpi'.y}$ refers to a value.
+        any rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
 
         We can also assume w.l.o.g. that every \Rule{Path} rule is such that $\Gamma',(\occ e \varpi:t') \leq \Gamma'$. If it is not the case,
         we can easily transform the derivation by intersecting the $t'$ with $\Gamma'(\occ e \varpi)$
