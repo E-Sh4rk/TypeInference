@@ -148,7 +148,7 @@
     \newcommand{\rd}[2]{\texttt{RefineDepth}_{#1}(#2)}
 
     We call \textit{depth environment} a partial function from variables, constants and lambda abstractions
-    to integers. For each depth environment $\depth$ and expression $e$, we define $\depof \depth e$ by:
+    to (finite) integers. For each depth environment $\depth$ and expression $e$, we define $\depof \depth e$ by:
     \[
       \left\{
         \begin{array}{lcl}
@@ -186,6 +186,13 @@
       &\rd e \depth=\textsf{lfp}_\depth (\rds e)
     \end{align*}
 
+    Let $\depth_I$ be the depth environment that maps every occurence of variable, constant or $\lambda$-abstraction
+    in $e$ to $0$.
+
+    Let's show that $\depth = \rd e {\depth_I}$ is well-defined.
+    As $\rds e$ is monotonic (and even extensive), we just have to show that there exists a fixpoint $\depth_F$.
+
+    TODO: AAAAAAAAAAH DOES NOT WORK (if id id is Any then ... else ...)
     -----
 
 %    -----
