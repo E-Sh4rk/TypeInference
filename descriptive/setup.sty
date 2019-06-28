@@ -71,6 +71,7 @@
   {#2}{#3}}
 
 \newcommand {\Rule}[1] {[\textsc{#1}]}
+\newcommand{\tcase}[4]{\ensuremath{#1{\in}#2\,\texttt{\textup{?}}\,#3\,\texttt{\textup{:}}\,#4}}
 
 \newcommand{\occ}[2]{#1{\downarrow}#2}
 \newcommand{\basic}[1]{\text{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont b}_{#1}}
@@ -178,5 +179,6 @@
 \newcommand{\aite}[5]{\ensuremath{\texttt{if}^{#5}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
 
 \newcommand{\cvdash}[3]{\vdash_{#2,#3,#1}}
-\newcommand{\pvdash}[4]{\vdash^{\texttt{Path}}_{#1,#3,#4,#2}}%\mathcal{P}
-\newcommand{\evdash}[3]{\vdash^{\texttt{Env}}_{#2,#3,#1}}
+\newcommand{\vdashp}{\vdash^{\texttt{Path}}}
+\newcommand{\pvdash}[3]{\vdashp_{#1,#2,#3}}%\mathcal{P}
+\newcommand{\evdash}[2]{\vdash^{\texttt{Env}}_{#1,#2}}

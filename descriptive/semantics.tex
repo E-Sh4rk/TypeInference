@@ -25,42 +25,52 @@
     \section{Typing rules}
 
     \begin{mathpar}
-      \Infer[Occ]
-          { }
-          { \Gamma \vdash e: \Gamma(e) }
-          { e\in\dom\Gamma }
-      \qquad
-      \Infer[Intersect]
-          { \Gamma \vdash e:t_1\\\Gamma \vdash e:t_2 }
-          { \Gamma \vdash e: t_1 \wedge t_2 }
-          { }
+        \Infer[Env]
+      { }
+      { \Gamma \vdash e: \Gamma(e) }
+      { e\in\dom\Gamma }
+  \qquad
+  \Infer[Intersect]
+      { \Gamma \vdash e:t_1\\\Gamma \vdash e:t_2 }
+      { \Gamma \vdash e: t_1 \wedge t_2 }
+      { }
       \qquad
       \Infer[Subs]
-          { \Gamma \vdash e:t\\t\leq t' }
-          { \Gamma \vdash e: t' }
-          { }
-      \qquad
+      { \Gamma \vdash e:t\\t\leq t' }
+      { \Gamma \vdash e: t' }
+      { }
       \\
       \Infer[Const]
-          { }
-          {\Gamma\vdash c:\basic{c}}
-          { }
-      \qquad
-      \Infer[App]
-          {
-            \Gamma \vdash e_1: \arrow {t_1}{t_2}\\
-            \Gamma \vdash e_2: t_1
-          }
-          { \Gamma \vdash {e_1}{e_2}: t_2 }
-          { }
+      { }
+      {\Gamma\vdash c:\basic{c}}
+      { }
+  \quad
+  \Infer[App]
+      {
+        \Gamma \vdash e_1: \arrow {t_1}{t_2}\quad
+        \Gamma \vdash e_2: t_1
+      }
+      { \Gamma \vdash {e_1}{e_2}: t_2 }
+      { }
           \\
-      \Infer[Abs]
-          {\Gamma,x:s_i\vdash e:t_i\\t\simeq \left(\bigwedge_{i\in I} \arrow {s_i} {t_i}\right)
-          \land \left(\bigwedge_{j\in J} \neg (\arrow {s'_j} {t'_j})\right)\\t\not\simeq\Empty}
-          {
-          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle t
-          }
-          { }
+          \Infer[Abs+]
+            {{\scriptstyle\forall i\in I}\quad\Gamma,x:s_i\vdash e:t_i}
+            {
+            \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle \bigwedge_{i\in I}\arrow {s_i} {t_i}
+            }
+            { }
+          \qquad
+          \Infer[Abs-]
+          {\Gamma \vdash \lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
+          { \Gamma \vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\neg(t_1\to t_2)  }
+          { (t\wedge\neg(t_1\to t_2))\not\simeq\Empty }
+%      \Infer[Abs]
+%          {\Gamma,x:s_i\vdash e:t_i\\t\simeq \left(\bigwedge_{i\in I} \arrow {s_i} {t_i}\right)
+%          \land \left(\bigwedge_{j\in J} \neg (\arrow {s'_j} {t'_j})\right)\\t\not\simeq\Empty}
+%          {
+%          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle t
+%          }
+%          { }
           \\
 %      \Infer[If]
 %            {\Gamma\vdash e:t_0\\
@@ -70,29 +80,37 @@
 %            \Gamma \cvdash - e t e_2:t'}
 %            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
 %            { }
-        \Infer[If]
-            {\Gamma\vdash e:t_0\\
-            %t_0\not\leq \neg t \Rightarrow
-            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \vdash e_1:t'\\
-            %t_0\not\leq t \Rightarrow
-            \Gamma \evdash - e t \Gamma^- \\ \Gamma^- \vdash e_2:t'}
-            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
-            { }
+%        \Infer[If]
+%            {\Gamma\vdash e:t_0\\
+%            %t_0\not\leq \neg t \Rightarrow
+%            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \vdash e_1:t'\\
+%            %t_0\not\leq t \Rightarrow
+%            \Gamma \evdash - e t \Gamma^- \\ \Gamma^- \vdash e_2:t'}
+%            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
+%            { }
+        \Infer[Case]
+        {\Gamma\vdash e:t_0\\
+        %t_0\not\leq \neg t \Rightarrow
+        \Gamma \evdash e t \Gamma_1 \\ \Gamma_1 \vdash e_1:t'\\
+        %t_0\not\leq t \Rightarrow
+        \Gamma \evdash e {\neg t} \Gamma_2 \\ \Gamma_2 \vdash e_2:t'}
+        {\Gamma\vdash \tcase {e} t {e_1}{e_2}: t'}
+        { }
       \qquad
-      \Infer[EFQ]
+      \Infer[Efq]
       { }
       { \Gamma, (e:\Empty) \vdash e': t }
       { }
       \\
       \Infer[Proj]
-      {\Gamma \vdash e:\pair {t_1} {t_2}}
-      {\Gamma \vdash \pi_i e:t_i}
-      { }
-      \qquad
-      \Infer[Pair]
-      {\Gamma \vdash e_1:t_1 \and \Gamma \vdash e_2:t_2}
-      {\Gamma \vdash (e_1,e_2):\pair {t_1} {t_2}}
-      { }
+  {\Gamma \vdash e:\pair{t_1}{t_2}}
+  {\Gamma \vdash \pi_i e:t_i}
+  { }
+  \qquad
+  \Infer[Pair]
+  {\Gamma \vdash e_1:t_1 \and \Gamma \vdash e_2:t_2}
+  {\Gamma \vdash (e_1,e_2):\pair {t_1} {t_2}}
+  { }
     \end{mathpar}
 
     \begin{center} \line(1,0){450} \end{center}
@@ -108,74 +126,69 @@
 %            { \Gamma \cvdash p e t e':t_2 }
 %            { }
         \Infer[Base]
-            { }
-            { \Gamma \evdash p e t \Gamma }
-            { }
-            \qquad
+        { }
+        { \Gamma \evdash e t \Gamma }
+        { }
+        \qquad
         \Infer[Path]
-            { \pvdash {\Gamma'} p e t \varpi:t' \\ \Gamma \evdash p e t \Gamma' }
-            { \Gamma \evdash p e t \Gamma',(\occ e \varpi:t') }
-            { }
+        { \pvdash {\Gamma'} e t \varpi:t' \\ \Gamma \evdash e t \Gamma' }
+        { \Gamma \evdash e t \Gamma',(\occ e \varpi:t') }
+        { }
     \end{mathpar}
 
     \begin{center} \line(1,0){450} \end{center}
 
     \begin{mathpar}
-        \Infer[PTypeof]
-            { \Gamma \vdash \occ e \varpi:t' }
-            { \pvdash \Gamma p e t \varpi:t' }
-            { }
-            \qquad
-        \Infer[PIntersect]
-            { \pvdash \Gamma p e t \varpi:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
-            { \pvdash \Gamma p e t \varpi:t_1\land t_2 }
-            { }
-            \qquad
         \Infer[PSubs]
-            { \pvdash \Gamma p e t \varpi:t_1 \\ t_1\leq t_2 }
-            { \pvdash \Gamma p e t \varpi:t_2 }
-            { }
-            \\
-        \Infer[PEps+]
-            { }
-            { \pvdash \Gamma + e t \epsilon:t }
-            { }
-            \qquad
-        \Infer[PEps-]
-            { }
-            { \pvdash \Gamma - e t \epsilon:\neg t }
-            { }
-            \\
-        \Infer[PAppL]
-            { \pvdash \Gamma p e t \varpi.1:t_1 \\ \pvdash \Gamma p e t \varpi:t_2 }
-            { \pvdash \Gamma p e t \varpi.0:\neg (\arrow {t_1} {\neg t_2}) }
-            { }
-            \qquad
-        \Infer[PAppR]
-            { \pvdash \Gamma p e t \varpi.0:\arrow{t_1}{t_2} \\ \pvdash \Gamma p e t \varpi:t_2' \\ t_2\land t_2' \simeq \Empty }
-            { \pvdash \Gamma p e t \varpi.1:\neg t_1 }
-            { }
-            \\
-        \Infer[PPairL]
-            { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
-            { \pvdash \Gamma p e t \varpi.l:t_1 }
-            { }
-            \qquad
-        \Infer[PPairR]
-            { \pvdash \Gamma p e t \varpi:\pair{t_1}{t_2} }
-            { \pvdash \Gamma p e t \varpi.r:t_2 }
-            { }
-            \qquad
-        \Infer[PFst]
-            { \pvdash \Gamma p e t \varpi:t' }
-            { \pvdash \Gamma p e t \varpi.f:\pair {t'} \Any }
-            { }
-            \qquad
-        \Infer[PSnd]
-            { \pvdash \Gamma p e t \varpi:t' }
-            { \pvdash \Gamma p e t \varpi.s:\pair \Any {t'} }
-            { }
-            \qquad
+        { \pvdash \Gamma e t \varpi:t_1 \\ t_1\leq t_2 }
+        { \pvdash \Gamma e t \varpi:t_2 }
+        { }
+        \qquad
+    \Infer[PIntersect]
+        { \pvdash \Gamma e t \varpi:t_1 \\ \pvdash \Gamma e t \varpi:t_2 }
+        { \pvdash \Gamma e t \varpi:t_1\land t_2 }
+        { }
+        \qquad
+    \Infer[PTypeof]
+        { \Gamma \vdash \occ e \varpi:t' }
+        { \pvdash \Gamma e t \varpi:t' }
+        { }
+        \\
+    \Infer[PEps]
+        { }
+        { \pvdash \Gamma e t \epsilon:t }
+        { }
+        \qquad
+    \Infer[PAppR]
+        { \pvdash \Gamma e t \varpi.0:\arrow{t_1}{t_2} \\ \pvdash \Gamma e t \varpi:t_2'}
+        { \pvdash \Gamma e t \varpi.1:\neg t_1 }
+        { t_2\land t_2' \simeq \Empty  }
+        \\
+    \Infer[PAppL]
+        { \pvdash \Gamma e t \varpi.1:t_1 \\ \pvdash \Gamma e t \varpi:t_2 }
+        { \pvdash \Gamma e t \varpi.0:\neg (\arrow {t_1} {\neg t_2}) }
+        { }
+        \qquad
+    \Infer[PPairL]
+        { \pvdash \Gamma e t \varpi:\pair{t_1}{t_2} }
+        { \pvdash \Gamma e t \varpi.l:t_1 }
+        { }
+        \\
+    \Infer[PPairR]
+        { \pvdash \Gamma e t \varpi:\pair{t_1}{t_2} }
+        { \pvdash \Gamma e t \varpi.r:t_2 }
+        { }
+        \qquad
+    \Infer[PFst]
+        { \pvdash \Gamma e t \varpi:t' }
+        { \pvdash \Gamma e t \varpi.f:\pair {t'} \Any }
+        { }
+        \qquad
+    \Infer[PSnd]
+        { \pvdash \Gamma e t \varpi:t' }
+        { \pvdash \Gamma e t \varpi.s:\pair \Any {t'} }
+        { }
+        \qquad
     \end{mathpar}
     
     \newpage
