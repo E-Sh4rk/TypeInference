@@ -88,11 +88,11 @@
           Then, we have:
           \begin{align*}
             \forall e,t.\ &\Gamma \vdash e:t \Rightarrow \Gamma' \vdash e:t\\
-            \forall e,t,p,\Gamma^p.\ &\Gamma \evdash p e t \Gamma^p \Rightarrow \exists {\Gamma^p}'\leq \Gamma^p.\ \Gamma' \evdash p e t {\Gamma^p}'\\
-            \forall e,t,p,\varpi,t'.\ &\pvdash \Gamma p e t \varpi:t' \Rightarrow \pvdash {\Gamma'} p e t \varpi:t'
+            \forall e,t,\Gamma_1.\ &\Gamma \evdash e t \Gamma_1 \Rightarrow \exists {\Gamma_1}'\leq \Gamma_1.\ \Gamma' \evdash e t {\Gamma_1}'\\
+            \forall e,t,\varpi,t'.\ &\pvdash \Gamma e t \varpi:t' \Rightarrow\ \pvdash {\Gamma'} e t \varpi:t'
           \end{align*}
         \end{lemma}
-        Proof: this is trivial. We just have to replace every \Rule{Occ} rule in the derivation with $\Gamma$
+        Proof: We just have to replace every \Rule{Env} rule in the derivation with $\Gamma$
         by the relevant derivation with $\Gamma'$, followed by a \Rule{Subs} if needed.
 
         \begin{corollary}[Preorder relation]
@@ -100,12 +100,12 @@
         \end{corollary}
 
         \begin{lemma}[Value refinement 1]
-          For any derivable judgement of the form $\pvdash \Gamma p e t \varpi.x:t'$ with $x\in\{0,1\}$ such that $\forall y.\ \occ e {\varpi.y}$ is a value
-          and $v = \occ e {\varpi.x} \not\in \valsemantic{t'}$, we have $\pvdash \Gamma p e t \varpi:\Empty$.
+          For any derivable judgement of the form $\pvdash \Gamma e t \varpi.x:t'$ with $x\in\{0,1\}$ such that $\forall y.\ \occ e {\varpi.y}$ is a value
+          and $v = \occ e {\varpi.x} \not\in \valsemantic{t'}$, we have $\pvdash \Gamma e t \varpi:\Empty$.
         \end{lemma}
 
         \begin{corollary}[Value refinement 2]
-          For any derivable judgement of the form $\Gamma \evdash p e t \Gamma'$, we can construct a derivation of $\Gamma \evdash p e t \Gamma''$ with $\Gamma''\leq\Gamma'$
+          For any derivable judgement of the form $\Gamma \evdash e t \Gamma'$, we can construct a derivation of $\Gamma \evdash e t \Gamma''$ with $\Gamma''\leq\Gamma'$
           that never uses the rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
         \end{corollary}
         Proof: We can easily remove every such rule from the derivation. If $\occ e {\varpi.x} \in \valsemantic{t'}$, the \Rule{Path} rule is useless
@@ -113,8 +113,8 @@
         replace it with a \Rule{Path} rule on $\varpi$.
 
         \begin{lemma}[Value testing]
-          For any derivable judgement of the form $\Gamma \evdash p v t \Gamma'$ (with $v$ a value), if we have $v \in \valsemantic{t} \Leftrightarrow p=+$,
-          then we have $\Gamma\leq\Gamma'$.
+          For any derivable judgement of the form $\Gamma \evdash v t \Gamma'$ (with $v$ a value),
+          we have $v \in \valsemantic{t} \Rightarrow \Gamma\leq\Gamma'$.
         \end{lemma}
 
         \begin{lemma}[Substitution]
@@ -127,14 +127,11 @@
             \item $v$ (value)
             \item $v v$ (value applied to a value)
           \end{itemize}
-          Let's also suppose that $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+          Let's also suppose that $\forall t.\ \Gamma \vdash e_a : t \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t$.
           
           Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
           \begin{align*}
-            &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
-            &\forall e,t,p,\Gamma^p.\ \Gamma \evdash p {e} {t} \Gamma^p \Rightarrow \Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho
-            \text{ and we still have } \forall t'.\ \Gamma^p \vdash e_a : t' \Rightarrow \Gamma^p\rho \vdash e_b:t'\\
-            &\forall e,t,p,\varpi,t'.\ \pvdash \Gamma p e t \varpi:t' \text{ and }\occ {e\rho} \varpi\text{ is defined} \Rightarrow \pvdash {\Gamma\rho} p {e\rho} t \varpi:t'
+            &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t
           \end{align*}
         \end{lemma}
 
@@ -148,55 +145,52 @@
 
         \subsection{Value refinement 1}
 
-        We proceed by induction on the derivation of $\pvdash \Gamma p e t \varpi.x:t'$.
+        We proceed by induction on the derivation of $\pvdash \Gamma e t \varpi.x:t'$.
 
         We perform a case analysis on the last rule:
         \begin{description}
           \item[\Rule{PTypeof}] In this case we have $\Gamma \vdash \occ e {\varpi.x} : t'$. As $v \not\in \valsemantic{t'}$,
-          we can derive $\Gamma \vdash \occ e {\varpi.x} : \Empty$ by using the rule \Rule{Intersect} and the rule \Rule{Abs} or \Rule{Const}.
+          we can derive $\Gamma \vdash \occ e {\varpi.x} : \Empty$ by using the rule \Rule{Intersect} and the rule \Rule{Abs+}, \Rule{Abs-} or \Rule{Const}.
           Thus, we also have $\Gamma \vdash \occ e \varpi : \Empty$ (as $x\in\{0,1\}$, we know that $\occ e \varpi$ is an application).
           Hence we can derive $\Gamma \vdash \occ e \varpi : \Empty$.
           \item[\Rule{PIntersect}] We must have $v \not\in \valsemantic{t_1 \land t_2}$. It implies $v \not\in \valsemantic{t_1} \cap \valsemantic{t_2}$
           and thus $v \not\in \valsemantic{t_1}$ or $v \not\in \valsemantic{t_2}$. Hence, we can apply the induction hypothesis.
           \item[\Rule{PSubs}] Trivial (we use the induction hypothesis).
-          \item[\Rule{PEps+} and \Rule{PEps-}] This case is impossible.
+          \item[\Rule{PEps}] This case is impossible.
           \item[\Rule{PAppL}] We have $v \not\in \valsemantic{\neg (\arrow {t_1} {\neg t_2})}$. Thus, we have $v \in \valsemantic{\arrow {t_1} {\neg t_2}}$
           and in consequence we can derive $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$.
 
           Recall that $\occ e {\varpi.1}$ is necessarily a value (by hypothesis).
-          By using the induction hypothesis on $\pvdash \Gamma p e t \varpi.1:t_1$, we can suppose $\occ e {\varpi.1} \in \valsemantic{t_1}$ (otherwise we can conclude directly).
+          By using the induction hypothesis on $\pvdash \Gamma e t \varpi.1:t_1$, we can suppose $\occ e {\varpi.1} \in \valsemantic{t_1}$ (otherwise we can conclude directly).
           Thus, we can derive $\Gamma \vdash \occ e {\varpi.1}: t_1$.
 
           From $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$ and $\Gamma \vdash \occ e {\varpi.1}: t_1$, we can derive $\Gamma \vdash \occ e {\varpi}: \neg t_2$
           using the rule \Rule{App}.
 
-          Now, by starting from $\pvdash \Gamma p e t \varpi:t_2$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
-          $\pvdash \Gamma p e t \varpi:\Empty$.
+          Now, by starting from $\pvdash \Gamma e t \varpi:t_2$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
+          $\pvdash \Gamma e t \varpi:\Empty$.
         
           \item[\Rule{PAppR}] We have $v \not\in \valsemantic{\neg t_1}$. Thus, we have $v \in \valsemantic{t_1}$ and in consequence
           we can derive $\Gamma \vdash v:t_1$. 
 
           Recall that $\occ e {\varpi.2}$ is necessarily a value (by hypothesis).
-          By using the induction hypothesis on $\pvdash \Gamma p e t \varpi.0:\arrow {t_1} {t_2}$, we can suppose $\occ e {\varpi.0} \in \valsemantic{\arrow {t_1} {t_2}}$ (otherwise we can conclude directly).
+          By using the induction hypothesis on $\pvdash \Gamma e t \varpi.0:\arrow {t_1} {t_2}$, we can suppose $\occ e {\varpi.0} \in \valsemantic{\arrow {t_1} {t_2}}$ (otherwise we can conclude directly).
           Thus, we can derive $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$.
 
           From $\Gamma \vdash v:t_1$ and $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$, we can derive $\Gamma \vdash \occ e {\varpi}: t_2$
           using the rule \Rule{App}.
 
-          Now, by starting from $\pvdash \Gamma p e t \varpi:t_2'$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
-          $\pvdash \Gamma p e t \varpi:\Empty$.
+          Now, by starting from $\pvdash \Gamma e t \varpi:t_2'$ and using the rules \Rule{PIntersect} and \Rule{PTypeof}, we can derive
+          $\pvdash \Gamma e t \varpi:\Empty$.
         \end{description}
 
         \subsection{Value testing}
 
         As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$.
-        Moreover, as $v \in \valsemantic{t} \Leftrightarrow p=+$:
-        \begin{itemize}
-          \item If $p=+$, any derivation $\pvdash \Gamma p v t \varpi:t'$ can only contains the rules \Rule{PTypeof}, \Rule{PIntersect}, \Rule{PSubs}
-          and \Rule{PEps+} with $v \in \valsemantic{t}$. Thus we can easily derive $\Gamma \vdash v:t'$.
-          \item Similarly, if $p=-$, we can derive $\Gamma \vdash v:t'$ for any $t'$ such that $\pvdash \Gamma p v t \varpi:t'$.
-        \end{itemize}
-        We can thus conclude that $\Gamma \leq \Gamma'$.
+        Thus, any derivation $\pvdash \Gamma v t \varpi:t'$ can only contains the rules
+        \Rule{PTypeof}, \Rule{PIntersect}, \Rule{PSubs} and \Rule{PEps}.
+        Moreover, as $v \in \valsemantic{t}$, the rules \Rule{PEps} can be replaced by \Rule{PTypeof}.
+        Thus we can easily derive $\Gamma \vdash v:t'$.
 
         \subsection{Substitution lemma}
 
@@ -204,19 +198,30 @@
 
         We note $\rho$ the substitution $\subst {e_a} {e_b}$.
 
-        We consider a derivation of a judgement as in the hypotheses (left-side of the implications).
+        We consider a derivation of $\Gamma \vdash e:t$.
 
         By using the value refinement lemma, we can assume without loss of generality that our derivation does not contain
         any rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
 
-        We can also assume w.l.o.g. that every \Rule{Path} rule is such that $\Gamma',(\occ e \varpi:t') \leq \Gamma'$. If it is not the case,
-        we can easily transform the derivation by intersecting the $t'$ with $\Gamma'(\occ e \varpi)$
-        using the rules \Rule{PIntersect}, \Rule{PTypeof} and \Rule{Occ}.
+        We can also assume w.l.o.g. that every application of the \Rule{Path} rule is such that $\Gamma',(\occ e \varpi:t') \leq \Gamma'$. If it is not the case,
+        we can easily transform the derivation by intersecting $t'$ with $\Gamma'(\occ e \varpi)$
+        using the rules \Rule{PIntersect}, \Rule{PTypeof} and \Rule{Env}.
         The rest of the derivation can easily be adapted by adding some \Rule{Subs} rules when needed.
 
         Finally, we can assume that, in any environment appearing in the derivation, if the environnement is not bottom,
-        then a value $v$ can only be mapped to a type $t$ such that $v\in\valsemantic{t}$. If it is not the case, then we just have to modify the
-        \Rule{Path} rule that introduced $(v:t)$ in the environment and add $(v:\Empty)$ instead by using the rules \Rule{PIntersect} and \Rule{PTypeof}.
+        then a value $v$ can only be mapped to a type $t$ such that $v\in\valsemantic{t}$. If it is not the case, then we just have to change the
+        \Rule{Path} rule that introduce $(v:t)$ into a path rule that introduce $(v:\Empty)$,
+        by using the rules \Rule{PIntersect} and \Rule{PTypeof} (if $v\not\in\valsemantic{t}$, then $v\in\valsemantic{\neg t}$
+        and thus $\Gamma \vdash v:\neg t$ is derivable).
+
+        Now, let's prove by induction on the derivation the following properties:
+
+        \begin{align*}
+          &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t\\
+          &\forall e,t,\Gamma'.\ \Gamma \evdash {e} {t} \Gamma' \Rightarrow \Gamma\rho \evdash {e\rho} {t} {\Gamma'}\rho
+          \text{ and we still have } \forall t.\ \Gamma' \vdash e_a : t \Rightarrow \Gamma'\rho \vdash e_b:t\\
+          &\forall e,t,\varpi,t' \text{ s.t. $\occ {e\rho} \varpi$ is defined}.\ \pvdash \Gamma e t \varpi:t' \Rightarrow \pvdash {\Gamma\rho} {e\rho} t \varpi:t'
+        \end{align*}
 
         We now proceed by induction on this derivation in order to produce the required derivation.
         
@@ -226,34 +231,38 @@
         There are many cases depending on the last rule:
 
         \begin{description}
-          \item[\Rule{Occ}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
-          Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Occ} and \Rule{Subs}.
-          \item[\Rule{EFQ}] If there exists $e\in\dom\Gamma$ such that $\Gamma(e)=\Empty$, then $(\Gamma\rho)(e\rho)=\Empty$
-          so we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{EFQ}.
+          \item[\Rule{Env}] If $e\in\dom\Gamma$, then we have $e\rho\in\dom{\Gamma\rho}$ and $(\Gamma\rho)(e\rho)\leq\Gamma(e)$.
+          Thus we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Env} and \Rule{Subs}.
+          \item[\Rule{Efq}] If there exists $e\in\dom\Gamma$ such that $\Gamma(e)=\Empty$, then $(\Gamma\rho)(e\rho)=\Empty$
+          so we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Efq}.
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
           \item[\Rule{Const}] In this case, $c\rho = c$ (because $c \neq e_a$). So it is trivial.
           \item[\Rule{App}] We have $(e_1 e_2)\rho = (e_1\rho) (e_2\rho)$ (because $e_1 e_2 \neq e_a$).
           So it is trivial (by using the induction hypothesis).
-          \item[\Rule{Abs}] We have $(\lambda^{t'}x.e)\rho = \lambda^{t'}x.(e\rho)$ (because $\lambda^{t'}x.e \neq e_a$).
+          \item[\Rule{Abs+}] We have $(\lambda^{t'}x.e)\rho = \lambda^{t'}x.(e\rho)$ (because $\lambda^{t'}x.e \neq e_a$).
           
           By alpha-renaming, we can suppose that the variable $x$ is a new fresh variable that does not appear
           in $e_a$ nor $e_b$ ($e_b$ is closed).
           
           We can thus use the induction hypothesis on all the judgements $\Gamma, x:s_i \vdash e:t_i$.
-          \item[\Rule{If}]
+          \item[\Rule{Abs-}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Case}]
           We have $(\ite e {t_{if}} {e_1} {e_2})\rho = \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}$ (because $\ite e {t_{if}} {e_1} {e_2} \neq e_a$).
 
-          We apply the induction hypothesis on the judgements $\Gamma\vdash e:t_0$ and $\Gamma\evdash + e {t_{if}} \Gamma^+$.
-          We get $\Gamma\rho\vdash e\rho:t_0$, $\Gamma\rho\evdash + {e\rho} {t_{if}} \Gamma^+\rho$ and
-          $\forall t'.\ \Gamma^+ \vdash e_a : t' \Rightarrow \Gamma^+\rho \vdash e_b:t'$.
-          Now, we can apply the induction hypothesis on $\Gamma^+\vdash e_1:t$ and we have $\Gamma^+\rho\vdash e_1\rho:t$.
+          We apply the induction hypothesis on the judgements $\Gamma\vdash e:t_0$ and $\Gamma\evdash e {t_{if}} \Gamma_1$.
+          We get $\Gamma\rho\vdash e\rho:t_0$, $\Gamma\rho\evdash {e\rho} {t_{if}} \Gamma_1\rho$ and
+          $\forall t'.\ \Gamma_1 \vdash e_a : t' \Rightarrow \Gamma_1\rho \vdash e_b:t'$.
+          Now, we can apply the induction hypothesis on $\Gamma_1\vdash e_1:t$ and we have $\Gamma_1\rho\vdash e_1\rho:t$.
 
-          We proceed similarly on the judgments $\Gamma\evdash - e {t_{if}} \Gamma^-$ and $\Gamma^-\vdash e_1:t$, and so we have all the premises
-          to apply the \Rule{If} rule in order to get $\Gamma\rho \vdash \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}:t'$. 
+          We proceed similarly on the judgments $\Gamma\evdash e {\neg t_{if}} \Gamma_2$ and $\Gamma_2\vdash e_2:t$, and so we have all the premises
+          to apply the \Rule{Case} rule in order to get $\Gamma\rho \vdash \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}:t'$. 
 
           \item[\Rule{Base}] Trivial.
-          \item[\Rule{Path}] First, let's show that we can derive $\Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho$.
+          \item[\Rule{Path}] We have by using the induction hypothesis $\Gamma\rho \evdash {e\rho} t \Gamma'\rho$
+          and $\forall t''.\ \Gamma' \vdash e_a : t'' \Rightarrow \Gamma'\rho \vdash e_b:t''$.
+          
+          First, let's show that we can derive $\Gamma\rho \evdash {e\rho} {t} {\Gamma''}\rho$ with $\Gamma''=\Gamma',(\occ e \varpi:t')$.
           
           There are two cases:
           \begin{itemize}
@@ -267,69 +276,66 @@
             \item $\occ e \varpi$ is not a strict subexpression of $e_a$.
             
             In this case, we know that $\occ {e\rho} \varpi$ is defined.
-            We have by using the induction hypothesis $\Gamma\rho \evdash p {e\rho} t \Gamma'\rho$
-            and $\forall t''.\ \Gamma' \vdash e_a : t'' \Rightarrow \Gamma'\rho \vdash e_b:t''$.
 
-            Thus we can also apply the induction hypothesis on $\pvdash {\Gamma'} p {e} t \varpi:t'$.
-            It gives $\pvdash {\Gamma'\rho} p {e\rho} t \varpi:t'$.
+            Thus we can apply the induction hypothesis on $\pvdash {\Gamma'} {e} t \varpi:t'$.
+            It gives $\pvdash {\Gamma'\rho} {e\rho} t \varpi:t'$.
             If $\occ {e\rho}\varpi \in\dom{\Gamma'\rho}$, and $(\Gamma'\rho)(\occ {e\rho}\varpi)=t''\not\geq t'$,
-            then we can derive $\pvdash {\Gamma'\rho} p {e\rho} t \varpi:t'\land t''$ just by using the rules
-            \Rule{PIntersect}, \Rule{PTypoef} and \Rule{Occ}.
+            then we can derive $\pvdash {\Gamma'\rho} {e\rho} t \varpi:t'\land t''$ just by using the rules
+            \Rule{PIntersect}, \Rule{PTypeof} and \Rule{Env}.
 
-            Using this last judgement together with $\Gamma \evdash p e t \Gamma'$, we can derive with the rule \Rule{Path}
-            the wanted $\Gamma\rho \evdash p {e\rho} {t} {\Gamma^p}\rho$.
+            Using this last judgement together with $\Gamma \evdash e t \Gamma'$, we can derive with the rule \Rule{Path}
+            the wanted $\Gamma\rho \evdash {e\rho} {t} {\Gamma''}\rho$.
           \end{itemize}
 
-          Now, let's show that $\forall t'.\ \Gamma^p \vdash e_a : t' \Rightarrow \Gamma^p\rho \vdash e_b:t'$.
+          Now, let's show that $\forall t'.\ \Gamma'' \vdash e_a : t' \Rightarrow \Gamma''\rho \vdash e_b:t'$.
 
-          Let $t'$ such that $\Gamma^p\vdash e_a:t'$.
+          Let $t'$ such that $\Gamma''\vdash e_a:t'$.
 
-          By induction hypothesis, we have $\Gamma' \vdash e_a : t' \Rightarrow \Gamma'\rho \vdash e_b:t'$,
-          with $\Gamma^p = \Gamma',(\occ e \varpi: t')$.
+          Recall that we have $\Gamma' \vdash e_a : t' \Rightarrow \Gamma'\rho \vdash e_b:t'$.
 
-          If $\Gamma^p = \bot$, then $\Gamma^p\rho = \bot$ so we are done. So lets's suppose $\Gamma^p \neq \bot$.
+          If $\Gamma'' = \bot$, then $\Gamma''\rho = \bot$ so we are done. So lets's suppose $\Gamma'' \neq \bot$.
 
           Let's separate the proof in two cases:
           \begin{itemize}
             \item If $\occ e \varpi \not\equiv e_a$. In this case, let's show that we have  $\Gamma'\vdash e_a:t'$.
-            Indeed, in the typing derivation of $\Gamma^p\vdash e_a:t'$, the \Rule{Occ} rules can only be applied on
+            Indeed, in the typing derivation of $\Gamma''\vdash e_a:t'$, the \Rule{Env} rules can only be applied on
             subexpressions of $e_a$.
             
             If $\occ e \varpi$ is not a strict subexpression of $e_a$
-            (and thus not a subexpression as $\occ e \varpi \not\equiv e_a$), there is no \Rule{Occ} rule applied to $\occ e \varpi$
-            in the derivation of $\Gamma^p\vdash e_a:t'$ and thus we can easily derive $\Gamma'\vdash e_a:t'$.
+            (and thus not a subexpression as $\occ e \varpi \not\equiv e_a$), there is no \Rule{Env} rule applied to $\occ e \varpi$
+            in the derivation of $\Gamma''\vdash e_a:t'$ and thus we can easily derive $\Gamma'\vdash e_a:t'$.
 
             If $\occ e \varpi$, is a strict subexpression of $e_a$, it must be a value (given the possible forms of $e_a$).
-            Moreover, as $\Gamma^p \neq \bot$, we have $\forall v\in\dom{\Gamma^p}.\ v\in\valsemantic{\Gamma^p(v)}$ (recall the assumptions at the beginning of the proof)
-            and thus $\forall v\in\dom{\Gamma^p}.\ \Gamma'\vdash v : \Gamma^p(v)$.
-            Thus we can derive $\Gamma'\vdash e_a:t'$ just by replacing every \Rule{Occ} rule applied to $\occ e \varpi$ in the derivation of $\Gamma^p\vdash e_a:t'$
+            Moreover, as $\Gamma'' \neq \bot$, we have $\forall v\in\dom{\Gamma''}.\ v\in\valsemantic{\Gamma''(v)}$ (recall the assumptions at the beginning of the proof)
+            and thus $\forall v\in\dom{\Gamma''}.\ \Gamma'\vdash v : \Gamma''(v)$.
+            Thus we can derive $\Gamma'\vdash e_a:t'$ just by replacing every \Rule{Env} rule applied to $\occ e \varpi$ in the derivation of $\Gamma''\vdash e_a:t'$
             by the relevant derivation.
 
             From $\Gamma'\vdash e_a:t'$ we deduce $\Gamma'\rho\vdash e_b:t'$.
-            As $\Gamma^p\leq\Gamma'$ (according to the assumptions we made on the derivation beginning of this proof)
-            and $\dom{\Gamma'}\subseteq\dom{\Gamma^p}$, we have $\Gamma^p\rho\leq\Gamma'\rho$ and thus, by monotonicity,
-            $\Gamma^p\rho\vdash e_b:t'$.
+            As $\Gamma''\leq\Gamma'$ (according to the assumptions we made on the derivation beginning of this proof)
+            and $\dom{\Gamma'}\subseteq\dom{\Gamma''}$, we have $\Gamma''\rho\leq\Gamma'\rho$ and thus, by monotonicity,
+            $\Gamma''\rho\vdash e_b:t'$.
 
             \item            
-            If $\occ e \varpi \equiv e_a$. Let's note $t_a=\Gamma^p(e_a)$. This time,
-            we can't derive $\Gamma'\vdash e_a:t'$ from $\Gamma^p\vdash e_a:t'$ because the rule \Rule{Occ}
+            If $\occ e \varpi \equiv e_a$. Let's note $t_a=\Gamma''(e_a)$. This time,
+            we can't derive $\Gamma'\vdash e_a:t'$ from $\Gamma''\vdash e_a:t'$ because the rule \Rule{Env}
             could be used on $\occ e \varpi=e_a$ (which may not be a value).
 
-            However, the rule \Rule{Occ} can only be used on $e_a$ at the bottom of the derivation of $\Gamma^+\vdash e_a:t'$:
-            there can't be any \Rule{App}, \Rule{Abs} or \Rule{If} after because the premises of these rules only contain strict subexpressions of their
-            consequence. The only rules that can appear in a branch containing a \Rule{Occ} applied on $e_a$ are \Rule{Occ}, \Rule{Subs} and \Rule{Intersect}
-            (not \Rule{EFQ} as $\Gamma^p \neq \bot$).
+            However, the rule \Rule{Env} can only be used on $e_a$ at the end of the derivation of $\Gamma''\vdash e_a:t'$:
+            there can't be any \Rule{App}, \Rule{Abs+} or \Rule{Case} after because the premises of these rules only contain strict subexpressions of their
+            consequence.
+            Thus, we can easily transform the derivation so that every \Rule{Env} applied on $e_a$ is directly followed by an \Rule{Intersect}:
+            if there is any \Rule{Abs-} or \Rule{Subs} between, we can move it after.
 
-            Thus, we can (temporarily) remove from the derivation all these branchs
-            (for each \Rule{Occ} we want to remove, we go down until we have an \Rule{Intersect} rule,
-            we remove this \Rule{Intersect} rule and replace it by its other premise).
+            Then, we can (temporarily) remove from the derivation all \Rule{Env} applied on $e_a$:
+            for each, we just replace the following \Rule{Intersect} rule by its other premise.
 
-            It gives us a derivation for $\Gamma^p \vdash e_a : t''$ such that $t''\land t_a \leq t'$ and without any \Rule{Occ} applied to $e_a$.
+            It yields a derivation for $\Gamma'' \vdash e_a : t''$ such that $t''\land t_a \leq t'$ and without any \Rule{Env} applied to $e_a$.
             Thus, we can transform it into a derivation of $\Gamma' \vdash e_a : t''$ as in the previous point, and we get $\Gamma'\rho \vdash e_b : t''$.
-            Still as before, we get a derivation for $\Gamma^p\rho\vdash e_b : t''$ by monotonicity.
+            Still as before, we get a derivation for $\Gamma''\rho\vdash e_b : t''$ by monotonicity.
             
-            Now, we can append at the end of this derivation a rule \Rule{Intersect} with a rule \Rule{Occ} applied to $e_b$.
-            As $(\Gamma^p\rho)(e_b) \leq \Gamma^p(e_a) = t_a$, we obtain by monotonicity a derivation for $\Gamma^p\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
+            Now, we can append at the end of this derivation a rule \Rule{Intersect} with a rule \Rule{Env} applied to $e_b$.
+            As $(\Gamma''\rho)(e_b) \leq \Gamma''(e_a) = t_a$, we obtain a derivation for $\Gamma''\rho\vdash e_b : t'$ (we can add a final \Rule{Subs} rule if needed).
           \end{itemize}
           
           \item[\Rule{PTypeof}] Trivial (by using the induction hypothesis).
@@ -345,9 +351,9 @@
         We proceed by case analysis on the last rule of the derivation:
         
         \begin{description}
-          \item[\Rule{Occ}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
+          \item[\Rule{Env}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible.
-          \item[\Rule{EFQ}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
+          \item[\Rule{Efq}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
@@ -379,7 +385,7 @@
             (it is then easy to conclude by using the \Rule{Intersect} rule).
 
             Let $i\in I'$. We have $\vvdash e_2:s_i$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
-            As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule $\Rule{Abs}$
+            As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule \Rule{Abs+}
             which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$ (recall that $\Gamma$ is ordinary so there is no abstraction in $\dom\Gamma$).
             Let's note $\Gamma'=\Gamma,(x:s_i)$.
             We can deduce, using the substitution lemma, that $\Gamma'\subst x {e_2} \vdash e_x\subst x {e_2}: t_i$.
@@ -388,27 +394,30 @@
             Thus, by monotonicity, we deduce $\Gamma \vdash e_x\subst x {e_2}: t_i$,
             that is $\Gamma \vdash e': t_i$.
           \end{itemize}
-          \item[\Rule{Abs}] Impossible case (no reduction possible).
-          \item[\Rule{If}] In this case, $e\equiv \ite {e_0} {t_{if}} {e_1} {e_2}$. There are three possible cases:
+          \item[\Rule{Abs+}] Impossible case (no reduction possible).
+          \item[\Rule{Abs-}] Impossible case (no reduction possible).
+          \item[\Rule{Case}] In this case, $e\equiv \ite {e_0} {t_{if}} {e_1} {e_2}$. There are three possible cases:
           \begin{itemize}
             \item $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$. In this case we have $e' \equiv e_1$.
-            We have derivations for $\Gamma \vdash e_0: t_0$, $\Gamma \evdash + {e_0} {t_{if}} \Gamma'$ and $\Gamma'\vdash e_1:t$.
+            We have derivations for $\Gamma \vdash e_0: t_0$, $\Gamma \evdash {e_0} {t_{if}} \Gamma'$ and $\Gamma'\vdash e_1:t$.
             
             As $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$, we have $\Gamma\leq\Gamma'$ by using the value testing lemma.
             Thus, by monotonicity, we have $\Gamma\vdash e_1:t$.
-            \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is very similar to the previous one.
+            \item $e_0$ is a value and $e_0 \not\in \valsemantic{t}$. This case is similar to the previous one (we replace $t_{if}$ by $\neg t_{if}$ and $e_1$ by $e_2$).
             \item $e_0$ is not a value.
-            In this case, we have $e_0\xleadsto{\rho} e_0'$ and $e'\equiv \ite {e_0\rho} {t_{if}} {e_1\rho} {e_2\rho}\equiv e\rho$.
+            In this case, we have $e_0\xleadsto{e_a\mapsto e_b} e_0'$ and $e'\equiv \ite {e_0\rho} {t_{if}} {e_1\rho} {e_2\rho}\equiv e\rho$
+            with $\rho = \subst{e_a}{e_b}$.
             
-            First, let's notice that if we note $\rho=\subst{e_a}{e_b}$, we have $e_b$ closed (only closed expressions are reducible),
-            and $e_a$ has one of the following forms (it can be easily proved by induction on the reduction step derivation):
+            First, let's notice that we have $e_b$ closed (only closed expressions are reducible),
+            and $e_a$ has one of the following forms:
             \begin{itemize}
               \item $\ite e t {e_1} {e_2}$ (if expression)
               \item $v v$ (value applied to a value)
             \end{itemize}
+            It can be easily proved by induction on the derivation of the reduction step.
 
             Secondly, as $e_a\leadsto e_b$ and as the derivation of this reduction is a strict subderivation of that of $e\leadsto e'$,
-            we can use the induction hypothesis on $e_a\leadsto e_b$ and we obtain $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t'$.
+            we can use the induction hypothesis on $e_a\leadsto e_b$ and we obtain $\forall t'.\ \Gamma \vdash e_a : t' \Rightarrow \Gamma\rho \vdash e_b:t'$.
             
             Thus, we can conclude directly by using the substitution lemma on $e$ and $\rho$.
           \end{itemize}
