@@ -125,8 +125,8 @@
             \item $x$ (variable)
             \item $\ite e t {e_1} {e_2}$ (if expression)
             \item $v$ (value)
-            \item $v v$ (value applied to a value)
-            \item $(v,v)$ (pair of two values)
+            \item $v v$ (application of two values)
+            \item $(v,v)$ (product of two values)
           \end{itemize}
           Let's also suppose that $\forall t.\ \Gamma \vdash e_a : t \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t$.
           
@@ -256,7 +256,7 @@
           &\forall e,t,\varpi,t' \text{ s.t. $\occ {e\rho} \varpi$ is defined}.\ \pvdash \Gamma e t \varpi:t' \Rightarrow \pvdash {\Gamma\rho} {e\rho} t \varpi:t'
         \end{align*}
 
-        We now proceed by induction on this derivation in order to produce the required derivation.
+        We proceed by case analysis on the last rule of the derivation at the left of the $\Rightarrow$ in order to construct the derivation at the right.
         
         If the last judgement is of the form $\Gamma \vdash e_a: t$, then we can directly conclude with the hypotheses of the lemma.
         Thus, we can suppose it is not the case.
@@ -270,9 +270,9 @@
           so we can easily derive $\Gamma\rho\vdash e\rho:t$ with the rule \Rule{Efq}.
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
-          \item[\Rule{Const}] In this case, $c\rho = c$ (because $c \neq e_a$). So it is trivial.
+          \item[\Rule{Const}] In this case, $c\rho = c$ (because $c \neq e_a$). Thus it is trivial.
           \item[\Rule{App}] We have $(e_1 e_2)\rho = (e_1\rho) (e_2\rho)$ (because $e_1 e_2 \neq e_a$).
-          So it is trivial (by using the induction hypothesis).
+          Thus we can directly conclude by using the induction hypothesis.
           \item[\Rule{Abs+}] We have $(\lambda^{t'}x.e)\rho = \lambda^{t'}x.(e\rho)$ (because $\lambda^{t'}x.e \neq e_a$).
           
           By alpha-renaming, we can suppose that the variable $x$ is a new fresh variable that does not appear
@@ -280,6 +280,10 @@
           
           We can thus use the induction hypothesis on all the judgements $\Gamma, x:s_i \vdash e:t_i$.
           \item[\Rule{Abs-}] Trivial (by using the induction hypothesis).
+          \item[\Rule{Proj}] We have $(\pi_i e)\rho = \pi_i (e\rho)$ (because $\pi_i e \neq e_a$).
+          Thus we can directly conclude by using the induction hypothesis.
+          \item[\Rule{Pair}] We have $(e_1,e_2)\rho = (e_1\rho,e_2\rho)$ (because $(e_1,e_2) \neq e_a$).
+          Thus we can directly conclude by using the induction hypothesis.
           \item[\Rule{Case}]
           We have $(\ite e {t_{if}} {e_1} {e_2})\rho = \ite {e\rho} {t_{if}} {e_1\rho} {e_2\rho}$ (because $\ite e {t_{if}} {e_1} {e_2} \neq e_a$).
 
@@ -302,8 +306,9 @@
             \item $\occ e \varpi$ is a strict subexpression of $e_a$.
             
             In this case, it means that among its three possible forms,
-            $e_a$ is of the form $v v$.
-            According to the assumptions we made on the derivation, it implies that $\varpi=\epsilon$.
+            $e_a$ is of the form $v v$ or $(v,v)$.
+            According to the assumptions we made on the derivation at the beginning of the proof,
+            it implies that $\varpi=\epsilon$.
             Hence, $e$ does not contain any occurence of $e_a$, so it is easy to conclude.
 
             \item $\occ e \varpi$ is not a strict subexpression of $e_a$.
@@ -345,7 +350,7 @@
             by the relevant derivation.
 
             From $\Gamma'\vdash e_a:t'$ we deduce $\Gamma'\rho\vdash e_b:t'$.
-            As $\Gamma''\leq\Gamma'$ (according to the assumptions we made on the derivation beginning of this proof)
+            As $\Gamma''\leq\Gamma'$ (according to the assumptions we made on the derivation at the beginning of the proof)
             and $\dom{\Gamma'}\subseteq\dom{\Gamma''}$, we have $\Gamma''\rho\leq\Gamma'\rho$ and thus, by monotonicity,
             $\Gamma''\rho\vdash e_b:t'$.
 
@@ -355,7 +360,7 @@
             could be used on $\occ e \varpi=e_a$ (which may not be a value).
 
             However, the rule \Rule{Env} can only be used on $e_a$ at the end of the derivation of $\Gamma''\vdash e_a:t'$:
-            there can't be any \Rule{App}, \Rule{Abs+} or \Rule{Case} after because the premises of these rules only contain strict subexpressions of their
+            there can't be any \Rule{App}, \Rule{Abs+}, \Rule{Proj}, \Rule{Pair} or \Rule{Case} after because the premises of these rules only contain strict subexpressions of their
             consequence.
             Thus, we can easily transform the derivation so that every \Rule{Env} applied on $e_a$ is directly followed by an \Rule{Intersect}:
             if there is any \Rule{Abs-} or \Rule{Subs} between, we can move it after.
@@ -381,18 +386,18 @@
 
         We construct a derivation for $\Gamma \vdash e':t$ by induction on the derivation of $\Gamma \vdash e:t$.
 
+        If $\Gamma = \bot$ this theorem is trivial, so we can suppose $\Gamma \neq \bot$.
+
         We proceed by case analysis on the last rule of the derivation:
         
         \begin{description}
           \item[\Rule{Env}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
           It contradicts the fact that $e$ reduces to $e'$ so this case is impossible.
-          \item[\Rule{Efq}] As $\Gamma$ is ordinary, it means that $e$ is a variable.
-          It contradicts the fact that $e$ reduces to $e'$ so this case is impossible. 
+          \item[\Rule{Efq}] This case is impossible as $\Gamma \neq \bot$.
           \item[\Rule{Intersect}] Trivial (by using the induction hypothesis).
           \item[\Rule{Subs}] Trivial (by using the induction hypothesis).
           \item[\Rule{Const}] Impossible case (no reduction possible).
-          \item[\Rule{App}] In this case, $e\equiv e_1 e_2$.
-          There is three possible cases:
+          \item[\Rule{App}] In this case, $e\equiv e_1 e_2$. There are three possible cases:
           \begin{itemize}
             \item $e_2$ is not a value. In this case, we must have $e_2\leadsto e_2'$
             and $e'\equiv e_1 e_2'$. We can easily conclude using the induction hypothesis.
@@ -419,7 +424,7 @@
 
             Let $i\in I'$. We have $\vvdash e_2:s_i$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
             As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule \Rule{Abs+}
-            which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$ (recall that $\Gamma$ is ordinary so there is no abstraction in $\dom\Gamma$).
+            which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$ (recall that $\Gamma \neq \bot$ and $\Gamma$ is ordinary so there is no abstraction in $\dom\Gamma$).
             Let's note $\Gamma'=\Gamma,(x:s_i)$.
             We can deduce, using the substitution lemma, that $\Gamma'\subst x {e_2} \vdash e_x\subst x {e_2}: t_i$.
            
@@ -429,6 +434,25 @@
           \end{itemize}
           \item[\Rule{Abs+}] Impossible case (no reduction possible).
           \item[\Rule{Abs-}] Impossible case (no reduction possible).
+          \item[\Rule{Proj}] In this case, $e\equiv \pi_i e_0$. There are two possible cases:
+          \begin{itemize}
+            \item $e_0$ is not a value. In this case, we must have $e_0\leadsto e_0'$
+            and $e'\equiv \pi_i e_0'$. We can easily conclude using the induction hypothesis.
+            \item $e_0$ is a value.
+            Given that $e_0 \leq \pair \Any \Any$, we have $e_0 = (v_1,v_2)$ with $v_1$ and $v_2$ two values.
+            We also have $e \leadsto v_i$.
+
+            The derivation of $\Gamma \vdash (v_1,v_2): \pair {t_1} {t_2}$ must contain a rule \Rule{Pair}
+            which guarantees $\Gamma \vdash v_i: t_i$ (recall that $\Gamma \neq \bot$ and $\Gamma$ is ordinary so there is no pair in $\dom\Gamma$).
+            It concludes this case.
+          \end{itemize} 
+          \item[\Rule{Pair}] In this case, $e\equiv (e_1,e_2)$. There are two possible cases:
+          \begin{itemize}
+            \item $e_2$ is not a value. In this case, we must have $e_2\leadsto e_2'$
+            and $e'\equiv (e_1, e_2')$. We can easily conclude using the induction hypothesis.
+            \item $e_2$ is a value and $e_1$ is not. In this case, we must have $e_1\leadsto e_1'$
+            and $e'\equiv (e_1', e_2)$. We can easily conclude using the induction hypothesis.
+          \end{itemize}
           \item[\Rule{Case}] In this case, $e\equiv \ite {e_0} {t_{if}} {e_1} {e_2}$. There are three possible cases:
           \begin{itemize}
             \item $e_0$ is a value and $e_0 \in \valsemantic{t_{if}}$. In this case we have $e' \equiv e_1$.
@@ -445,7 +469,8 @@
             and $e_a$ has one of the following forms:
             \begin{itemize}
               \item $\ite e t {e_1} {e_2}$ (if expression)
-              \item $v v$ (value applied to a value)
+              \item $v v$ (application of two values)
+              \item $(v,v)$ (product of two values)
             \end{itemize}
             It can be easily proved by induction on the derivation of the reduction step.
 
