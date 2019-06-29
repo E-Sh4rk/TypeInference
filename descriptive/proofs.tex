@@ -27,7 +27,7 @@
   
   The environements also operate up to alpha-renaming.
 
-  TODO: add rules for pairs (already done for value refinement 1)
+  TODO: add rules for pairs (already done until value testing)
 
     \section{Definitions}
 
@@ -126,6 +126,7 @@
             \item $\ite e t {e_1} {e_2}$ (if expression)
             \item $v$ (value)
             \item $v v$ (value applied to a value)
+            \item $(v,v)$ (pair of two values)
           \end{itemize}
           Let's also suppose that $\forall t.\ \Gamma \vdash e_a : t \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t$.
           
@@ -214,11 +215,15 @@
 
         \subsection{Value testing}
 
-        As $v$ is a value, the applications of \Rule{Path} can only have $\varpi=\epsilon$.
+        As $v$ is a value, the applications of \Rule{Path} have a path $\varpi$ only composed of $l$ and $r$
+        and such that $\occ e \varpi$ is a value.
+
         Thus, any derivation $\pvdash \Gamma v t \varpi:t'$ can only contains the rules
-        \Rule{PTypeof}, \Rule{PIntersect}, \Rule{PSubs} and \Rule{PEps}.
-        Moreover, as $v \in \valsemantic{t}$, the rules \Rule{PEps} can be replaced by \Rule{PTypeof}.
-        Thus we can easily derive $\Gamma \vdash v:t'$.
+        \Rule{PTypeof}, \Rule{PIntersect}, \Rule{PSubs}, \Rule{PEps}, \Rule{PPairL} and \Rule{PPairR}.
+
+        Moreover, as $v \in \valsemantic{t}$, the rules \Rule{PEps} can be replaced by a \Rule{PTypeof}.
+        Thus we can easily derive $\Gamma \vdash v:t'$ (we replace \Rule{PTypeof} by \Rule{Typeof},
+        \Rule{PIntersect} by \Rule{Intersect}, etc.).
 
         \subsection{Substitution lemma}
 
