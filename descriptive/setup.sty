@@ -139,12 +139,12 @@
 \newcommand{\Odd} {\textsf{Odd}}
 \newcommand{\subst}[2]{\{#1 \mapsto #2\}}
 
-\newcommand{\Genv}[2]{\textsf{Gamma}_{#1}(#2)}
-\newcommand{\Ga}[1]{\textsf{Gamma}_{#1}}
-\newcommand{\Gaux}[2]{\textsf{Aux}_{#1}(#2)}
-\newcommand{\Gaa}[1]{\textsf{Aux}_{#1}}
-\newcommand{\Refine}[3]{\textsf{Refine}^{#1}_{#2}(#3)}
-\newcommand{\RefineStep}[2]{\textsf{RefineStep}^{#1}_{#2}}
+\newcommand{\Refine}[2]{\textsf{Refine}_{#1}(#2)}
+\newcommand{\RefineStep}[1]{\textsf{RefineStep}_{#1}}
+
+\newcommand{\constr}[2]{\textsf{Constr}_{#2}(#1)}
+%\newcommand{\env}[1]{\textsf{Env}_{#1}}
+\newcommand{\env}[1]{\textsf{Intertype}_{#1}}
 
 \newcommand{\cons}[2]{{#1}\textsf{::}{#2}}
 \newcommand{\fixpoint}{\textsf{gfp}}
@@ -176,9 +176,12 @@
 \newcommand{\tsint}[1]{\textbf{\textup{\{}}#1\textbf{\textup{\}}}}
 \newcommand{\tsrep}[1]{\textsf{Repr}(#1)}
 
-\newcommand{\aite}[5]{\ensuremath{\texttt{if}^{#5}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
-
-\newcommand{\cvdash}[3]{\vdash_{#2,#3,#1}}
+\newcommand{\vdashA}{\vdash_{\!\scriptscriptstyle\mathcal{A}}}
 \newcommand{\vdashp}{\vdash^{\texttt{Path}}}
 \newcommand{\pvdash}[3]{\vdashp_{#1,#2,#3}}%\mathcal{P}
 \newcommand{\evdash}[2]{\vdash^{\texttt{Env}}_{#1,#2}}
+
+\DeclareMathSymbol{\qm}{\mathalpha}{operators}{"3F}
+\DeclareMathAlphabet{\mathbbm}{U}{bbold}{m}{n}
+\newcommand{\dyn}{\ensuremath{\mathbbm{\qm}}}
+\newcommand{\Aa}{\ensuremath{_{\scriptscriptstyle\mathcal{A}}}}
