@@ -195,18 +195,16 @@
 
     \section{Intermediate semantics}
 
-    TODO: Add rules for pairs
-
     \[
       \begin{array}{lrcl}
-      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \ite e t e e\\
-      \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e
+      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt (e,e) \alt \ite e t e e\\
+      \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e \alt (v,v)
       \end{array}
     \]
 
     \[
       \begin{array}{lrcl}
-      \textbf{Context} & C[] & ::= & e [] \alt [] v
+      \textbf{Context} & C[] & ::= & e [] \alt [] v \alt (e,[]) \alt ([],v)
       \end{array}
     \]
 
@@ -221,6 +219,11 @@
       \Infer[App]
       { }
       {(\lambda^tx.e) v \idleadsto e\subst x v}
+      {}
+      \qquad
+      \Infer[Proj]
+      { }
+      {\pi_i (v_1,v_2) \idleadsto v_i}
       {}\\
       \Infer[TestCtx]
       {e \xleadsto{e_r\mapsto e_r'} e'}
