@@ -30,7 +30,7 @@
       { \Gamma \vdash e: \Gamma(e) }
       { e\in\dom\Gamma }
   \qquad
-  \Infer[Intersect]
+  \Infer[Inter]
       { \Gamma \vdash e:t_1\\\Gamma \vdash e:t_2 }
       { \Gamma \vdash e: t_1 \wedge t_2 }
       { }
@@ -144,7 +144,7 @@
         { \pvdash \Gamma e t \varpi:t_2 }
         { }
         \qquad
-    \Infer[PIntersect]
+    \Infer[PInter]
         { \pvdash \Gamma e t \varpi:t_1 \\ \pvdash \Gamma e t \varpi:t_2 }
         { \pvdash \Gamma e t \varpi:t_1\land t_2 }
         { }
