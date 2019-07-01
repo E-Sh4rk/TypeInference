@@ -1,0 +1,15 @@
+
+The EnvA rule should have a special case when e is a variable.
+
+------------------
+
+Define typeof before algorithmic rules.
+
+------------------
+
+All the functions above are defined if and only if so all their subexpressions are (i.e., e↓ϖ.i must
+be defined).
+---->
+All the functions above are defined if and only if all their subexpressions are (i.e., e↓ϖ.i must
+be defined). We must also have e well-typed (i.e. typeof(e)\neq\tsempty) so that every suboccurence is also
+well-typed (thus, repr(typeof(e↓ϖ.i)) is well-defined).

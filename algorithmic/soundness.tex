@@ -80,14 +80,6 @@
 
   \section{Theorems}
 
-  \begin{lemma}[Monotonicity and well-definedness of $\Refine {e,t} \Gamma$]
-    \begin{align*}
-      &\forall e,\Gamma,\Gamma'.\ \Gamma'\leqA\Gamma \Rightarrow \tyof e {\Gamma'} \leq \tyof e {\Gamma}\\
-      &\forall e,t,\Gamma.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Refine {e,t} \Gamma \text{ is well-defined}\\
-      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leqA\Gamma \text{ and } \tyof e \Gamma \neq \tsempty \Rightarrow \Refine {e,t} {\Gamma'} \leq \Refine {e,t} \Gamma\\
-    \end{align*}
-  \end{lemma}
-
 %  Moreover, the greatest fixpoint $\fixpoint_\Gamma (\RefineStep {e,t})$ can be computed by iterating
 %  the application of $\RefineStep {e,t}$ starting from $\gamma$, until a fixed point is reached.
 %  The termination will be proved later.
@@ -110,6 +102,10 @@
   \end{theorem}
 
   \section{Proofs}
+
+  \subsection{Soundness of the algorithm}
+
+  
 
 %  \subsection{$\texttt{Refine}$ computation}
 %
