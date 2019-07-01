@@ -95,7 +95,7 @@
 
   \begin{theorem}[Soundness of the algorithm]
     \begin{align*}
-      &\forall \Gamma, e, t.\ t\in\tyof e \Gamma \Rightarrow \Gamma \vdash e:t\\
+      &\forall \Gamma, e, t.\ \tyof e \Gamma \leq t \Rightarrow \Gamma \vdash e:t\\
       &\forall \Gamma, \Gamma', e, t.\ \Refine {e,t} \Gamma = \Gamma' \Rightarrow \Gamma \evdash e t \Gamma'\\
       &\forall \Gamma, e, t, t', \varpi.\ \env {\Gamma,e,t} (\varpi) = t' \Rightarrow\ \pvdash \Gamma e t \varpi:t'
     \end{align*}
@@ -105,18 +105,60 @@
 
   \subsection{Soundness of the algorithm}
 
-  We proceed by induction over the structure of $e$.
+  We proceed by induction over the structure of $e$
+  and the domain of $\Gamma$ (with the inclusion order) when $e$ does not change.
 
   Let's prove the first property.
-  We have $\tyof e \Gamma$.
+  Let $t$ such that $\tsint{\tyof e \Gamma} \leq t$.
 
-  If $\Gamma = \bot$, the property is trivial. Let's assume $\Gamma \neq \bot$.
+  If $\Gamma = \bot$, we trivially have $\Gamma \vdash e:t$ with the rule \Rule{Efq}.
+  Let's assume $\Gamma \neq \bot$.
 
-  If $e\in\dom\Gamma$, then the last rule used is \Rule{Env\Aa}. TODO
+  If $e=x$ a variable, then the last rule used is \Rule{Var\Aa}.
+  We can derive $\Gamma \vdash x:t$ by using the rule \Rule{Env} and \Rule{Subs}.
+  So let's assume that $e$ is not a variable.
+
+  If $e\in\dom\Gamma$, then the last rule used is \Rule{Env\Aa}.
+  Let $t'\in\tsint{\ts}$ such that $t'\land\Gamma(e)\leq t$.
+  The induction hypothesis gives $\Gamma\setminus\{e\} \vdash e:t'$
+  (the premise uses the same $e$ but the domain of $\Gamma$ is strictly smaller).
+  Thus, we can build a derivation $\Gamma \vdash e:t$ by using the rules \Rule{Subs}, \Rule{Inter},
+  \Rule{Env} and the derivation $\Gamma\setminus\{e\} \vdash e:t'$.
+
+  Now, let's suppose that $e\not\in\dom\Gamma$.
 
   \begin{description}
-    \item[$e=\cdots$]
+    \item[$e=c$] The last rule is \Rule{Const\Aa}. We derive easily $\Gamma \vdash c:t$ with \Rule{Const} and \Rule{Subs}.
+    \item[$e=x$] Already treated.
+    \item[$e=\lambda^{\bigwedge_{i\in I} \arrow {t_i}{s_i}}x.e'$]
+    The last rule is \Rule{Abs\Aa}.
+    We have $\arrow {t_i}{s_i} \leq t$.
+    Using the definition of type schemes, let $t'=\bigwedge_{i\in I} \arrow {t_i}{s_i} \land \bigwedge_{j\in J} \neg \arrow {t'_j}{s'_j}$ such that $\Empty \neq t' \leq t$.
+    The induction hypothesis gives, for all $i\in I$, $\Gamma,x:s_i\vdash e':t_i$.
+    
+    Thus, we can derive $\Gamma\vdash e:\bigwedge_{i\in I} \arrow {t_i}{s_i}$ using the rule \Rule{Abs+}, and with \Rule{Inter} and
+    \Rule{Abs-} we can derive $\Gamma\vdash e:t'$. We can conclude by applying \Rule{Subs}.
+    \item[$e=e_1 e_2$] The last rule is \Rule{App\Aa}.
+    We have $\apply {\ts_1} {\ts_2} \leq t$. Thus, let $t_1$ and $t_2$ such that $\ts_1 \leq t_1$, $\ts_2 \leq t_2$ and $\apply {t_1} {t_2} \leq t$.
+    We know, according to the descriptive definition of $\apply {} {}$, that there exists $s\leq t$ such that $t_1 \leq \arrow {t_2} s$.
+
+    By using the induction hypothesis, we have $\Gamma\vdash e_1:t_1$ and $\Gamma\vdash e_2:t_2$. We can thus derive
+    $\Gamma\vdash e_1:\arrow {t_2} s$ using \Rule{Subs}, and together with $\Gamma\vdash e_2:t_2$ it gives
+    $\Gamma\vdash e_1\ e_2:s$ with \Rule{App}. We conclude with \Rule{Subs}.
+
+    \item[$e=\pi_i e'$] The last rule is \Rule{Proj\Aa}. We have $\bpi_i \ts \leq t$. Thus, let $t'$ such that $\ts \leq t'$ and $\bpi_i t' \leq t$.
+    We know, according to the descriptive definition of $\bpi_i$, that there exists $t_i\leq t$ such that $t' \leq \pair \Any {t_i}$ (for $i=2$) or $t' \leq \pair {t_i} \Any$ (for $i=1$).
+    
+    By using the induction hypothesis, we have $\Gamma\vdash e':t'$, and thus we easily conclude using \Rule{Subs} and \Rule{Proj}
+    (for instance for the case $i=1$, we can derive $\Gamma\vdash e':\pair {t_i} \Any$ with \Rule{Subs} and then use \Rule{Proj}).
+
+    \item[$e=(e_1,e_2)$] The last rule is \Rule{Pair\Aa}. We conclude easily with the induction hypothesis and the rules \Rule{Subs} and \Rule{Pair}.
+
+    \item[$\ite {e_0} t {e_1} {e_2}$] The last rule is \Rule{Case\Aa}. We conclude easily with the induction hypothesis and the rules
+    \Rule{Subs} and \Rule{Case} (for the application of \Rule{Case}, $t'$ must be taken equal to $t_1 \vee t_2$ with $t_1$ and $t_2$ such that $\ts_1\leq t_1$, $\ts_2\leq t_2$ and $t_1 \vee t_2 \leq t$).
   \end{description}
+
+  Now, let's prove the second property. TODO.
 
 %  \subsection{$\texttt{Refine}$ computation}
 %
