@@ -95,9 +95,9 @@
 
   \begin{theorem}[Soundness of the algorithm]
     \begin{align*}
-      &\forall \Gamma, e, t.\ t\in\tyof e \Gamma \Rightarrow \Gamma \vdash e:t\text{ is derivable}\\
-      &\forall \Gamma, \Gamma', e, t.\ \Refine {e,t} \Gamma = \Gamma' \Rightarrow \Gamma \evdash e t \Gamma' \text{ is derivable}\\
-      &\forall \Gamma, e, t, t', \varpi.\ \env {\Gamma,e,t} (\varpi) = t' \Rightarrow\ \pvdash \Gamma e t \varpi:t' \text{ is derivable}
+      &\forall \Gamma, e, t.\ t\in\tyof e \Gamma \Rightarrow \Gamma \vdash e:t\\
+      &\forall \Gamma, \Gamma', e, t.\ \Refine {e,t} \Gamma = \Gamma' \Rightarrow \Gamma \evdash e t \Gamma'\\
+      &\forall \Gamma, e, t, t', \varpi.\ \env {\Gamma,e,t} (\varpi) = t' \Rightarrow\ \pvdash \Gamma e t \varpi:t'
     \end{align*}
   \end{theorem}
 
@@ -105,7 +105,18 @@
 
   \subsection{Soundness of the algorithm}
 
-  
+  We proceed by induction over the structure of $e$.
+
+  Let's prove the first property.
+  We have $\tyof e \Gamma$.
+
+  If $\Gamma = \bot$, the property is trivial. Let's assume $\Gamma \neq \bot$.
+
+  If $e\in\dom\Gamma$, then the last rule used is \Rule{Env\Aa}. TODO
+
+  \begin{description}
+    \item[$e=\cdots$]
+  \end{description}
 
 %  \subsection{$\texttt{Refine}$ computation}
 %

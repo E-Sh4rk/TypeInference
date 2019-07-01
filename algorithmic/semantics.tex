@@ -26,20 +26,25 @@
 
     \begin{mathpar}
       \Infer[Efq\Aa]
+  { }
+  { \Gamma, (e:\Empty) \vdashA e': \Empty }
+  { \begin{array}{c}\text{\tiny with priority over}\\[-1.8mm]\text{\tiny all the other rules}\end{array}}
+  \qquad
+  \Infer[Var\Aa]
       { }
-      { \Gamma, (e:\Empty) \vdashA e': \Empty }
-      { \begin{array}{c}\text{\tiny with priority over}\\[-1.8mm]\text{\tiny all the other rules}\end{array}}
-      \\
-      \Infer[Env\Aa]
-          { \Gamma\setminus\{e\} \vdashA e : \ts }
-          { \Gamma \vdashA e: \Gamma(e) \tsand \ts }
-          { e\in\dom\Gamma}
-      \qquad
-      \Infer[Const\Aa]
-          { }
-          {\Gamma\vdashA c:\basic{c}}
-          {c\not\in\dom\Gamma}
-       \\
+      { \Gamma \vdashA x: \Gamma(x) }
+      { x\in\dom\Gamma}
+  \\
+  \Infer[Env\Aa]
+      { \Gamma\setminus\{e\} \vdashA e : \ts }
+      { \Gamma \vdashA e: \Gamma(e) \tsand \ts }
+      { e\in\dom\Gamma \text{ and } e \text{ not a variable}}
+  \qquad
+  \Infer[Const\Aa]
+      { }
+      {\Gamma\vdashA c:\basic{c}}
+      {c\not\in\dom\Gamma}
+   \\
       \Infer[Abs\Aa]
           {\Gamma,x:s_i\vdashA e:\ts_i'\\ \ts_i'\leq t_i}
           {

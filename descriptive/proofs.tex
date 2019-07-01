@@ -74,11 +74,11 @@
         For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
         are up to alpha-renaming.
 
-        \begin{lemma}[$\vvdash$ and $\vdash$ relations]Let $v$ a value, $t$ a type and $\Gamma$ an environment.
+        \begin{lemma}[Completeness and soundness for values]Let $v$ a value, $t$ a type and $\Gamma$ an environment.
 
-          If $\vvdash v:t$ and $v$ is well-typed in $\Gamma$, then $\Gamma\vdash v:t$.
+          If $v \in \valsemantic{t}$ and $v$ is well-typed in $\Gamma$, then $\Gamma\vdash v:t$.
 
-          If $\Gamma \vdash v:t$ and $\Gamma\neq\bot$, then $\vvdash v:t$.
+          If $\Gamma \vdash v:t$ and $\Gamma\neq\bot$, then $v \in \valsemantic{t}$.
         \end{lemma}
     
         \begin{lemma}[Monotonicity]
@@ -409,18 +409,18 @@
 
             This means that $s\leq \bigvee_{i\in I} s_i$ and that for any non-empty $I'$ such that
             $s\not\leq \bigvee_{i\in I\setminus I'} s_i$, we have $\bigwedge_{i\in I'} t_i \leq t$
-            (TODO: ref lemma 6.8 semantic subtyping). Let's take $I'=\{i\in I\alt \vvdash e_2:s_i\}$.
-            We have $I'$ not empty: $\vvdash e_2:s$ and $s\leq \bigvee_{i\in I} s_i$, so according to
-            $\valsemantic \_$ properties we have at least one $i$ such that $\vvdash e_2:s_i$.
+            (TODO: ref lemma 6.8 semantic subtyping). Let's take $I'=\{i\in I\alt e_2\in\valsemantic{s_i}\}$.
+            We have $I'$ not empty: $e_2\in\valsemantic{s}$ and $s\leq \bigvee_{i\in I} s_i$, so according to
+            $\valsemantic \_$ properties we have at least one $i$ such that $e_2\in\valsemantic{s_i}$.
             We also have $s\not\leq \bigvee_{i\in I\setminus I'} s_i$, otherwise there would be a $i\not\in I$
-            such that $\vvdash e_2: s_i$ (contradiction with the definition of $I'$).
+            such that $e_2\in\valsemantic{s_i}$ (contradiction with the definition of $I'$).
             As a consequence, we get $\bigwedge_{i\in I'} t_i \leq t$.
 
             Now, let's prove that $\Gamma \vdash e':\bigwedge_{i\in I'} t_i$ (which, by subsumption,
             yields $\Gamma \vdash e': t$). For that, we show that for any $i\in I'$, $\Gamma \vdash e':t_i$
             (it is then easy to conclude by using the \Rule{Inter} rule).
 
-            Let $i\in I'$. We have $\vvdash e_2:s_i$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
+            Let $i\in I'$. We have $e_2\in\valsemantic{s_i}$, and so $\Gamma \vdash e_2:s_i$ ($e_2$ is well-typed in $\Gamma$).
             As $e_1$ is well-typed in $\Gamma$, there must be in its derivation an application of the rule \Rule{Abs+}
             which guarantees $\Gamma,(x:s_i) \vdash e_x:t_i$ (recall that $\Gamma \neq \bot$ and $\Gamma$ is ordinary so there is no abstraction in $\dom\Gamma$).
             Let's note $\Gamma'=\Gamma,(x:s_i)$.
