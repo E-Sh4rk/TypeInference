@@ -38,13 +38,6 @@
       $\Gamma$ is bottom (noted $\Gamma = \bot$) iff $\exists e\in\dom\Gamma.\ \Gamma(e)\simeq\Empty$.
     \end{definition}
 
-    \begin{definition}[(Pre)order on environments]
-    Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leqA \Gamma$ iff:
-    \begin{align*}
-        &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \tyof e \Gamma \leq \Gamma(e))
-    \end{align*}
-    \end{definition}
-
 %    \begin{definition}[Plinth]
 %      A plinth $S$ is a set of types such that:
 %      \begin{itemize}
@@ -96,8 +89,8 @@
   \begin{theorem}[Soundness of the algorithm]
     \begin{align*}
       &\forall \Gamma, e, t.\ \tyof e \Gamma \leq t \Rightarrow \Gamma \vdash e:t\\
-      &\forall \Gamma, \Gamma', e, t.\ \Refine {e,t} \Gamma = \Gamma' \Rightarrow \Gamma \evdash e t \Gamma'\\
-      &\forall \Gamma, e, t, t', \varpi.\ \env {\Gamma,e,t} (\varpi) = t' \Rightarrow\ \pvdash \Gamma e t \varpi:t'
+      &\forall \Gamma, e, t, t', \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
+      &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma
     \end{align*}
   \end{theorem}
 
@@ -158,7 +151,44 @@
     \Rule{Subs} and \Rule{Case} (for the application of \Rule{Case}, $t'$ must be taken equal to $t_1 \vee t_2$ with $t_1$ and $t_2$ such that $\ts_1\leq t_1$, $\ts_2\leq t_2$ and $t_1 \vee t_2 \leq t$).
   \end{description}
 
-  Now, let's prove the second property. TODO.
+  TODO: second property
+
+  Finally, let's prove the third property.
+  Let $\Gamma' = \Refine {e,t} \Gamma = {\RefineStep{e,t}}^{n_0}(\Gamma)$.
+  We want to show that $\Gamma \evdash e t \Gamma'$ is derivable.
+
+  First, let's notive that $\evdash e t$ is transitive:
+  if $\Gamma \evdash e t \Gamma'$ and $\Gamma' \evdash e t \Gamma''$, then $\Gamma \evdash e t \Gamma''$.
+  The proof is quite easy: we can just start from the derivation of $\Gamma \evdash e t \Gamma'$, and we add
+  at the end a slightly modified version of the derivation of $\Gamma' \evdash e t \Gamma''$ where:
+  \begin{itemize}
+    \item the initial \Rule{Base} rule has been removed in order to be able to do the junction,
+    \item all the $\Gamma'$ at the left of $\evdash e t$ are replaced by $\Gamma$
+    (the proof is still valid as this $\Gamma'$ at the left is never used in any rule)
+  \end{itemize}
+
+  Thanks to this property, we can suppose that $n_0 = 1$ (and so $\Gamma' = \RefineStep{e,t}(\Gamma)$).
+  If it is not the case, we just have to proceed by induction on $n_0$ and use the transitivity property.
+
+  Let's build a derivation for $\Gamma \evdash e t \Gamma'$.
+
+  By using the proof of the second property on $e$ that we've done just before, we get:
+  $\forall \varpi.\ \pvdash \Gamma e t \varpi: \env {\Gamma,e,t} (\varpi)$.
+
+  Let's recall a monotonicity property: for any $\Gamma_1$ and $\Gamma_2$ such that $\Gamma_2 \leq \Gamma_1$, we have
+  $\forall t'.\ \pvdash {\Gamma_1} e t \varpi:t' \Rightarrow \pvdash {\Gamma_2} e t \varpi:t'$.\\  
+  Moreover, when we also have $\occ e \varpi \in\dom{\Gamma_2}$, we can derive $\pvdash {\Gamma_2} e t \varpi:t'\land\Gamma_2(\occ e \varpi)$
+  (just by adding a \Rule{PInter} rule with a \Rule{PTypeof} and a \Rule{Env}).
+
+  Hence, we can apply successively a \Rule{Path} rule for all valid $\varpi$ in $e$,
+  with the following premises ($\Gamma_\varpi$ being the previous environment, that trivially verifies $\Gamma_\varpi\leq\Gamma$):\\
+  
+  \begin{tabular}{lll}
+    If $\occ e \varpi \in\dom{\Gamma_\varpi}$&$\pvdash {\Gamma_\varpi} e t \varpi: \env {\Gamma,e,t} (\varpi)\land\Gamma_\varpi(\occ e \varpi)$&$\Gamma\evdash e t {\Gamma_\varpi}$\\
+    Otherwise&$\pvdash {\Gamma_\varpi} e t \varpi: \env {\Gamma,e,t} (\varpi)$&$\Gamma\evdash e t {\Gamma_\varpi}$
+  \end{tabular}
+
+  At the end, it gives the judgement $\Gamma \evdash e t \Gamma'$, so it concludes the proof.
 
 %  \subsection{$\texttt{Refine}$ computation}
 %
