@@ -151,7 +151,29 @@
     \Rule{Subs} and \Rule{Case} (for the application of \Rule{Case}, $t'$ must be taken equal to $t_1 \vee t_2$ with $t_1$ and $t_2$ such that $\ts_1\leq t_1$, $\ts_2\leq t_2$ and $t_1 \vee t_2 \leq t$).
   \end{description}
 
-  TODO: second property
+
+  Now, let's prove the second property.
+  We perform a (nested) induction on $\varpi$.
+
+  Recall that $\env {\Gamma,e,t} (\varpi) = \constr \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}$.
+  We can easily derive $\pvdash \Gamma e t \varpi : \tsrep {\tyof {\occ e \varpi} \Gamma}$ by using the outer induction hypothesis
+  (by definition of $\tsrep {\_}$ we have $\forall \ts.\ \ts \leq \tsrep \ts$).
+
+  We also have to derive $\pvdash \Gamma e t \varpi : \constr \varpi {\Gamma,e,t}$ (then it will be easy to conclude using the rule \Rule{PInter}).
+  \begin{description}
+    \item[$\varpi=\epsilon$] We use the rule \Rule{PEps}.
+    \item[$\varpi=\varpi'.1$] By using the outer and inner induction hypotheses, we can derive
+    $\pvdash \Gamma e t \varpi'.0 : \tsrep {\tyof {\occ e {\varpi'.0}} \Gamma}$ and $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$.
+    Then, by using \Rule{PSubs} on this first derivation, we can derive $\pvdash \Gamma e t \varpi'.0 : \arrow {t_1} {t_2}$
+    such that $t_2 \land  \env {\Gamma,e,t} (\varpi') \simeq \Empty$ and $\neg t_1 \leq \worra {\cdots} {\cdots}$ TODO
+    \item[$\varpi=\varpi'.0$] By using the inner induction hypothesis and the last case, we can derive
+    $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$ and $\pvdash \Gamma e t \varpi'.1 : \env {\Gamma,e,t} (\varpi'.1)$.
+    Hence we can apply \Rule{PAppL}.
+    \item[$\varpi=\varpi'.l$]
+    \item[$\varpi=\varpi'.r$]
+    \item[$\varpi=\varpi'.f$]
+    \item[$\varpi=\varpi'.s$]    
+  \end{description}
 
   Finally, let's prove the third property.
   Let $\Gamma' = \Refine {e,t} \Gamma = {\RefineStep{e,t}}^{n_0}(\Gamma)$.
