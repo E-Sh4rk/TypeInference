@@ -189,13 +189,19 @@
     In consequence, we can conclude by applying the rule \Rule{PAppR}
     with the premises $\pvdash \Gamma e t \varpi'.0 : \arrow {t_1} {t_2}$ and $\pvdash \Gamma e t \varpi' : s$.
 
-    \item[$\varpi=\varpi'.0$] By using the inner induction hypothesis and the last case, we can derive
+    \item[$\varpi=\varpi'.0$] By using the inner induction hypothesis and the previous case we've just proved, we can derive
     $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$ and $\pvdash \Gamma e t \varpi'.1 : \env {\Gamma,e,t} (\varpi'.1)$.
     Hence we can apply \Rule{PAppL}.
-    \item[$\varpi=\varpi'.l$]
-    \item[$\varpi=\varpi'.r$]
-    \item[$\varpi=\varpi'.f$]
-    \item[$\varpi=\varpi'.s$]    
+    \item[$\varpi=\varpi'.l$] Let's note $t_1=\bpi_1 \env {\Gamma,e,t} (\varpi')$.
+    According to the descriptive definition of $\bpi_1$, we have $\env {\Gamma,e,t} (\varpi') \leq \pair {t_1} {\Any}$.
+
+    The inner induction hypothesis gives $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$, and thus using the rule \Rule{PSubs}
+    we can derive $\pvdash \Gamma e t \varpi' : \pair {t_1} \Any$. We can conclude just by applying the rule \Rule{PPairL} to this premise.
+    \item[$\varpi=\varpi'.r$] This case is similar to the previous.
+    \item[$\varpi=\varpi'.f$] The inner induction hypothesis gives $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$,
+    so we can conclude by applying \Rule{PFst}.
+    \item[$\varpi=\varpi'.s$] The inner induction hypothesis gives $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$,
+    so we can conclude by applying \Rule{PSnd}.
   \end{description}\ \\
 
   Finally, let's prove the third property.
