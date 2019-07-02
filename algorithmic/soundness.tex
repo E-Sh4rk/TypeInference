@@ -18,6 +18,10 @@
 \newtheorem{property}{Property}
 \newtheorem{corollary}{Corollary}
 
+% TODO: use =def notation when relevant
+% \def\Tiny{\fontsize{4pt}{4pt}\selectfont}
+% \newcommand*{\eqdef}{\ensuremath{\overset{\mathclap{\text{\Tiny def}}}{=}}}
+
 \begin{document}
 
   \maketitle
@@ -89,8 +93,8 @@
   \begin{theorem}[Soundness of the algorithm]
     \begin{align*}
       &\forall \Gamma, e, t.\ \tyof e \Gamma \leq t \Rightarrow \Gamma \vdash e:t\\
-      &\forall \Gamma, e, t, t', \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
-      &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma
+      &\forall \Gamma, e, t, \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
+      &\forall \Gamma, e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma
     \end{align*}
   \end{theorem}
 
@@ -99,7 +103,7 @@
   \subsection{Soundness of the algorithm}
 
   We proceed by induction over the structure of $e$
-  and the domain of $\Gamma$ (with the inclusion order) when $e$ does not change.
+  and, for two identical $e$, on the domain of $\Gamma$ (with the inclusion order).
 
   Let's prove the first property.
   Let $t$ such that $\tsint{\tyof e \Gamma} \leq t$.
@@ -149,8 +153,7 @@
 
     \item[$\ite {e_0} t {e_1} {e_2}$] The last rule is \Rule{Case\Aa}. We conclude easily with the induction hypothesis and the rules
     \Rule{Subs} and \Rule{Case} (for the application of \Rule{Case}, $t'$ must be taken equal to $t_1 \vee t_2$ with $t_1$ and $t_2$ such that $\ts_1\leq t_1$, $\ts_2\leq t_2$ and $t_1 \vee t_2 \leq t$).
-  \end{description}
-
+  \end{description}\ \\
 
   Now, let's prove the second property.
   We perform a (nested) induction on $\varpi$.
@@ -162,10 +165,30 @@
   We also have to derive $\pvdash \Gamma e t \varpi : \constr \varpi {\Gamma,e,t}$ (then it will be easy to conclude using the rule \Rule{PInter}).
   \begin{description}
     \item[$\varpi=\epsilon$] We use the rule \Rule{PEps}.
-    \item[$\varpi=\varpi'.1$] By using the outer and inner induction hypotheses, we can derive
-    $\pvdash \Gamma e t \varpi'.0 : \tsrep {\tyof {\occ e {\varpi'.0}} \Gamma}$ and $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$.
-    Then, by using \Rule{PSubs} on this first derivation, we can derive $\pvdash \Gamma e t \varpi'.0 : \arrow {t_1} {t_2}$
-    such that $t_2 \land  \env {\Gamma,e,t} (\varpi') \simeq \Empty$ and $\neg t_1 \leq \worra {\cdots} {\cdots}$ TODO
+    \item[$\varpi=\varpi'.1$]
+    Let's note $f=\tsrep {\tyof {\occ e {\varpi'.0}} \Gamma}$, $s=\env {\Gamma,e,t} (\varpi')$ and $t_{\text{res}} = \worra f s$. 
+    
+    By using the outer and inner induction hypotheses, we can derive $\pvdash \Gamma e t \varpi'.0 : f$ and $\pvdash \Gamma e t \varpi' : s$.
+
+    By using the descriptive definition of $\worra {} {}$, we have $t' = \apply f {(\dom f \setminus t_{\text{res}})} \leq \neg s$.
+
+    Moreover, by using the descriptive definition of $\apply {} {}$ on $t'$, we have
+    $f \leq \arrow {(\dom f \setminus t_{\text{res}})} {t'}$.
+
+    As $t'\leq \neg s$, it gives $f \leq \arrow {(\dom f \setminus t_{\text{res}})} {\neg s}$.
+
+    Let's note $t_1 = \dom f \setminus t_{\text{res}}$ and $t_2 = \neg s$. The above inequality can be rewritten $f \leq \arrow {t_1} {t_2}$.
+
+    Thus, by using \Rule{PSubs} on the derivation $\pvdash \Gamma e t \varpi'.0 : f$, we can derive $\pvdash \Gamma e t \varpi'.0 : \arrow {t_1} {t_2}$.
+    We have:
+    \begin{itemize}
+      \item $t_2 \land s \simeq \Empty$ (as $t_2 = \neg s$)
+      \item $\neg t_1 = t_{\text{res}} \vee \neg \dom f = t_{\text{res}}$
+    \end{itemize}
+    
+    In consequence, we can conclude by applying the rule \Rule{PAppR}
+    with the premises $\pvdash \Gamma e t \varpi'.0 : \arrow {t_1} {t_2}$ and $\pvdash \Gamma e t \varpi' : s$.
+
     \item[$\varpi=\varpi'.0$] By using the inner induction hypothesis and the last case, we can derive
     $\pvdash \Gamma e t \varpi' : \env {\Gamma,e,t} (\varpi')$ and $\pvdash \Gamma e t \varpi'.1 : \env {\Gamma,e,t} (\varpi'.1)$.
     Hence we can apply \Rule{PAppL}.
@@ -173,7 +196,7 @@
     \item[$\varpi=\varpi'.r$]
     \item[$\varpi=\varpi'.f$]
     \item[$\varpi=\varpi'.s$]    
-  \end{description}
+  \end{description}\ \\
 
   Finally, let's prove the third property.
   Let $\Gamma' = \Refine {e,t} \Gamma = {\RefineStep{e,t}}^{n_0}(\Gamma)$.
