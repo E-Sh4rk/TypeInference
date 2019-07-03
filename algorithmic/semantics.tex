@@ -22,7 +22,7 @@
 
   \maketitle
   
-    \section{Typing rules}
+    \subsection{Full algorithmic type system}
 
     \begin{mathpar}
       \Infer[Efq\Aa]
@@ -93,6 +93,14 @@
       {(e_1,e_2)\not\in\dom\Gamma}
     
     \end{mathpar}
+
+    \begin{align*}
+      \tyof e \Gamma = 
+      \left\{\begin{array}{ll}
+        \ts & \text{if } \Gamma \vdashA e:\ts \\
+        \tsempty & \text{otherwise}
+      \end{array}\right.
+    \end{align*}
 
     \begin{eqnarray}
       \constr\epsilon{\Gamma,e,t} & = & t\\
