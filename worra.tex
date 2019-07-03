@@ -34,41 +34,14 @@
 \date{\vspace{-5ex}}
 
 \pagenumbering{gobble}
-\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
-\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
-\DeclareFontFamily{U}{mathb}{}
-\DeclareFontShape{U}{mathb}{m}{n}{
-  <-5.5> mathb5
-  <5.5-6.5> mathb6
-  <6.5-7.5> mathb7
-  <7.5-8.5> mathb8
-  <8.5-9.5> mathb9
-  <9.5-11.5> mathb10
-  <11.5-> mathb12
-}{}
-\DeclareSymbolFont{mathb}{U}{mathb}{m}{n}
-\DeclareMathSymbol{\sqdot}{\mathbin}{mathb}{"0D}
-\newcommand{\worra}[2]{#1\mathop{\,\sqdot\,} #2}
-\newcommand{\apply}[2]{#1\circ#2}
-\newcommand{\dom}[1]{\textsf{dom}(#1)}
-\newcommand{\alt}{~|~}
-\newcommand{\Empty} {\textsf{Empty}}%\MyMathBb{0}}
-\newcommand{\Any} {\textsf{Any}}%\MyMathBb{1}}
-\newcommand{\Int} {\textsf{Int}}
-\newcommand{\Even} {\textsf{Even}}
-\newcommand{\Odd} {\textsf{Odd}}
-\newcommand{\Bool} {\textsf{Bool}}
-\newcommand{\True} {\textsf{True}}
-\newcommand{\False} {\textsf{False}}
+\usepackage{setup}
 
 \begin{document}
 
     \maketitle
 
-    \section{Proofs}
-
-    \subsection{Recall: some definitons}
+    \section{Recall: some definitons}
 
     \[ \worra t s = \min \{ u \alt \apply t {(\dom t \setminus u)} \leq \neg s \} \]
 
@@ -77,78 +50,97 @@
     \begin{eqnarray*}
         \dom{t}    & = & \bigwedge_{i\in I}\bigvee_{p\in P_i}s_p\\[4mm]
         \apply t s & = & \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt s\not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\hspace*{1cm}\makebox[0cm][l]{(for $s\leq\dom{t}$)}\\[4mm]
-        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{p\in P_i\alt s\wedge t_p=\varnothing\}}\neg s_p \right)\\
-        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)
+        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{p\in P_i\alt s\wedge t_p=\Empty\}}\neg s_p \right)\\
+        \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)
     \end{eqnarray*}
     Example of non-optimality of worra (1st version) :
     \[ \worra {(\Any \rightarrow \Any) \land (\neg \Bool \rightarrow \neg \True) \land (\neg \Bool \rightarrow \neg \False)} \Bool = \Any \text{ instead of } \Bool \]
     \pagebreak
 
-    \subsection{Correctness of worra (2nd version)}
+    \section{Operator $\worra {} {}$}
+
+    In this section, we will use the algorithmic definition of $\worra {} {}$ and show that it is equivalent to its
+    descriptive definition.
+
+    \begin{eqnarray*}
+        &t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)\\
+        &\worra t s = \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)
+    \end{eqnarray*}
+
+    \begin{lemma}[Correctness of $\worra {} {}$]
+        $\forall t, s.\ \apply t {(\dom t \setminus (\worra t s))} \leq \neg s$
+    \end{lemma}
     
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ be any type.
 
-    Let's prove that $\apply t {(\dom t \setminus (\worra t s))} \leq \neg s$ with the algorithmic definition for $\worra {} {}$.\\
-    Equivalently, we want $(\apply t {(\dom t \setminus (\worra t s))}) \land s = \varnothing$.\\
+    Let's prove that $\apply t {(\dom t \setminus (\worra t s))} \leq \neg s$ (with the algorithmic definition for $\worra {} {}$).\\
+    Equivalently, we want $(\apply t {(\dom t \setminus (\worra t s))}) \land s \simeq \Empty$.\\
 
-    Let $u$ be a type such that $u \leq \dom t$ and $(\apply t u) \land s \neq \varnothing$ (if such a type does not exist, we are done).\\
-    Let's show that $u \land (\worra t s) \neq \varnothing$ (we can easily deduce the wanted property from that, by the absurd).\\
+    Let $u$ be a type such that $u \leq \dom t$ and $(\apply t u) \land s \not\simeq \Empty$ (if such a type does not exist, we are done).\\
+    Let's show that $u \land (\worra t s) \not\simeq \Empty$ (we can easily deduce the wanted property from that, by the absurd).\\
     For that, we should prove the following:\\
 
     \[
         \exists i \in I.\ 
-        u \land \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right) \neq \varnothing
+        u \land \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right) \not\simeq \Empty
     \]
 
-  From $(\apply t u) \land s \neq \varnothing$, we can take (using the algorithmic definition of $\circ$) $i \in I$ and $Q \subsetneq P_i$ such that:\\
-  \[ u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing \]
+  From $(\apply t u) \land s \not\simeq \Empty$, we can take (using the algorithmic definition of $\circ$) $i \in I$ and $Q \subsetneq P_i$ such that:\\
+  \[ u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } (\bigwedge_{p\in P_i\setminus Q}t_p) \land s \not\simeq \Empty \]
 
-    For any $P \subset P_i$ such that $s \leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p = \varnothing$),\\
-    we have $P \cap Q \neq \varnothing$ (by the absurd, because $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \neq \varnothing$).\\
+    For any $P \subseteq P_i$ such that $s \leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p \simeq \Empty$),\\
+    we have $P \cap Q \neq \varnothing$ (by the absurd, because $(\bigwedge_{p\in P_i\setminus Q}t_p) \land s \not\simeq \Empty$).\\
     Consequently, we have:
-    \[ \forall P \subset P_i.\ s \leq \bigvee_{p \in P} \neg t_p \Rightarrow \bigwedge_{p \in P} s_p \leq \bigvee_{q \in Q}s_q \]
+    \[ \forall P \subseteq P_i.\ s \leq \bigvee_{p \in P} \neg t_p \Rightarrow \bigwedge_{p \in P} s_p \leq \bigvee_{q \in Q}s_q \]
     We can deduce that:
-    \[ \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \leq \bigvee_{q \in Q}s_q \]
-    Moreover, as $u \not\leq \bigvee_{q\in Q}s_q$, we have $u \not\leq \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right)$.\\
+    \[ \bigvee_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right) \leq \bigvee_{q \in Q}s_q \]
+    Moreover, as $u \not\leq \bigvee_{q\in Q}s_q$, we have $u \not\leq \bigvee_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p\right)$.\\
     This is equivalent to the wanted result.
         
     \qed
     \pagebreak
 
-    \subsection{Worra alternative definition}
+    \begin{lemma}[$\worra {} {}$ alternative definition]
+        The following algorithmic definition for $\worra {} {}$ is equivalent to the previous one:
+
+        \[\forall t, s.\ \worra t s = \bigvee_{i \in I} \left( \bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
+            \dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\]
+    \end{lemma}
 
     \begin{align*}
         \worra t s & = \dom t \wedge\bigvee_{i\in I}\left(
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left(\dom t \wedge
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} s_p \right) \wedge
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} \left(s_p \land \bigvee_{P \subset P_i \setminus \{p\}}
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left(\dom t \wedge
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} s_p \right) \wedge
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} \left(s_p \land \bigvee_{P \subseteq P_i \setminus \{p\}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in (P_i \setminus \{p\}) \setminus P} \neg s_n \right) \right) \right) \wedge
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} \left(\bigvee_{P \subset P_i \setminus \{p\}} \left( s_p \land
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{p \in P_i} \left(\bigvee_{P \subseteq P_i \setminus \{p\}} \left( s_p \land
             \bigwedge_{p \in P} s_p \land \bigwedge_{n \in (P_i \setminus \{p\}) \setminus P} \neg s_n \right) \right) \right) \wedge
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\    
-        & = \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{\substack{P \subset P_i\\P \neq \varnothing}}
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\    
+        & \simeq \bigvee_{i\in I} \left(\left( \dom t \wedge \bigvee_{\substack{P \subseteq P_i\\P \neq \varnothing}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right) \right) \wedge
-            \bigwedge_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subset P_i\\P \neq \varnothing}}
+            \bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subseteq P_i\\P \neq \varnothing}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right) \setminus
-            \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p \right)\right)\\
-        & = \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subset P_i\\P \neq \varnothing}}
+            \bigvee_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigwedge_{p \in P} s_p \right)\right)\\
+        & \simeq \bigvee_{i\in I} \left( \dom t \wedge \bigvee_{\substack{P \subseteq P_i\\P \neq \varnothing}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right) \setminus
-            \bigvee_{\{P \subset P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}}
+            \bigvee_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}}
             \left(\bigwedge_{p \in P} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
-        & = \bigvee_{i \in I} \left( \dom t \land \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
+        & \simeq \bigvee_{i \in I} \left( \dom t \land \bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
             \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\\
-        & = \bigvee_{i \in I} \left( \bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
+        & \simeq \bigvee_{i \in I} \left( \bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
             \dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)
     \end{align*}
     \pagebreak
 
-    \subsection{Optimality of worra (2nd version)}
+    \begin{lemma}[Optimality of $\worra {} {}$]
+        TODO
+    \end{lemma}
 
     Let $t$ an arrow type. $t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right)$\\
     Let $s$ be any type.
@@ -156,26 +148,26 @@
     Let $u$ be such that $\apply t {(\dom t \setminus u)} \leq \neg s$. We want to prove that $\worra t s \leq u$.
 
     We have:
-    \[\worra t s = \bigvee_{i \in I} \left(\bigvee_{\{P \subset P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} } a_{i,P}\right) \]
+    \[\worra t s = \bigvee_{i \in I} \left(\bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} } a_{i,P}\right) \]
     With:
     \[a_{i,P}=\dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n\]
 
-    Let $i \in I$ and $P \subset P_i$ such that $s \not\leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p \neq \varnothing$) and such that $a_{i,P} \neq \varnothing$.\\
+    Let $i \in I$ and $P \subseteq P_i$ such that $s \not\leq \bigvee_{p \in P} \neg t_p$ (equivalently, $s \land \bigwedge_{p \in P} t_p \not\simeq \Empty$) and such that $a_{i,P} \not\simeq \Empty$.\\
     For convenience, let $a = a_{i,P}$. We just have to show that $a \leq u$.
 
-    By the absurd, let's suppose that $a \setminus u \neq \varnothing$ and show that $(\apply t {(\dom t \setminus u)}) \land s \neq \varnothing$.\\
+    By the absurd, let's suppose that $a \setminus u \not\simeq \Empty$ and show that $(\apply t {(\dom t \setminus u)}) \land s \not\simeq \Empty$.\\
 
     Let's recall the algorithmic definition of $\circ$:
     \[\apply t {(\dom t \setminus u)} = \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt \dom t \setminus u \not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\]
 
     Let's take $Q = P_i \setminus P$. We just have to prove that:
-    \[ \dom t \setminus u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } s \land \bigwedge_{p\in P_i\setminus Q}t_p \neq \varnothing \]
+    \[ \dom t \setminus u \not\leq\bigvee_{q\in Q}s_q \text{\ \ \ and\ \ \ } s \land \bigwedge_{p\in P_i\setminus Q}t_p \not\simeq \Empty \]
 
-    As $P_i \setminus Q = P$, we immediatly have $s \land \bigwedge_{p\in P_i\setminus Q}t_p \neq \varnothing$.
+    As $P_i \setminus Q = P$, we immediatly have $s \land \bigwedge_{p\in P_i\setminus Q}t_p \not\simeq \Empty$.
 
     Moreover, we know that $a \leq \bigwedge_{q \in Q} \neg s_q$ (definition of $a_{i,P}$), so we have:
-    \[a \land \bigwedge_{q\in Q} \neg s_q = a\]
-    Thus: \[(a \setminus u) \land \bigwedge_{q\in Q} \neg s_q = (a \land \bigwedge_{q\in Q} \neg s_q) \setminus u = a \setminus u \neq \varnothing\]
+    \[a \land \bigwedge_{q\in Q} \neg s_q \simeq a\]
+    Thus: \[(a \setminus u) \land \bigwedge_{q\in Q} \neg s_q \simeq (a \land \bigwedge_{q\in Q} \neg s_q) \setminus u \simeq a \setminus u \not\simeq \Empty\]
     And so: \[ a \setminus u \not\leq \bigvee_{q\in Q}s_q \]
 
     As $ \dom t \setminus u \geq a \setminus u$, we can immediatly obtain the remaining inequality.
