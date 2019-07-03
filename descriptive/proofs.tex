@@ -5,7 +5,7 @@
 \hypersetup{pdfstartview=XYZ}%         zoom par defaut
 
 \setlength{\droptitle}{-5em}   % This is your set screw
-\title{\vspace{1.5cm}Descriptive type system}
+\title{\vspace{1.5cm}Declarative type system}
 \author{}
 \date{\vspace{-5ex}}
 
@@ -22,12 +22,14 @@
 
   \maketitle
 
-  In the following, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
+  \subsection{Subject reduction}
+
+  In this section, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
   For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
   
   The environements also operate up to alpha-renaming.
 
-    \section{Definitions}
+    \subsubsection{Some definitions}
 
     \begin{definition}[Bottom environment]
       Let $\Gamma$ an environment.\\
@@ -39,10 +41,11 @@
         \begin{align*}
           &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \Gamma' \vdash e : \Gamma(e))
         \end{align*}
+        This relation is a preorder (proof below).
       \end{definition}
     
-      \begin{definition}[Environment substitution]
-        Let $\Gamma$ an environment and $\rho$ a substitution from variables to expressions.
+      \begin{definition}[Application of a substitution to an environment]
+        Let $\Gamma$ an environment and $\rho$ a substitution from expressions to expressions.
         The environment $\Gamma\rho$ is defined by:
         \begin{align*}
           &\dom {\Gamma\rho} = \dom \Gamma \rho\\
@@ -54,7 +57,7 @@
         We say that an environment $\Gamma$ is ordinary iff its domain only contains variables.
       \end{definition}
 
-    \section{Theorems}
+    \subsubsection{Theorems and proofs}
 
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
@@ -64,7 +67,7 @@
             &\forall s.\ \forall t.\ \valsemantic {s\vee t} = \valsemantic s \cup \valsemantic t
           \end{align*}
         \end{property}
-        Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic_subtyping [TODO: ref].
+        Proof: theorem 5.5, lemmas 6.19, 6.22, 6.23 of semantic\_subtyping (TODO: ref).
 
         \begin{lemma}[Alpha-renaming]
           Both the type system and the semantics are invariant by alpha-renaming.
@@ -74,12 +77,14 @@
         For the semantics, it is a consequence of the fact that parallel substitutions (for the case of the $\texttt{if}$)
         are up to alpha-renaming.
 
-        \begin{lemma}[Completeness and soundness for values]Let $v$ a value, $t$ a type and $\Gamma$ an environment.
+        \begin{lemma}[Completeness and soundness for typing of values]
+          Let $v$ a value, $t$ a type and $\Gamma$ an environment.
 
           If $v \in \valsemantic{t}$ and $v$ is well-typed in $\Gamma$, then $\Gamma\vdash v:t$.
 
           If $\Gamma \vdash v:t$ and $\Gamma\neq\bot$, then $v \in \valsemantic{t}$.
         \end{lemma}
+        Prrof: trivial.
     
         \begin{lemma}[Monotonicity]
           Let $\Gamma$ and $\Gamma'$ two environments such that $\Gamma' \leq \Gamma$.
@@ -102,47 +107,7 @@
           and $v = \occ e {\varpi.x} \not\in \valsemantic{t'}$, we can derive $\pvdash \Gamma e t \varpi:\Empty$.
         \end{lemma}
 
-        \begin{corollary}[Value refinement 2]
-          For any derivable judgement of the form $\Gamma \evdash e t \Gamma'$ (with $e$ well-typed in $\Gamma$), we can construct a derivation of $\Gamma \evdash e t \Gamma''$ with $\Gamma''\leq\Gamma'$
-          that never uses the rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
-        \end{corollary}
-        Proof: We can easily remove every such rule from the derivation. If $\occ e {\varpi.x} \in \valsemantic{t'}$, the \Rule{Path} rule is useless
-        and we can freely remove it. Otherwise, if $\occ e {\varpi.x} \not\in \valsemantic{t'}$, we can use the previous lemma to
-        replace it with a \Rule{Path} rule on $\varpi$.
-
-        \begin{lemma}[Value testing]
-          For any derivable judgement of the form $\Gamma \evdash v t \Gamma'$ (with $v$ a value),
-          we have $v \in \valsemantic{t} \Rightarrow \Gamma\leq\Gamma'$.
-        \end{lemma}
-
-        \begin{lemma}[Substitution]
-          Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
-
-          Let's suppose that $e_b$ is closed and that $e_a$ has one of the following form:
-          \begin{itemize}
-            \item $x$ (variable)
-            \item $\ite e t {e_1} {e_2}$ (if expression)
-            \item $v$ (value)
-            \item $v v$ (application of two values)
-            \item $(v,v)$ (product of two values)
-          \end{itemize}
-          Let's also suppose that $\forall t.\ \Gamma \vdash e_a : t \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t$.
-          
-          Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
-          \begin{align*}
-            &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t
-          \end{align*}
-        \end{lemma}
-
-        \begin{theorem}[Subject reduction]
-          Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
-
-          If $\Gamma\vdash e:t$ and $e\leadsto e'$, then $\Gamma\vdash e':t$.
-        \end{theorem}
-
-        \section{Proofs}
-
-        \subsection{Value refinement 1}
+        Proof:
 
         We proceed by induction on the derivation of $\pvdash \Gamma e t \varpi.x:t'$.
 
@@ -210,8 +175,27 @@
           we can derive $\pvdash \Gamma e t \varpi:\Empty$.
           \item[\Rule{PSnd}] Similar to the previous case.
         \end{description}
+        \qed
 
-        \subsection{Value testing}
+        \begin{corollary}[Value refinement 2]
+          For any derivable judgement of the form $\Gamma \evdash e t \Gamma'$ (with $e$ well-typed in $\Gamma$), we can construct a derivation of $\Gamma \evdash e t \Gamma''$ with $\Gamma''\leq\Gamma'$
+          that never uses the rule \Rule{Path} on a path $\varpi.x$ such that $\forall y.\ \occ e {\varpi.y}$ refers to a value.
+        \end{corollary}
+
+        Proof:
+
+        We can easily remove every such rule from the derivation. If $\occ e {\varpi.x} \in \valsemantic{t'}$, the \Rule{Path} rule is useless
+        and we can freely remove it. Otherwise, if $\occ e {\varpi.x} \not\in \valsemantic{t'}$, we can use the previous lemma to
+        replace it with a \Rule{Path} rule on $\varpi$.
+
+        \qed
+
+        \begin{lemma}[Value testing]
+          For any derivable judgement of the form $\Gamma \evdash v t \Gamma'$ (with $v$ a value),
+          we have $v \in \valsemantic{t} \Rightarrow \Gamma\leq\Gamma'$.
+        \end{lemma}
+
+        Proof:
 
         As $v$ is a value, the applications of \Rule{Path} have a path $\varpi$ only composed of $l$ and $r$
         and such that $\occ e \varpi$ is a value.
@@ -223,7 +207,28 @@
         Thus we can easily derive $\Gamma \vdash v:t'$ (we replace \Rule{PTypeof} by \Rule{Typeof},
         \Rule{PInter} by \Rule{Inter}, etc.).
 
-        \subsection{Substitution lemma}
+        \qed
+
+        \begin{lemma}[Substitution]
+          Let $\Gamma$ an environment. Let $e_a$ and $e_b$ two expressions.
+
+          Let's suppose that $e_b$ is closed and that $e_a$ has one of the following form:
+          \begin{itemize}
+            \item $x$ (variable)
+            \item $\ite e t {e_1} {e_2}$ (if expression)
+            \item $v$ (value)
+            \item $v v$ (application of two values)
+            \item $(v,v)$ (product of two values)
+          \end{itemize}
+          Let's also suppose that $\forall t.\ \Gamma \vdash e_a : t \Rightarrow \Gamma\subst {e_a} {e_b} \vdash e_b:t$.
+          
+          Then, by noting $\rho = \subst {e_a} {e_b}$ we have:
+          \begin{align*}
+            &\forall e,t.\ \Gamma \vdash e:t \Rightarrow \Gamma\rho \vdash e\rho:t
+          \end{align*}
+        \end{lemma}
+
+        Proof:
 
         Let $\Gamma$, $e_a$, $e_b$ as in the statement.
 
@@ -377,8 +382,13 @@
           \item[\Rule{PTypeof}] Trivial (by using the induction hypothesis).
           \item[\Rule{P$\cdots$}] All the remaining rules are trivial.
         \end{description}
+        \qed
 
-        \subsection{Subject reduction}
+        \begin{theorem}[Subject reduction]
+          Let $\Gamma$ an ordinary environment, $e$ and $e'$ two expressions and $t$ a type.
+
+          If $\Gamma\vdash e:t$ and $e\leadsto e'$, then $\Gamma\vdash e':t$.
+        \end{theorem}
 
         Let $\Gamma$, $e$, $e'$ and $t$ as in the statement.
 
@@ -478,5 +488,6 @@
             Thus, we can conclude directly by using the substitution lemma on $e$ and $\rho$.
           \end{itemize}
         \end{description}
+        \qed
 
 \end{document}
