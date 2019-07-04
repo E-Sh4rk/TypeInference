@@ -22,7 +22,7 @@
 
   \maketitle
 
-  \subsection{Subject reduction}
+  \subsection{Proofs for the descriptive type system}
 
   In this section, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
   For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
@@ -57,7 +57,7 @@
         We say that an environment $\Gamma$ is ordinary iff its domain only contains variables.
       \end{definition}
 
-    \subsubsection{Theorems and proofs}
+    \subsubsection{Some straightforward lemmas}
 
         \begin{property}[$\valsemantic \_$ properties]
           \begin{align*}
@@ -101,6 +101,8 @@
         \begin{corollary}[Preorder relation]
           The relation $\leq$ on environements is a preorder.
         \end{corollary}
+
+        \subsubsection{Major lemmas and subject reduction}
 
         \begin{lemma}[Value refinement 1]
           If we have $\pvdash \Gamma e t \varpi.x:t'$ with $x\in\{0,1,l,r,f,s\}$ (and $e$ well-typed in $\Gamma$) such that $\forall y.\ \occ e {\varpi.y}$ is a value
