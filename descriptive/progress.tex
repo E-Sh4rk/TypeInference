@@ -1,0 +1,44 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Declarative type system}
+\author{}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+
+  \subsection{Progress}
+
+      \begin{lemma}[Inversion]
+        \begin{align*}
+          &\valsemantic{\pair {t_1} {t_2}} = \{(v_1,v_2) \alt \vvdash v_1:t_1, \vvdash v_2:t_2 \}\\
+          &\valsemantic{b} = \{c \alt \basic{c} \leq b \}\\
+          &\valsemantic{\arrow t s} = \{\lambda^{\bigwedge_{i\in I}\arrow {t_i} {s_i}}x.e \alt \bigwedge_{i\in I}\arrow {t_i} {s_i} \leq \arrow t s\}
+        \end{align*}
+      \end{lemma}
+      Proof: lemma 6.21 of semantic\_subtyping (TODO: ref).
+
+      \begin{theorem}[Progress]
+      If $\varnothing \vdash e:t$, then either $e$ is a value or there exists $e'$ such that $e \leadsto e'$.
+      \end{theorem}
+
+      Proof:
+
+      \qed
+
+\end{document}
