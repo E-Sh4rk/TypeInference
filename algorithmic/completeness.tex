@@ -31,30 +31,63 @@
     \end{array}\right.
   \end{align*}
 
-  \section{Definitions}
+  \section{Some definitions}
 
     \begin{definition}[Bottom environment]
       Let $\Gamma$ an environment.\\
       $\Gamma$ is bottom (noted $\Gamma = \bot$) iff $\exists e\in\dom\Gamma.\ \Gamma(e)\simeq\Empty$.
     \end{definition}
 
-    \begin{definition}[(Pre)order on environments]
+    \begin{definition}[Algorithmic (pre)order on environments]
     Let $\Gamma$ and $\Gamma'$ two environments. We say that $\Gamma' \leqA \Gamma$ iff:
     \begin{align*}
         &\Gamma'=\bot \text{ or } (\Gamma\neq\bot \text{ and } \forall e \in \dom \Gamma.\ \tyof e \Gamma \leq \Gamma(e))
     \end{align*}
     \end{definition}
 
-  \section{Theorems}
+  \section{Major lemmas and completeness}
 
-  \begin{lemma}[Monotonicity]
+  \begin{lemma}[Monotonicity] Let $\Gamma$ and $\Gamma'$ such that $\Gamma'\leqA\Gamma $. We have:
     \begin{align*}
-      &\forall e,\Gamma,\Gamma'.\ \Gamma'\leqA\Gamma \Rightarrow \tyof e {\Gamma'} \leq \tyof e {\Gamma}\\
-      &\forall e,t,\Gamma,\Gamma'.\ \Gamma'\leqA\Gamma \text{ and } \tyof e \Gamma \neq \tsempty \Rightarrow \Refine {e,t} {\Gamma'} \leq \Refine {e,t} \Gamma\\
+      &\forall e.\ \tyof e {\Gamma'} \leq \tyof e {\Gamma}\\
+      &\forall e,t,\varpi.\ \tyof e \Gamma \neq \tsempty \Rightarrow \env {\Gamma',e,t} (\varpi) \leq \env {\Gamma,e,t} (\varpi)\\
+      &\forall e,t.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Refine {e,t} {\Gamma'} \leq \Refine {e,t} \Gamma\\
     \end{align*}
   \end{lemma}
 
-  \section{Proofs}
+  Proof:
 
+  We proceed by induction over the structure of $e$
+  and, for two identical $e$, on the domain of $\Gamma$ (with the inclusion order).
+
+  Let's prove the first property.
+
+  If $\Gamma = \bot$, we also have $\Gamma' = \bot$ and thus we can conclude with the rule \Rule{Efq}.
+  Let's assume $\Gamma \neq \bot$.
+
+  If $e=x$ a variable, then the last rule used is \Rule{Var\Aa}.
+  As $\Gamma' \leqA \Gamma$, we have $\Gamma'(e) \leq \Gamma(e)$ and thus
+  we can conclude with the rule \Rule{Var\Aa}.
+  So let's assume that $e$ is not a variable.
+
+  If $e\in\dom\Gamma$, then the last rule used is \Rule{Env\Aa}.
+  As $\Gamma' \leqA \Gamma$, we have $\tyof e {\Gamma'} \leq \Gamma(e)$.
+  Moreover, by applying the induction hypothesis on the premise $\tyof e {\Gamma\setminus \{e\}}$,
+  we have $\tyof e {\Gamma'\setminus \{e\}} \leq \tyof e {\Gamma\setminus \{e\}}$. TODO: fix last sentence
+  by strengthening the lemma with a concept of 'smaller environment for an expression'.
+  \begin{itemize}
+    \item If we have $e\in\dom{\Gamma'}$, we have
+    $\tyof e {\Gamma'} = \tyof e {\Gamma'} \land \tyof e {\Gamma'\setminus \{e\}} \leq \Gamma(e)\land\tyof e {\Gamma\setminus \{e\}} = \tyof e {\Gamma}$.
+    \item  Otherwise, if we have $e\not\in\dom{\Gamma'}$. Thus we have
+    $\tyof e {\Gamma'} = \tyof e {\Gamma'\setminus \{e\}} \leq \Gamma(e) \land \tyof e {\Gamma\setminus \{e\}}=\tyof e {\Gamma}$.
+  \end{itemize}
+
+  %Let $t'\in\tsint{\ts}$ such that $t'\land\Gamma(e)\leq t$.
+  %The induction hypothesis gives $\Gamma\setminus\{e\} \vdash e:t'$
+  %(the premise uses the same $e$ but the domain of $\Gamma$ is strictly smaller).
+  %Thus, we can build a derivation $\Gamma \vdash e:t$ by using the rules \Rule{Subs}, \Rule{Inter},
+  %\Rule{Env} and the derivation $\Gamma\setminus\{e\} \vdash e:t'$.
+
+  \qed
 
 \end{document}

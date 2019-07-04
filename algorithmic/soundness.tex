@@ -50,8 +50,8 @@
   \begin{theorem}[Soundness of the algorithm]
     \begin{align*}
       &\forall \Gamma, e, t.\ \tyof e \Gamma \leq t \Rightarrow \Gamma \vdash e:t\\
-      &\forall \Gamma, e, t, \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
-      &\forall \Gamma, e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma
+      &\forall \Gamma, e, t, \varpi.\ \tyof e \Gamma \neq \tsempty \Rightarrow \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
+      &\forall \Gamma, e, t.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Gamma \evdash e t \Refine {e,t} \Gamma
     \end{align*}
   \end{theorem}
 
