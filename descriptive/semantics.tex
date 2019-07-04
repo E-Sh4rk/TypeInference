@@ -229,7 +229,7 @@
       {e \xleadsto{e_r\mapsto e_r'} e'}
       {\ite e t {e_1} {e_2} \idleadsto \ite {e\subst{e_r}{e_r'}} t {e_1\subst {e_r} {e_r'}} {e_2\subst {e_r} {e_r'}}}
       {}\\
-      \Infer[Ite]
+      \Infer[Case]
       {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
       {\ite v t {e_1} {e_2} \idleadsto e_i}
       {}

@@ -39,6 +39,43 @@
 
       Proof:
 
+      We proceed by induction on the derivation $\varnothing \vdash e:t$.
+      We consider the last rule of this derivation:
+
+      \begin{description}
+        \item[\Rule{Env}] This case is impossible (the environment is empty).
+        \item[\Rule{Efq}] This case is impossible (the environment is empty).
+        \item[\Rule{Inter}] Straightforward application of the induction hypothesis.
+        \item[\Rule{Subs}] Straightforward application of the induction hypothesis.
+        \item[\Rule{Const}] In this case, $e$ must be a constant so $e$ is a value.
+        \item[\Rule{App}] We have $e=e_1\ e_2$, with $\varnothing \vdash e_1: \arrow s t$
+        and $\varnothing \vdash e_2 : s$. If one of the $e_i$ can be reduced, then
+        $e$ can also be reduced using the reduction rule \Rule{Ctx}.
+        
+        Otherwise, by using the induction hypothesis we get that both $e_1$ and $e_2$ are values.
+        Moreover, by using the inversion lemma, we know that $e_1$ has the form
+        $\lambda^{\bigwedge_{i\in I} \arrow {t_i} {s_i}}x.e_0$. In consequence, $e$ is reducible
+        (the reduction rule \Rule{App} can be applied).
+        \item[\Rule{Abs+}] In this case, $e$ must be a lambda abstraction, so $e$ is a value.
+        \item[\Rule{Abs-}] Straightforward application of the induction hypothesis.
+        \item[\Rule{Case}] We have $e = \ite {e_0} {t'} {e_1} {e_2}$. If $e_0$ can be reduced,
+        then $e$ can also be reduced using the reduction rule \Rule{TestCtx}.
+
+        Otherwise, by using the induction hypothesis we get that $e_0$ is a value.
+        In consequence, $e$ is reducible (the reduction rule \Rule{Case} can be applied).
+        \item[\Rule{Proj}] We have $e=\pi_i e_0$, $t=t_i$, $\varnothing \vdash e_0: \pair {t_1} {t_2}$.
+        If $e_0$ can be reduced, then $e$ can also be reduced using the rule \Rule{Ctx}.
+        
+        Otherwise, by using the induction hypothesis we get that $e_0$ is a value.
+        Moreover, by using the inversion lemma, we know that $e_0$ has the form $(v_1, v_2)$.
+        In consequence, $e$ is reducible (the reduction rule \Rule{Proj} can be applied).
+        \item[\Rule{Pair}] We have $e=(e_1,e_2)$. If one of the $e_i$ can be reduced, then
+        $e$ can also be reduced using the reduction rule \Rule{Ctx}.
+
+        Otherwise, by using the induction hypothesis we get that both $e_1$ and $e_2$ are values.
+        In consequence, $e$ is also a value.
+      \end{description}
+
       \qed
 
 \end{document}
