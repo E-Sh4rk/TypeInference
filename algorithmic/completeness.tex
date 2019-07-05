@@ -160,14 +160,14 @@
 
   Let's note $t_1 = \tsrep {\tyof{\occ e{\varpi'.0}}{\Gamma'}}$ and $t_2 = \tsrep {\tyof{\occ e{\varpi'.0}}\Gamma}$
   and $t'=\env {\Gamma,e,t} (\varpi')$.
-  As $e$ is well-typed, we have $\tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}} \leq \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}} \leq \dom {t_2}$.\\
+  As $e$ is well-typed, and using the inner induction hypothesis, we have $\tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}} \leq \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}} \leq \dom {t_2}$.\\
   Thus, using this property, we get:\\
   \begin{align*}
   &(\worra {t_1} {t'}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}}\\
   \leq &(\worra {t_2} {t'}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}}
   \end{align*}
 
-  Then, using the monotonicity of the second argument of $\worra {}{}$:
+  Then, using the monotonicity of the second argument of $\worra {}{}$ and the outer induction hypothesis:
   \begin{align*}
     &(\worra {t_1} {\env {\Gamma',e,t} (\varpi')}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}}\\
     \leq &(\worra {t_2} {\env {\Gamma,e,t} (\varpi')}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}}
@@ -176,10 +176,25 @@
 
   \ 
 
-  Finally, let's prove the third property.
+  Finally, we must prove the third property.\\
+  It is straightforward by using the previous result and the induction hypothesis:\\
+  for any $e'$ such that $\exists \varpi.\ \occ e \varpi \equiv e'$, we get
+  $\bigwedge_{\{\varpi\alt \occ e \varpi \equiv e'\}} \env {\Gamma',e,t} (\varpi) \leq \bigwedge_{\{\varpi\alt \occ e \varpi \equiv e'\}} \env {\Gamma,e,t} (\varpi)$.
 
-  TODO
+  The rest follows.
 
   \qed
+
+  \begin{theorem}[Completeness]
+    For any $\Gamma$, $e$, $t$ such that we can derive $\Gamma \vdash e:t$, there exists a global parameter $n_o$
+    with which $\tyof e \Gamma \leq t$.
+
+    More precisely:
+    \begin{align*}
+      &\forall \Gamma, e, t.\ \Gamma \vdash e:t \Rightarrow \tyof e \Gamma \leq t \text{ (for $n_o$ large enough)}\\
+      &\forall \Gamma, e, t, \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi) \Rightarrow \tyof e \Gamma \neq \tsempty \text{ (for $n_o$ large enough)}\\
+      &\forall \Gamma, e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma \Rightarrow \tyof e \Gamma \neq \tsempty \text{ (for $n_o$ large enough)}
+    \end{align*}
+  \end{theorem}
 
 \end{document}

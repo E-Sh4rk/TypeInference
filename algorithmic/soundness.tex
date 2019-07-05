@@ -48,6 +48,9 @@
   \subsubsection{Soundness}
 
   \begin{theorem}[Soundness of the algorithm]
+    For any $\Gamma$, $e$, $t$ such that $\tyof e \Gamma \leq t$ (for any $n_o$), we can derive $\Gamma \vdash e:t$.
+
+    More precisely:
     \begin{align*}
       &\forall \Gamma, e, t.\ \tyof e \Gamma \leq t \Rightarrow \Gamma \vdash e:t\\
       &\forall \Gamma, e, t, \varpi.\ \tyof e \Gamma \neq \tsempty \Rightarrow \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi)\\
