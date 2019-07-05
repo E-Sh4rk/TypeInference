@@ -49,11 +49,11 @@
 
   \subsubsection{Major lemmas and completeness}
 
-  \begin{lemma}[Monotonicity] Let $\Gamma$, $\Gamma'$ and $e$ such that $\Gamma'\leqA^e \Gamma $. We have:
+  \begin{lemma}[Monotonicity] Let $\Gamma$, $\Gamma'$ and $e$ such that $\Gamma'\leqA^e \Gamma$ and $\tyof e \Gamma \neq \tsempty$. We have:
     \begin{align*}
-      &\tyof e {\Gamma'} \leq \tyof e {\Gamma}\\
-      &\forall t,\varpi.\ \tyof e \Gamma \neq \tsempty \Rightarrow \env {\Gamma',e,t} (\varpi) \leq \env {\Gamma,e,t} (\varpi)\\
-      &\forall t.\ \tyof e \Gamma \neq \tsempty \Rightarrow \Refine {e,t} {\Gamma'} \leqA^e \Refine {e,t} \Gamma\\
+      &\tyof e {\Gamma'} \leq \tyof e {\Gamma} \text{ and } \tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}\\
+      &\forall t,\varpi.\ \env {\Gamma',e,t} (\varpi) \leq \env {\Gamma,e,t} (\varpi)\\
+      &\forall t.\ \Refine {e,t} {\Gamma'} \leqA^e \Refine {e,t} \Gamma\\
     \end{align*}
   \end{lemma}
 
@@ -62,7 +62,10 @@
   We proceed by induction over the structure of $e$
   and, for two identical $e$, on the domains of $\Gamma$ and $\Gamma'$ (with the lexicographical inclusion order).
 
-  Let's prove the first property.
+  Let's prove the first property: $\tyof e {\Gamma'} \leq \tyof e {\Gamma} \text{ and } \tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$.
+  We will focus on showing $\tyof e {\Gamma'} \leq \tyof e {\Gamma}$. The property $\tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$
+  follows for each case by noticing that $\tsrep {t \tsand \ts} \leq t \land \tsrep {\ts}$ and
+  $\tsrep {\ts_1 \tsor \ts_2} = \tsrep {\ts_1} \vee \tsrep {\ts_2}$ (the only rule that introduces the type scheme constructor $\tsfun {\_}$ is \Rule{Abs\Aa}).
 
   If $\Gamma' = \bot$ we can conclude directly with the rule \Rule{Efq}.
   So let's assume $\Gamma' \neq \bot$ and $\Gamma \neq \bot$
@@ -135,6 +138,13 @@
 
     We proceed the same way for the last premise.
   \end{description}\ \\
+
+  Now, let's prove the second property.
+  We perform a (nested) induction on $\varpi$.
+
+  TODO
+
+  Finally, let's prove the third property.
 
   TODO
 

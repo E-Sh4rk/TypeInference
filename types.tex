@@ -12,11 +12,6 @@
 \pagenumbering{gobble}
 
 \theoremstyle{definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{definition}{Definition}
-\newtheorem{property}{Property}
-\newtheorem{corollary}{Corollary}
 
 \begin{document}
 
@@ -98,7 +93,7 @@
     \begin{property}
       Let $\ts_1$ and $\ts_2$ two non-empty type schemes.\\
       If $\tsint {\ts_1} \simeq \tsint {\ts_2}$, then $\tsrep {\ts_1} \simeq \tsrep {\ts_2}$.\\
-      If $\ts_1 \leq \ts_2$, then $\tsrep {\ts_1} \leq \tsrep {\ts_2}$.
+      However, we can have $\tsrep {\ts_2} < \tsrep {\ts_1}$ even if $\ts_1 \leq \ts_2$ (ex: $\tsfunone \Bool \Bool$ and $(\arrow \Bool \Bool) \land \neg (\arrow \Bool \False)$).
     \end{property}
 
     \begin{lemma}
