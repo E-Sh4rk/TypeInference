@@ -49,7 +49,7 @@
 
   \subsubsection{Major lemmas and completeness}
 
-  \begin{lemma}[Monotonicity] Let $\Gamma$, $\Gamma'$ and $e$ such that $\Gamma'\leqA^e \Gamma$ and $\tyof e \Gamma \neq \tsempty$. We have:
+  \begin{lemma}[Monotonicity of the algorithm] Let $\Gamma$, $\Gamma'$ and $e$ such that $\Gamma'\leqA^e \Gamma$ and $\tyof e \Gamma \neq \tsempty$. We have:
     \begin{align*}
       &\tyof e {\Gamma'} \leq \tyof e {\Gamma} \text{ and } \tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}\\
       &\forall t,\varpi.\ \env {\Gamma',e,t} (\varpi) \leq \env {\Gamma,e,t} (\varpi)\\
@@ -185,7 +185,7 @@
 
   \qed
 
-  \begin{theorem}[Completeness]
+  \begin{theorem}[Completeness of the algorithm]
     For any $\Gamma$, $e$, $t$ such that we can derive $\Gamma \vdash e:t$, there exists a global parameter $n_o$
     with which $\tyof e \Gamma \leq t$.
 
