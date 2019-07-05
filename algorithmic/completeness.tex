@@ -192,8 +192,8 @@
     More precisely:
     \begin{align*}
       &\forall \Gamma, e, t.\ \Gamma \vdash e:t \Rightarrow \tyof e \Gamma \leq t \text{ (for $n_o$ large enough)}\\
-      &\forall \Gamma, e, t, \varpi.\ \pvdash \Gamma e t \varpi:\env {\Gamma,e,t} (\varpi) \Rightarrow \tyof e \Gamma \neq \tsempty \text{ (for $n_o$ large enough)}\\
-      &\forall \Gamma, e, t.\ \Gamma \evdash e t \Refine {e,t} \Gamma \Rightarrow \tyof e \Gamma \neq \tsempty \text{ (for $n_o$ large enough)}
+      &\forall \Gamma, e, t, t', \varpi.\ \pvdash \Gamma e t \varpi:t' \Rightarrow \env {\Gamma,e,t} (\varpi) \leq t' \text{ (for $n_o$ large enough)}\\
+      &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
     \end{align*}
   \end{theorem}
 
