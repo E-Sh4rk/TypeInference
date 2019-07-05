@@ -66,7 +66,7 @@
   If $\Gamma = \bot$, we trivially have $\Gamma \vdash e:t$ with the rule \Rule{Efq}.
   Let's assume $\Gamma \neq \bot$.
 
-  If $e=x$ a variable, then the last rule used is \Rule{Var\Aa}.
+  If $e=x$ is a variable, then the last rule used is \Rule{Var\Aa}.
   We can derive $\Gamma \vdash x:t$ by using the rule \Rule{Env} and \Rule{Subs}.
   So let's assume that $e$ is not a variable.
 
@@ -84,7 +84,7 @@
     \item[$e=x$] Already treated.
     \item[$e=\lambda^{\bigwedge_{i\in I} \arrow {t_i}{s_i}}x.e'$]
     The last rule is \Rule{Abs\Aa}.
-    We have $\arrow {t_i}{s_i} \leq t$.
+    We have $\bigwedge_{i\in I} \arrow {t_i}{s_i} \leq t$.
     Using the definition of type schemes, let $t'=\bigwedge_{i\in I} \arrow {t_i}{s_i} \land \bigwedge_{j\in J} \neg \arrow {t'_j}{s'_j}$ such that $\Empty \neq t' \leq t$.
     The induction hypothesis gives, for all $i\in I$, $\Gamma,x:s_i\vdash e':t_i$.
     
