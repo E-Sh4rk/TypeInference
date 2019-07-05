@@ -64,8 +64,9 @@
 
   Let's prove the first property: $\tyof e {\Gamma'} \leq \tyof e {\Gamma} \text{ and } \tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$.
   We will focus on showing $\tyof e {\Gamma'} \leq \tyof e {\Gamma}$. The property $\tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$
-  follows for each case by noticing that $\tsrep {t \tsand \ts} \leq t \land \tsrep {\ts}$ and
-  $\tsrep {\ts_1 \tsor \ts_2} = \tsrep {\ts_1} \vee \tsrep {\ts_2}$ (the only rule that introduces the type scheme constructor $\tsfun {\_}$ is \Rule{Abs\Aa}).
+  can be proved in a very similar way, by noticing that $\tsrep {t \tsand \ts} \leq t \land \tsrep {\ts}$,
+  $\tsrep {\ts_1 \tsor \ts_2} = \tsrep {\ts_1} \vee \tsrep {\ts_2}$ and $\tsrep {\ts_1 \tstimes \ts_2} = \pair {\tsrep {\ts_1}} {\tsrep {\ts_2}}$.
+  (Note that the only rule that introduces the type scheme constructor $\tsfun {\_}$ is \Rule{Abs\Aa}.)
 
   If $\Gamma' = \bot$ we can conclude directly with the rule \Rule{Efq}.
   So let's assume $\Gamma' \neq \bot$ and $\Gamma \neq \bot$
@@ -125,7 +126,7 @@
       $\tyof {e'} {\Refine {e_0,t} \Gamma'} \leq (\Refine {e_0,t} \Gamma) (e')$
       by using $\Refine {e_0,t} {\Gamma'} \leqA^{e_0} \Refine {e_0,t} \Gamma$.
 
-      \item Otherwise, as $\Refine {e_0,t} {\_}$ is extensive,
+      \item Otherwise, as $\Refine {e_0,t} {\_}$ is reductive,
       we have $\Refine {e_0,t} {\Gamma'} \leqA \Gamma'$ and thus by using the induction hypothesis
       $\tyof {e'} {\Refine {e_0,t} {\Gamma'}} \leq \tyof {e'} {\Gamma'}$.
       We also have $\tyof {e'} {\Gamma'} \leq \Gamma(e')$ by using $\Gamma' \leqA^{e_1} \Gamma$.
@@ -142,7 +143,38 @@
   Now, let's prove the second property.
   We perform a (nested) induction on $\varpi$.
 
-  TODO
+  We know that $\tsrep{\tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep{\tyof {\occ e \varpi} {\Gamma}}$
+  by the outer induction hypothesis (for $\varpi=\epsilon$ we use the proof of the first property above).
+
+  Thus we just have to prove that $\constr {\varpi} {\Gamma',e,t} \leq \constr {\varpi} {\Gamma,e,t}$.
+  The only case that is interesting is the case $\varpi=\varpi'.1$.
+
+  First, we can notice that the $\worra {} {}$ operator is monotonic for its second argument
+  (consequence of its declarative definition).
+
+  Secondly, let's show that for any function types $t_1 \leq t_2$, and for any type $t'$,
+  we have $(\worra {t_1} {t'}) \land \dom {t_2} \leq \worra {t_2} {t'}$. By the absurd, let's suppose it is not true.
+  Let's note $t'' = (\worra {t_1} {t'}) \land \dom {t_2}$.
+  Then we have $t'' \leq \dom {t_2} \leq \dom {t_1}$ and $t_2 \leq \arrow {t''} {t'}$ and
+  $t_1 \not\leq \arrow {t''} {t'}$, which contradicts $t_1 \leq t_2$.
+
+  Let's note $t_1 = \tsrep {\tyof{\occ e{\varpi'.0}}{\Gamma'}}$ and $t_2 = \tsrep {\tyof{\occ e{\varpi'.0}}\Gamma}$
+  and $t'=\env {\Gamma,e,t} (\varpi')$.
+  As $e$ is well-typed, we have $\tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}} \leq \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}} \leq \dom {t_2}$.\\
+  Thus, using this property, we get:\\
+  \begin{align*}
+  &(\worra {t_1} {t'}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}}\\
+  \leq &(\worra {t_2} {t'}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}}
+  \end{align*}
+
+  Then, using the monotonicity of the second argument of $\worra {}{}$:
+  \begin{align*}
+    &(\worra {t_1} {\env {\Gamma',e,t} (\varpi')}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma'}}\\
+    \leq &(\worra {t_2} {\env {\Gamma,e,t} (\varpi')}) \land \tsrep {\tyof {\occ e {\varpi'.1}} {\Gamma}}
+  \end{align*}
+  \\
+
+  \ 
 
   Finally, let's prove the third property.
 
