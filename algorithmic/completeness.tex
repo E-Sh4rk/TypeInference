@@ -59,8 +59,10 @@
   \subsubsection{Major lemmas and completeness}
 
   \begin{lemma}
-    Let $t$ a type and $\ts$ a type scheme.
-    We have $\tsrep{t\tsand\ts} \leq \tsrep{t} \land \tsrep{\ts}$.
+    \begin{align*}
+      &\forall t,\ts.\ \tsrep{t\tsand\ts} \leq t \land \tsrep{\ts}\\
+      &\forall \ts_1,\ts_2.\ \tsrep{\apply {\ts_1}{\ts_2}} \leq \apply {\tsrep {\ts_1}}{\tsrep {\ts_2}}
+    \end{align*}
   \end{lemma}
 
   Proof: straightfoward, by induction on the structure of $\ts$.
@@ -80,8 +82,7 @@
 
   Let's prove the first property: $\tyof e {\Gamma'} \leq \tyof e {\Gamma} \text{ and } \tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$.
   We will focus on showing $\tyof e {\Gamma'} \leq \tyof e {\Gamma}$. The property $\tsrep{\tyof e {\Gamma'}} \leq \tsrep{\tyof e {\Gamma}}$
-  can be proved in a very similar way, by using the fact that $\tsrep {t \tsand \ts} \leq t \land \tsrep {\ts}$,
-  $\tsrep {\ts_1 \tsor \ts_2} = \tsrep {\ts_1} \vee \tsrep {\ts_2}$ and $\tsrep {\ts_1 \tstimes \ts_2} = \pair {\tsrep {\ts_1}} {\tsrep {\ts_2}}$.
+  can be proved in a very similar way, by using the fact that operators on type schemes like $\tsand$ or $\apply {} {}$ are also monotone.
   (Note that the only rule that introduces the type scheme constructor $\tsfun {\_}$ is \Rule{Abs\Aa}.)
 
   If $\Gamma' = \bot$ we can conclude directly with the rule \Rule{Efq}.
@@ -215,11 +216,48 @@
 
   Proof:
 
-  We proceed by induction on the declarative derivation.
+  We proceed by induction on the derivation.
+
+  Let's prove the first property. We have a positive derivation of $\Gamma \vdash e:t$.
+
+  If $\Gamma = \bot$, we can conclude directly using \Rule{Efq\Aa}. Thus, let's suppose $\Gamma \neq \bot$.
+
+  If $e=x$ is a variable, then the derivation only uses \Rule{Env}, \Rule{Inter} and \Rule{Subs}.
+  We can easily conclude just be using \Rule{Var\Aa}. Thus, let's suppose $e$ is not a variable.
+
+  If $e\in\dom\Gamma$, we can have the rule \Rule{Env} in our derivation, but there can only be
+  \Rule{Inter} and \Rule{Subs} after it (not \Rule{Abs-} as we have a positive derivation).
+  Thus, we can build a positive derivation of $\Gamma \vdash e:t'$ that does not use the rule \Rule{Env} on $e$
+  and such that $t'\land \Gamma(e) \leq t$. Thus we have a positive derivation for $\Gamma\setminus\{e\} \vdash e:t'$.
+  By using the induction hypothesis we deduce that $\tsrep{\tyof e {\Gamma\setminus\{e\}}} \leq t'$.
+  Thus, by looking at the rule \Rule{Env\Aa},
+  we deduce $\tsrep{\tyof e \Gamma} \leq \Gamma(e) \land \tsrep{\tyof e {\Gamma\setminus\{e\}}} \leq t$.
+  It concludes this case, so let's assume $e\not\in\dom\Gamma$.
 
   \begin{description}
-    \item[\Rule{Env}] Trivial.
-    \item[\Rule{Inter}] TODO%By using the induction hypothesis we get $\tsrep{\tyof e \Gamma}$
+    \item[\Rule{Env}] Impossible case ($e\not\in\dom\Gamma$).
+    \item[\Rule{Inter}] By using the induction hypothesis we get $\tsrep{\tyof e \Gamma} \leq t_1$ and $\tsrep{\tyof e \Gamma} \leq t_2$.
+    Thus, we have $\tsrep{\tyof e \Gamma} \leq t_1 \land t_2$. 
+    \item[\Rule{Subs}] Trivial using the induction hypothesis.
+    \item[\Rule{Const}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Const\Aa}.
+    Thus this case is trivial.
+    \item[\Rule{App}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{App\Aa}.
+    Let $\ts_1 = \tyof {e_1} \Gamma$ and $\ts_2 = \tyof {e_2} \Gamma$. 
+    With the induction hypothesis we have $\tsrep {\ts_1} \leq \arrow {t_1} {t_2}$ and $\tsrep {\ts_2} \leq t_1$, with $t_2=t$.
+    According to the descriptive definition of $\apply{}{}$, we have
+    $\apply{\tsrep {\ts_1}}{\tsrep {\ts_2}} \leq \apply{\arrow {t_1}{t_2}}{t_1} \leq t_2$.
+    As we also have $\tsrep{\apply {\ts_1} {\ts_2}} \leq \apply{\tsrep {\ts_1}}{\tsrep {\ts_2}}$,
+    we can conclude that $\tyof e \Gamma \leq t_2=t$.
+
+    \item[\Rule{Abs+}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Abs\Aa}.
+    This case is straightforward using the induction hypothesis.
+    \item[\Rule{Abs-}] This case is impossible (the derivation is positive).
+    \item[\Rule{Case}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Case\Aa}.
+    By using the induction hypothesis and the monotonicity lemma, we get $\tsrep{\ts_1}\leq t$ and $\tsrep{\ts_2}\leq t$.
+    So we have $\tsrep{\ts_1\tsor\ts_2}=\tsrep{\ts1}\vee\tsrep{\ts2}\leq t$.
+    \item[\Rule{Proj}] Quite similar to the case \Rule{App}.
+    \item[\Rule{Pair}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Pair\Aa}.
+    We just use the induction hypothesis and the fact that $\tsrep{\ts_1\tstimes\ts_2}=\pair {\tsrep{\ts1}} {\tsrep{\ts2}}$.
   \end{description}
 
   \qed
