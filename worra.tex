@@ -104,7 +104,7 @@
     \begin{lemma}[$\worra {} {}$ alternative definition]
         The following algorithmic definition for $\worra {} {}$ is equivalent to the previous one:
 
-        \[\forall t, s.\ \worra t s = \bigvee_{i \in I} \left( \bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
+        \[\forall t, s.\ \worra t s \simeq \bigvee_{i \in I} \left( \bigvee_{\{P \subseteq P_i\alt s \not\leq \bigvee_{p \in P} \neg t_p \} }\left(
             \dom t \land \bigwedge_{p\in P_i} s_p \land \bigwedge_{n \in P_i \setminus P} \neg s_n \right)\right)\]
     \end{lemma}
 
