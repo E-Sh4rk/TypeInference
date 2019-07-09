@@ -22,7 +22,7 @@
 
   \maketitle
 
-  \subsubsection{Some definitions}
+  \subsubsection{Completeness}
 
     \begin{definition}[Bottom environment]
       Let $\Gamma$ an environment.\\
@@ -56,8 +56,6 @@
       has a positive derivation as first premise ($\pvdash \Gamma e t \varpi.1:t_1$).
     \end{definition}
 
-  \subsubsection{Major lemmas and completeness}
-
   \begin{lemma}
     \begin{align*}
       &\forall t,\ts.\ \tsrep{t\tsand\ts} \leq t \land \tsrep{\ts}\\
@@ -65,7 +63,9 @@
     \end{align*}
   \end{lemma}
 
-  Proof: straightfoward, by induction on the structure of $\ts$.
+  \begin{proof}
+    Straightfoward, by induction on the structure of $\ts$.
+  \end{proof}
 
   \begin{lemma}[Monotonicity of the algorithm] Let $\Gamma$, $\Gamma'$ and $e$ such that $\Gamma'\leqA^e \Gamma$ and $\tyof e \Gamma \neq \tsempty$. We have:
     \begin{align*}
@@ -75,8 +75,7 @@
     \end{align*}
   \end{lemma}
 
-  Proof:
-
+  \begin{proof} 
   We proceed by induction over the structure of $e$
   and, for two identical $e$, on the domains of $\Gamma$ and $\Gamma'$ (with the lexicographical inclusion order).
 
@@ -199,8 +198,7 @@
   $\bigwedge_{\{\varpi\alt \occ e \varpi \equiv e'\}} \env {\Gamma',e,t} (\varpi) \leq \bigwedge_{\{\varpi\alt \occ e \varpi \equiv e'\}} \env {\Gamma,e,t} (\varpi)$.
 
   The rest follows.
-
-  \qed
+  \end{proof}
 
   \begin{theorem}[Completeness of the algorithm for positive derivations]
     For any $\Gamma$, $e$, $t$ such that we have a positive derivation of $\Gamma \vdash e:t$,
@@ -213,8 +211,7 @@
     \end{align*}
   \end{theorem}
 
-  Proof:
-
+  \begin{proof}
   We proceed by induction on the derivation.
 
   Let's prove the first property. We have a positive derivation of $\Gamma \vdash e:t$.
@@ -332,8 +329,7 @@
       \item[\Rule{PSnd}] Trivial using the induction hypothesis.
     \end{description}
   \end{description}
-
-  \qed
+  \end{proof}
 
   \begin{theorem}[Completeness of the algorithm for acceptable derivations]
     For any $\Gamma$, $e$, $t$ such that we have an acceptable derivation of $\Gamma \vdash e:t$, there exists a global parameter $n_o$
