@@ -209,7 +209,6 @@
     More precisely:
     \begin{align*}
       &\forall \Gamma, e, t.\ \Gamma \vdash e:t \text{ has a positive derivation } \Rightarrow \tsrep{\tyof e \Gamma} \leq t\\
-      &\forall \Gamma, e, t, t', \varpi.\ \pvdash \Gamma e t \varpi:t' \text{ has a positive derivation } \Rightarrow \env {\Gamma,e,t} (\varpi) \leq t'\\
       &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \text{ has a positive derivation } \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
     \end{align*}
   \end{theorem}
@@ -264,25 +263,40 @@
 
   \ 
 
-  Now, let's prove the second property. We have a positive derivation of $\pvdash \Gamma e t \varpi:t'$.
-
-  We perform a nested induction on $\varpi$.
+  Now, let's prove the second property. We have a positive derivation of $\Gamma \evdash e t \Gamma'$.
 
   \begin{description}
-    \item[\Rule{PSubs}] Trivial using the induction hypothesis.
-    \item[\Rule{PInter}] By using the induction hypothesis we get
-    $\env {\Gamma,e,t} (\varpi) \leq t_1$ and $\env {\Gamma,e,t} (\varpi) \leq t_2$.
-    Thus, we have $\env {\Gamma,e,t} (\varpi) \leq t_1 \land t_2$.
-    \item[\Rule{PTypeof}] By using the induction hypothesis we get
-    $\tsrep{\tyof {\occ e \varpi} \Gamma} \leq t'$.
-    Moreover we have $\env {\Gamma,e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} \Gamma}$
-    (by definition), thus we can conclude directly.
-    \item[\Rule{PEps}] Trivial.
-    \item[\Rule{PAppR}] TODO: not true for this case because of the non-recursive call in the algorithmic system.
-    \item[\Rule{PAppL}] TODO
-  \end{description}
+    \item[\Rule{Base}] Any value of $n_o$ will give $\Refine {e,t} \Gamma \leqA \Gamma$, even $n_o = 0$.
+    \item[\Rule{Path}] We have $\Gamma' = \Gamma_1,(\occ e \varpi,t')$.
+    By induction, we have $\Gamma \evdash e t \Gamma_2$ with $\Gamma_2 \leq \Gamma_1$ and for a certain $n_o=n$.
 
-  TODO
+    We now proceed by induction on the derivation $\pvdash \Gamma e t \varpi:t'$
+    to show that we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\Refine {e,t} \Gamma \leq \Gamma''$
+    for a certain $n_o=n'>=n$.
+
+    \begin{description}
+      \item[\Rule{PSubs}] Trivial using the induction hypothesis.
+      \item[\Rule{PInter}] By using the induction hypothesis we get
+      $\env {\Gamma_1'',e,t} (\varpi) \leq t_1$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$
+      with $\Refine {e,t} \Gamma \leq \Gamma_1''$ for a certain $n_o=n_1$ and
+      $\Refine {e,t} \Gamma \leq \Gamma_2''$ for a certain $n_o=n_2$. By taking $n_o=\max (n_1,n_2)$,
+      we have $\Refine {e,t} \Gamma \leq \Gamma''$ with $\Gamma'' \leq \Gamma_1''$ and $\Gamma'' \leq \Gamma_2''$.
+      Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t_1 \land t_2$.
+      \item[\Rule{PTypeof}] By using the outer induction hypothesis we get
+      $\tsrep{\tyof {\occ e \varpi} \Gamma} \leq t'$.
+      Moreover we have $\env {\Gamma,e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} \Gamma}$
+      (by definition), thus we can conclude directly.
+      \item[\Rule{PEps}] Trivial.
+      \item[\Rule{PAppR}] TODO: pay attention to the non-recursive call in the algorithmic system.
+       
+      \item[\Rule{PAppL}] By using the induction hypothesis we get
+      $\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$
+      with $\Refine {e,t} \Gamma \leq \Gamma_1''$ for a certain $n_o=n_1$ and
+      $\Refine {e,t} \Gamma \leq \Gamma_2''$ for a certain $n_o=n_2$. By taking $n_o=\max (n_1,n_2)$,
+      we have $\Refine {e,t} \Gamma \leq \Gamma''$ with $\Gamma'' \leq \Gamma_1''$ and $\Gamma'' \leq \Gamma_2''$.
+      Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2})$.
+    \end{description}
+  \end{description}
 
   \qed
 
@@ -293,7 +307,6 @@
     More precisely:
     \begin{align*}
       &\forall \Gamma, e, t.\ \Gamma \vdash e:t \text{ has an acceptable derivation } \Rightarrow \tyof e \Gamma \leq t\\
-      &\forall \Gamma, e, t, t', \varpi.\ \pvdash \Gamma e t \varpi:t' \text{ has an acceptable derivation } \Rightarrow \env {\Gamma,e,t} (\varpi) \tsand \tyof {\occ e \varpi} \Gamma \leq t'\\
       &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \text{ has an acceptable derivation } \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
     \end{align*}
   \end{theorem}
