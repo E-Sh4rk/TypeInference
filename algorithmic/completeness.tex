@@ -288,14 +288,44 @@
       Moreover we have $\env {\Gamma'',e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} {\Gamma''}}$
       (by definition), thus we can conclude directly.
       \item[\Rule{PEps}] Trivial.
-      \item[\Rule{PAppR}] TODO: pay attention to the non-recursive call in the algorithmic system.
        
+      \item[\Rule{PAppR}] By using the induction hypothesis we get
+      $\env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2'$
+      with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$, $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$
+      and $t_2\land t_2' \simeq \Empty$.
+      
+      By taking $n'=\max (n_1,n_2) + 1$,
+      we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_1'')$
+      and $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_2'')$.
+      In consequence, we have $\tsrep{\tyof {\occ e {\varpi.0}} {\Gamma''}} \leq \env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}$
+      (by definition of $\RefineStep {e,t}$).
+
+      As $t_2\land t_2' \simeq \Empty$, we have:
+      \begin{align*}
+        &\apply {(\arrow {t_1} {t_2})} {(\dom{\arrow {t_1} {t_2}}\setminus(\neg t_1))}\\
+        &\simeq \apply {(\arrow {t_1} {t_2})} {t_1} \simeq t_2 \leq \neg t_2'
+      \end{align*}
+
+      Thus, by using the declarative definition of $\worra {} {}$, we know that
+      $\worra {(\arrow {t_1} {t_2})} {t_2'} \leq \neg t_1$.
+
+      According to the properties on $\worra {} {}$ that we have proved in the proof of the monotonicity lemma,
+      we can deduce:
+      \begin{align*}
+      &t_1 \land \worra {\tsrep{\tyof {\occ e {\varpi.0}} {\Gamma''}}} {\env {\Gamma'',e,t} (\varpi)}\\
+      &\leq t_1 \land \worra {(\arrow {t_1} {t_2})} {t_2'} \leq t_1 \land \neg t_1 \simeq \Empty
+      \end{align*}
+      And thus $\worra {\tsrep{\tyof {\occ e {\varpi.0}} {\Gamma''}}} {\env {\Gamma'',e,t} (\varpi)} \leq \neg t_1$.
+
+      It concludes this case.
+
       \item[\Rule{PAppL}] By using the induction hypothesis we get
       $\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$
       with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$ and
       $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$. By taking $n'=\max (n_1,n_2)$,
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2})$.
+  
     \end{description}
   \end{description}
 
