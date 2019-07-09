@@ -267,8 +267,8 @@
 
   \begin{description}
     \item[\Rule{Base}] Any value of $n_o$ will give $\Refine {e,t} \Gamma \leqA \Gamma$, even $n_o = 0$.
-    \item[\Rule{Path}] We have $\Gamma' = \Gamma_1,(\occ e \varpi,t')$.
-    By applying the induction hypothesis on $\Gamma \evdash e t \Gamma_1$, we have
+    \item[\Rule{Path}] We have $\Gamma' = \Gamma_1,(\occ e \varpi:t')$.
+    By applying the induction hypothesis on the premise $\Gamma \evdash e t \Gamma_1$, we have
     $\RefineStep {e,t}^n (\Gamma) = \Gamma_2$ with $\Gamma_2 \leqA \Gamma_1$ for a certain $n$.
 
     We now proceed by induction on the derivation $\pvdash {\Gamma_1} e t \varpi:t'$
@@ -284,8 +284,8 @@
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t_1 \land t_2 = t'$.
       \item[\Rule{PTypeof}] By using the outer induction hypothesis we get
-      $\tsrep{\tyof {\occ e \varpi} \Gamma} \leq t'$.
-      Moreover we have $\env {\Gamma'',e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} {\Gamma''}}$
+      $\tsrep{\tyof {\occ e \varpi} {\Gamma_2}} \leq t'$.
+      Moreover we have $\env {\Gamma_2,e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} {\Gamma_2}}$
       (by definition), thus we can conclude directly.
       \item[\Rule{PEps}] Trivial.
        
@@ -324,8 +324,12 @@
       with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$ and
       $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$. By taking $n'=\max (n_1,n_2)$,
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
-      Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2})$.
+      Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2}) = t'$.
   
+      \item[\Rule{PPairL}] Trivial using the induction hypothesis and the descriptive definition of $\bpi_1$.
+      \item[\Rule{PPairR}] Trivial using the induction hypothesis and the descriptive definition of $\bpi_2$.
+      \item[\Rule{PFst}] Trivial using the induction hypothesis.
+      \item[\Rule{PSnd}] Trivial using the induction hypothesis.
     \end{description}
   \end{description}
 
