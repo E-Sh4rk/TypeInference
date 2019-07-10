@@ -111,7 +111,7 @@
   we have $\tyof e {\Gamma'} \leq \tyof e {\Gamma'\setminus \{e\}} \leq \tyof e {\Gamma}$ by induction hypothesis.
 
   Thus, let's suppose that $e\not\in\dom\Gamma$ and $e\not\in\dom{\Gamma'}$.
-  From now we know that the last rule in $\tyof e {\Gamma}$ and $\tyof e {\Gamma'}$ is the same.
+  From now we know that the last rule in the derivation of $\tyof e {\Gamma}$ and $\tyof e {\Gamma'}$ (if any) is the same.
 
   \begin{description}
     \item[$e=c$] The last rule is \Rule{Const\Aa}. It does not depend on $\Gamma$ so this case is trivial.
@@ -239,9 +239,9 @@
     \item[\Rule{Inter}] By using the induction hypothesis we get $\tsrep{\tyof e \Gamma} \leq t_1$ and $\tsrep{\tyof e \Gamma} \leq t_2$.
     Thus, we have $\tsrep{\tyof e \Gamma} \leq t_1 \land t_2$. 
     \item[\Rule{Subs}] Trivial using the induction hypothesis.
-    \item[\Rule{Const}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Const\Aa}.
+    \item[\Rule{Const}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Const\Aa}.
     Thus this case is trivial.
-    \item[\Rule{App}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{App\Aa}.
+    \item[\Rule{App}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{App\Aa}.
     Let $\ts_1 = \tyof {e_1} \Gamma$ and $\ts_2 = \tyof {e_2} \Gamma$. 
     With the induction hypothesis we have $\tsrep {\ts_1} \leq \arrow {t_1} {t_2}$ and $\tsrep {\ts_2} \leq t_1$, with $t_2=t$.
     According to the descriptive definition of $\apply{}{}$, we have
@@ -249,14 +249,14 @@
     As we also have $\tsrep{\apply {\ts_1} {\ts_2}} \leq \apply{\tsrep {\ts_1}}{\tsrep {\ts_2}}$,
     we can conclude that $\tyof e \Gamma \leq t_2=t$.
 
-    \item[\Rule{Abs+}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Abs\Aa}.
+    \item[\Rule{Abs+}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Abs\Aa}.
     This case is straightforward using the induction hypothesis.
     \item[\Rule{Abs-}] This case is impossible (the derivation is positive).
-    \item[\Rule{Case}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Case\Aa}.
+    \item[\Rule{Case}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Case\Aa}.
     By using the induction hypothesis and the monotonicity lemma, we get $\tsrep{\ts_1}\leq t$ and $\tsrep{\ts_2}\leq t$.
     So we have $\tsrep{\ts_1\tsor\ts_2}=\tsrep{\ts1}\vee\tsrep{\ts2}\leq t$.
     \item[\Rule{Proj}] Quite similar to the case \Rule{App}.
-    \item[\Rule{Pair}] We know that the derivation of $\tyof e \Gamma$ ends with the rule \Rule{Pair\Aa}.
+    \item[\Rule{Pair}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Pair\Aa}.
     We just use the induction hypothesis and the fact that $\tsrep{\ts_1\tstimes\ts_2}=\pair {\tsrep{\ts1}} {\tsrep{\ts2}}$.
   \end{description}
 
@@ -383,7 +383,19 @@
     the rule \Rule{Abs-} could possibly be used after a rule \Rule{Env} applied on $e$.
     However, this case can easily be eliminated by changing the premise of this \Rule{Abs-} with another one
     that does not use the rule \Rule{Env} on $e$ (the type of the premise does not matter for the rule \Rule{Abs-},
-    even $\Any$ suffices).
+    even $\Any$ suffices). Thus let's assume $e\not\in\dom\Gamma$.
+
+    Now we analyze the last rule of the derivation (only the cases that differ are shown):
+    \begin{description}
+      \item[\Rule{Abs-}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Abs\Aa}.
+      Moreover, by using the induction hypothesis on the premise, we know that $\tyof e \Gamma \neq \varnothing$.
+      Thus we have $\tyof e \Gamma \leq \neg (\arrow {t_1} {t_2}) = t$ (because every type $\neg (\arrow {s'} {t'})$
+      such that $\neg (\arrow {s'} {t'}) \land \bigwedge_{i\in I} \arrow {s_i} {t_i} \neq \Empty$ is in $\tsint{\tsfun{\arrow {s_i} {t_i}}}$).
+    \end{description}
+
+    \ 
+
+    Now let's prove the second property. We have a rank-0 negated derivation of $\Gamma \evdash e t \Gamma'$.
 
     TODO
   \end{proof}
