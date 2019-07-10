@@ -283,7 +283,7 @@
     $\RefineStep {e,t}^n (\Gamma) = \Gamma_2$ with $\Gamma_2 \leqA \Gamma_1$ for a certain $n$.
 
     We now proceed by induction on the derivation $\pvdash {\Gamma_1} e t \varpi:t'$
-    to show that we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$
+    to show that we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\Gamma'' = \RefineStep {e,t}^{n'} (\Gamma_2)$
     for a certain $n'$. It is then easy to conclude by taking $n_o = n+n'$.
 
     \begin{description}
@@ -297,14 +297,13 @@
       \end{align*}
       
       By taking $n'=\max (n_1,n_2)$,
-      we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
+      we can have $\Gamma'' = \RefineStep {e,t}^{n'} (\Gamma_2)$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t_1 \land t_2 = t'$.
       \item[\Rule{PTypeof}] By using the outer induction hypothesis we get
       $\tsrep{\tyof {\occ e \varpi} {\Gamma_2}} \leq t'$.
       Moreover we have $\env {\Gamma_2,e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} {\Gamma_2}}$
       (by definition of $\env {}$), thus we can conclude directly.
       \item[\Rule{PEps}] Trivial.
-       
       \item[\Rule{PAppR}] By using the induction hypothesis we get:
       \begin{align*}
         &\env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}\\
@@ -315,7 +314,7 @@
       \end{align*}
       
       By taking $n'=\max (n_1,n_2) + 1$,
-      we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_1'')$
+      we can have $\Gamma'' = \RefineStep {e,t}^{n'} (\Gamma_2)$ with $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_1'')$
       and $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_2'')$.
       In consequence, we have $\tsrep{\tyof {\occ e {\varpi.0}} {\Gamma''}} \leq \env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}$
       (by definition of $\RefineStep {e,t}$).
@@ -349,7 +348,7 @@
       \end{align*}
 
       By taking $n'=\max (n_1,n_2)$,
-      we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
+      we can have $\Gamma'' = \RefineStep {e,t}^{n'} (\Gamma_2)$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2}) = t'$.
   
       \item[\Rule{PPairL}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
@@ -441,7 +440,7 @@
       by applying the induction hypothesis on the premise $\Gamma \evdash e t \Gamma_1$, we have
       $\RefineStep {e,t}^n (\Gamma) = \Gamma_2$ with $\Gamma_2 \leqA \Gamma_1$ for a certain $n$.
 
-      However, this time, we can't prove $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$
+      However, this time, we can't prove $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\Gamma'' = \RefineStep {e,t}^{n'} (\Gamma_2)$
       for a certain $n'$: the induction hypothesis is weaker than in the previous proof
       (we don't have $\tsrep {\tyof e \Gamma} \leq t$ but only $\tyof e \Gamma \leq t$).
       
@@ -494,6 +493,7 @@
         Thus we have $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$.
 
         Now we can conclude exactly as in the previous proof (by taking $n'=\max (n_1,n_2)$).
+
         \item[\Rule{PPairL}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
         \item[\Rule{PPairR}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
         \item[\Rule{PFst}] Quite straightforward using the induction hypothesis.
@@ -501,7 +501,5 @@
       \end{description}
     \end{description}
   \end{proof}
-
-TODO: replace the multiple $\cdots \leqA \Gamma''$ by $\cdots = \Gamma''$.
 
 \end{document}
