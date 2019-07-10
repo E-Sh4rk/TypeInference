@@ -221,10 +221,12 @@
   If $e=x$ is a variable, then the derivation only uses \Rule{Env}, \Rule{Inter} and \Rule{Subs}.
   We can easily conclude just be using \Rule{Var\Aa}. Thus, let's suppose $e$ is not a variable.
 
-  If $e\in\dom\Gamma$, we can have the rule \Rule{Env} in our derivation, but there can only be
-  \Rule{Inter} and \Rule{Subs} after it (not \Rule{Abs-} as we have a positive derivation).
-  Thus, we can build a positive derivation of $\Gamma \vdash e:t'$ that does not use the rule \Rule{Env} on $e$
-  and such that $t'\land \Gamma(e) \leq t$. Thus we have a positive derivation for $\Gamma\setminus\{e\} \vdash e:t'$.
+  If $e\in\dom\Gamma$, we can have the rule \Rule{Env} applied to $e$ in our derivation, but in this case
+  there can only be \Rule{Inter} and \Rule{Subs} after it (not \Rule{Abs-} as we have a positive derivation).
+  Thus, our derivation contains a derivation of $\Gamma \vdash e:t'$ that does not use the rule \Rule{Env} on $e$
+  and such that $t'\land \Gamma(e) \leq t$ (actually, it is possible for our derivation to typecheck $e$ only using the rule \Rule{Env}:
+  in this case we can take $t'=\Any$ and use the fact that $\Gamma$ is well-formed).
+  Hence, we can build a positive derivation for $\Gamma\setminus\{e\} \vdash e:t'$.
   By using the induction hypothesis we deduce that $\tsrep{\tyof e {\Gamma\setminus\{e\}}} \leq t'$.
   Thus, by looking at the rule \Rule{Env\Aa},
   we deduce $\tsrep{\tyof e \Gamma} \leq \Gamma(e) \land \tsrep{\tyof e {\Gamma\setminus\{e\}}} \leq t$.
@@ -367,5 +369,23 @@
       &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \text{ has a rank-0 negated derivation } \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
     \end{align*}
   \end{theorem}
+
+  \begin{proof}
+    This proof is quite similar to that of the completeness for positive derivations.
+    In consequence, we will only detail cases that are quite different from those of the previous proof.
+
+    Let's begin with the first property. We have a rank-0 negated derivation of $\Gamma \vdash e:t$.
+    We want to show $\tyof e \Gamma \leq t$ (note that this is weaker than showing $\tsrep {\tyof e \Gamma} \leq t$).
+
+    As in the previous proof, we can suppose that $\Gamma \neq \bot$ and that $e$ is not a variable.
+
+    The case $e\in\dom\Gamma$ is also very similar, but there is an additional case to consider:
+    the rule \Rule{Abs-} could possibly be used after a rule \Rule{Env} applied on $e$.
+    However, this case can easily be eliminated by changing the premise of this \Rule{Abs-} with another one
+    that does not use the rule \Rule{Env} on $e$ (the type of the premise does not matter for the rule \Rule{Abs-},
+    even $\Any$ suffices).
+
+    TODO
+  \end{proof}
 
 \end{document}

@@ -63,7 +63,7 @@
           \Infer[Abs-]
           {\Gamma \vdash \lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
           { \Gamma \vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\neg(t_1\to t_2)  }
-          { (t\wedge\neg(t_1\to t_2))\not\simeq\Empty }
+          { ((\wedge_{i\in I}\arrow {s_i} {t_i})\wedge\neg(t_1\to t_2))\not\simeq\Empty }
 %      \Infer[Abs]
 %          {\Gamma,x:s_i\vdash e:t_i\\t\simeq \left(\bigwedge_{i\in I} \arrow {s_i} {t_i}\right)
 %          \land \left(\bigwedge_{j\in J} \neg (\arrow {s'_j} {t'_j})\right)\\t\not\simeq\Empty}

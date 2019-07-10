@@ -27,9 +27,21 @@
   In this section, the substitutions on expressions that we introduce are up to alpha-renaming and perform only one pass.
   For instance, if our substitution is $\rho=\subst {(\lambda^t x. x) y} {y}$, we have $((\lambda^t x. x)((\lambda^t z. z) y))\rho = (\lambda^t x. x) y$.
   
-  The environements also operate up to alpha-renaming.
+  The environments also operate up to alpha-renaming.
+
+  Finally, the only environments that we consider are well-formed environments (see definition below). We can easily
+  check that every derivation only contains well-formed environments, provided that the initial judgement also use a well-formed environment.
+  It is a consequence of the fact that rule \Rule{Case} require $e$ to be typeable and that it only refines subexpressions of $e$.
 
     \subsubsection{Some definitions}
+
+    \begin{definition}[Well-formed environment]
+      We say that an environment $\Gamma$ is well-formed iff
+      $\forall e\in\dom\Gamma \text{ s.t. $e$ is not a variable}.\ \exists t.\ \Gamma\setminus\{e\} \vdash e:t$.
+
+      In other words, an environment can refine the type of an expression, but only if this expression is already typeable
+      without this entry in the environment (possibly with a strictly weaker type).
+    \end{definition}
 
     \begin{definition}[Bottom environment]
       Let $\Gamma$ an environment.\\
@@ -132,7 +144,7 @@
           \item[\Rule{PSubs}] Trivial (we use the induction hypothesis).
           \item[\Rule{PEps}] This case is impossible.
           \item[\Rule{PAppL}] We have $v \not\in \valsemantic{\neg (\arrow {t_1} {\neg t_2})}$. Thus, we have $v \in \valsemantic{\arrow {t_1} {\neg t_2}}$
-          and in consequence we can derive $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$.
+          and in consequence we can derive $\Gamma \vdash v:\arrow {t_1} {\neg t_2}$ (because $e$ is well-typed in $\Gamma$).
 
           Recall that $\occ e {\varpi.1}$ is necessarily a value (by hypothesis).
           By using the induction hypothesis on $\pvdash \Gamma e t \varpi.1:t_1$, we can suppose $\occ e {\varpi.1} \in \valsemantic{t_1}$ (otherwise, we can conclude directly).
@@ -149,7 +161,7 @@
 
           Recall that $\occ e {\varpi.0}$ is necessarily a value (by hypothesis).
           By using the induction hypothesis on $\pvdash \Gamma e t \varpi.0:\arrow {t_1} {t_2}$, we can suppose $\occ e {\varpi.0} \in \valsemantic{\arrow {t_1} {t_2}}$ (otherwise, we can conclude directly).
-          Thus, we can derive $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$.
+          Thus, we can derive $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$ (because $e$ is well-typed in $\Gamma$).
 
           From $\Gamma \vdash v:t_1$ and $\Gamma \vdash \occ e {\varpi.0}: \arrow {t_1} {t_2}$, we can derive $\Gamma \vdash \occ e {\varpi}: t_2$
           using the rule \Rule{App}.
