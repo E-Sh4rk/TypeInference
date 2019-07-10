@@ -110,7 +110,7 @@
       \constr{\varpi.r}{\Gamma,e,t} & = & \bpr{\env {\Gamma,e,t} (\varpi)}\\
       \constr{\varpi.f}{\Gamma,e,t} & = & \pair{\env {\Gamma,e,t} (\varpi)}\Any\\
       \constr{\varpi.s}{\Gamma,e,t} & = & \pair\Any{\env {\Gamma,e,t} (\varpi)}\\
-      \env {\Gamma,e,t} (\varpi) & = & \constr \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}
+      \env {\Gamma,e,t} (\varpi) & = & \tsrep {\constr \varpi {\Gamma,e,t} \tsand \tyof {\occ e \varpi} \Gamma}
     \end{eqnarray}
 
     \begin{align*}

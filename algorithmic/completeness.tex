@@ -59,6 +59,7 @@
   \begin{lemma}
     \begin{align*}
       &\forall t,\ts.\ \tsrep{t\tsand\ts} \leq t \land \tsrep{\ts}\\
+      &\forall t,\ts.\ t\tsand\ts \not\simeq \Empty \Rightarrow \tsrep{t\tsand\ts} \simeq t \land \tsrep{\ts}\\
       &\forall \ts_1,\ts_2.\ \tsrep{\apply {\ts_1}{\ts_2}} \leq \apply {\tsrep {\ts_1}}{\tsrep {\ts_2}}
     \end{align*}
   \end{lemma}
@@ -159,8 +160,19 @@
   Now, let's prove the second property.
   We perform a (nested) induction on $\varpi$.
 
-  We know that $\tsrep{\tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep{\tyof {\occ e \varpi} {\Gamma}}$
-  by the outer induction hypothesis (for $\varpi=\epsilon$ we use the proof of the first property above).
+  Recall that we have $\forall t,\ts.\ t\tsand\ts \not\simeq \Empty \Rightarrow \tsrep{t\tsand\ts} \simeq t \land \tsrep{\ts}$.
+  
+  Thus, in order to prove
+  $\tsrep {\constr {\varpi} {\Gamma',e,t} \tsand \tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep {\constr {\varpi} {\Gamma,e,t} \tsand \tyof {\occ e \varpi} {\Gamma}}$,
+  we can prove the following:
+  \begin{align*}
+    &\constr {\varpi} {\Gamma',e,t} \leq \constr {\varpi} {\Gamma,e,t}\\
+    &\tyof {\occ e \varpi} {\Gamma'} \leq \tyof {\occ e \varpi} {\Gamma}\\
+    &\tsrep{\tyof {\occ e \varpi} {\Gamma'}} \leq \tsrep{\tyof {\occ e \varpi} {\Gamma}}
+  \end{align*}
+
+  The two last inequalities can be proved
+  with the outer induction hypothesis (for $\varpi=\epsilon$ we use the proof of the first property above).
 
   Thus we just have to prove that $\constr {\varpi} {\Gamma',e,t} \leq \constr {\varpi} {\Gamma,e,t}$.
   The only case that is interesting is the case $\varpi=\varpi'.1$.
@@ -446,7 +458,5 @@
       \end{description}
     \end{description}
   \end{proof}
-
-  TODO: change intertype definition, update paper and proofs (soundness,monotonicity,completeness 1, completeness 2)
 
 \end{document}

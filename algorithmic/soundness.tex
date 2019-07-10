@@ -117,11 +117,11 @@
   Now, let's prove the second property.
   We perform a (nested) induction on $\varpi$.
 
-  Recall that $\env {\Gamma,e,t} (\varpi) = \constr \varpi {\Gamma,e,t} \land \tsrep {\tyof {\occ e \varpi} \Gamma}$.
-  We can easily derive $\pvdash \Gamma e t \varpi : \tsrep {\tyof {\occ e \varpi} \Gamma}$ by using the outer induction hypothesis
-  (by definition of $\tsrep {\_}$ we have $\forall \ts.\ \ts \leq \tsrep \ts$).
+  Recall that $\env {\Gamma,e,t} (\varpi) = \tsrep {\constr \varpi {\Gamma,e,t} \tsand \tyof {\occ e \varpi} \Gamma}$.
+  For any $t'$ such that $\tyof {\occ e \varpi} \Gamma \leq t'$, we can easily derive $\pvdash \Gamma e t \varpi : t'$ by using the outer induction hypothesis
+  (the first property that we have proved above) and the rule \Rule{PTypeof}.
 
-  We also have to derive $\pvdash \Gamma e t \varpi : \constr \varpi {\Gamma,e,t}$ (then it will be easy to conclude using the rule \Rule{PInter}).
+  Now we have to derive $\pvdash \Gamma e t \varpi : \constr \varpi {\Gamma,e,t}$ (then it will be easy to conclude using the rule \Rule{PInter}).
   \begin{description}
     \item[$\varpi=\epsilon$] We use the rule \Rule{PEps}.
     \item[$\varpi=\varpi'.1$]
