@@ -302,7 +302,7 @@
       \item[\Rule{PTypeof}] By using the outer induction hypothesis we get
       $\tsrep{\tyof {\occ e \varpi} {\Gamma_2}} \leq t'$.
       Moreover we have $\env {\Gamma_2,e,t} (\varpi) \leq \tsrep{\tyof {\occ e \varpi} {\Gamma_2}}$
-      (by definition), thus we can conclude directly.
+      (by definition of $\env {}$), thus we can conclude directly.
       \item[\Rule{PEps}] Trivial.
        
       \item[\Rule{PAppR}] By using the induction hypothesis we get:
@@ -385,6 +385,16 @@
     (it makes no difference relatively to the rule \Rule{Efq}).
   \end{proof}
 
+  \begin{lemma}
+    If $e$ is an application, then $\tyof e \Gamma$ does not contain any constructor $\tsfun \cdots$.
+    Consequently, we have $\tsrep{\tyof e \Gamma} \simeq \tyof e \Gamma$.
+  \end{lemma}
+
+  \begin{proof}
+    By case analysis: neither \Rule{Efq}, \Rule{Env\Aa} nor \Rule{App\Aa} can produce a type
+    containing a constructor $\tsfun \cdots$.
+  \end{proof}
+
   \begin{theorem}[Completeness for rank-0 negated derivations]
     For every $\Gamma$, $e$, $t$ such that we have a rank-0 negated derivation of $\Gamma \vdash e:t$, there exists a global parameter $n_o$
     with which $\tyof e \Gamma \leq t$.
@@ -427,13 +437,21 @@
       \item[\Rule{Base}] Any value of $n_o$ will give $\Refine {e,t} \Gamma \leqA \Gamma$, even $n_o = 0$.
       \item[\Rule{Path}] We have $\Gamma' = \Gamma_1,(\occ e \varpi:t')$.
        
-      We proceed the same way as in the previous proof, but this time the induction hypothesis is weaker
+      As in the previous proof of completeness,
+      by applying the induction hypothesis on the premise $\Gamma \evdash e t \Gamma_1$, we have
+      $\RefineStep {e,t}^n (\Gamma) = \Gamma_2$ with $\Gamma_2 \leqA \Gamma_1$ for a certain $n$.
+
+      However, this time, we can't prove $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$
+      for a certain $n'$: the induction hypothesis is weaker than in the previous proof
       (we don't have $\tsrep {\tyof e \Gamma} \leq t$ but only $\tyof e \Gamma \leq t$).
       
-      Thus, we can't prove that $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$
-      for a certain $n'$. Instead, we will prove that
+      Instead, we will prove by induction on the derivation $\pvdash {\Gamma_1} e t \varpi:t'$ that
       $\env {\Gamma'',e,t} (\varpi) \tsand \tyof {\occ e \varpi} {\Gamma''} \leq t'$.
-      It suffices to conclude in the same way as in the previous proof.
+      It suffices to conclude in the same way as in the previous proof:
+      by taking $n_o = n+n'$,
+      it ensures that our final environment $\Gamma_{n_o}$ verifies $\tyof {\occ e \varpi} \Gamma_{n_o} \leq t'$
+      and thus we have $\Gamma_{n_o} \leq \Gamma'$
+      (given that $\tsrep{\Empty} = \Empty$, we also easily verify that if $\Gamma' = \bot \Rightarrow \Gamma_{n_o}=\bot$).
 
       \begin{description}
         \item[\Rule{PSubs}] Trivial using the induction hypothesis.
@@ -441,16 +459,25 @@
         \item[\Rule{PTypeof}] By using the outer induction hypothesis we get $\tyof {\occ e \varpi} {\Gamma_2} \leq t'$ so it is trivial.
         \item[\Rule{PEps}] Trivial.
         \item[\Rule{PAppR}] TODO
-        \item[\Rule{PAppL}] %By using the induction hypothesis we get:
-        %\begin{align*}
-        %  &\env {\Gamma_1'',e,t} (\varpi.1) \tsand \tyof {\occ e {\varpi.1}} {\Gamma_1''} \leq t_1\\
-        %  &\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} \leq t_2\\
-        %  &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
-        %  &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
-        %\end{align*}
-        %
-        TODO
-    
+        \item[\Rule{PAppL}] We know that the left premise is a positive derivation.
+        Thus, using the previous completeness theorem, we get:
+        \begin{align*}
+          &\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1\\
+          &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''
+        \end{align*}
+
+        By using the induction hypothesis, we also get:
+        \begin{align*}
+          &\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} \leq t_2\\
+          &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+        \end{align*}
+
+        Moreover, as $\occ e {\varpi}$ is an application, we can use the lemma above to deduce
+        $\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} = \env {\Gamma_2'',e,t} (\varpi)$
+        (see definition of $\env {}$).
+        Thus we have $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$.
+
+        Now we can conclude exactly as in the previous proof (by taking $n'=\max (n_1,n_2)$).
         \item[\Rule{PPairL}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
         \item[\Rule{PPairR}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
         \item[\Rule{PFst}] TODO%Trivial using the induction hypothesis.
