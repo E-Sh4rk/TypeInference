@@ -51,8 +51,8 @@
       A derivation of the declarative type system is said positive iff it does not contain any rule \Rule{Abs-}.
     \end{definition}
 
-    \begin{definition}[Acceptable derivation]
-      A derivation of the declarative type system is said acceptable iff any application of \Rule{PAppL}
+    \begin{definition}[Rank-0 negated derivation]
+      A derivation of the declarative type system is said rank-0 negated iff any application of \Rule{PAppL}
       has a positive derivation as first premise ($\pvdash \Gamma e t \varpi.1:t_1$).
     \end{definition}
 
@@ -200,8 +200,8 @@
   The rest follows.
   \end{proof}
 
-  \begin{theorem}[Completeness of the algorithm for positive derivations]
-    For any $\Gamma$, $e$, $t$ such that we have a positive derivation of $\Gamma \vdash e:t$,
+  \begin{theorem}[Completeness for positive derivations]
+    For every $\Gamma$, $e$, $t$ such that we have a positive derivation of $\Gamma \vdash e:t$,
     there exists a global parameter $n_o$ with which $\tsrep{\tyof e \Gamma} \leq t$.
 
     More precisely:
@@ -332,14 +332,39 @@
   \end{description}
   \end{proof}
 
-  \begin{theorem}[Completeness of the algorithm for acceptable derivations]
-    For any $\Gamma$, $e$, $t$ such that we have an acceptable derivation of $\Gamma \vdash e:t$, there exists a global parameter $n_o$
+  \begin{corollary}\label{app:completeness}
+    If we restrict our language so that the only functional type that can be used in a test is $\arrow \Empty \Any$
+    and such that there is no negated arrows in the domain of lambda-abstractions,
+    then the algorithmic type system becomes complete
+    (i.e. any expression that can be typed in the declarative type system is also typeable in the algorithmic one)
+    and type schemes can be removed from it (we can use regular types instead).
+  \end{corollary}
+
+  \begin{proof}
+    With such restrictions, the rule \Rule{Abs-} is not needed anymore.
+
+    Indeed, when typing an application $e_1 e_2$, the negative part of the type of $e_1$ (i.e. the $N_i$ part of its DNF)
+    is ignored by the operator $\apply {} {}$.
+
+    Moreover, as there is no negated arrows in the domain of lambda-abstractions,
+    the negative arrows of the type of $e_2$ can also be ignored.
+
+    Similarly, negative arrows can also be ignored when refining an application ($\worra {} {}$ also ignore the negative part
+    of the type of $e_1$).
+
+    Finally, as the only functional type that we can test is $\arrow \Empty \Any$, a functional type
+    cannot be refined to $\Empty$ due to its negative part, and thus we can ignore its negative part
+    (it makes no difference relatively to the rule \Rule{Efq}).
+  \end{proof}
+
+  \begin{theorem}[Completeness for rank-0 negated derivations]
+    For every $\Gamma$, $e$, $t$ such that we have a rank-0 negated derivation of $\Gamma \vdash e:t$, there exists a global parameter $n_o$
     with which $\tyof e \Gamma \leq t$.
 
     More precisely:
     \begin{align*}
-      &\forall \Gamma, e, t.\ \Gamma \vdash e:t \text{ has an acceptable derivation } \Rightarrow \tyof e \Gamma \leq t\\
-      &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \text{ has an acceptable derivation } \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
+      &\forall \Gamma, e, t.\ \Gamma \vdash e:t \text{ has a rank-0 negated derivation } \Rightarrow \tyof e \Gamma \leq t\\
+      &\forall \Gamma, \Gamma', e, t.\ \Gamma \evdash e t \Gamma' \text{ has a rank-0 negated derivation } \Rightarrow \Refine {e,t} \Gamma \leqA \Gamma' \text{ (for $n_o$ large enough)}
     \end{align*}
   \end{theorem}
 
