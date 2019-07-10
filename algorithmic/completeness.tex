@@ -276,10 +276,15 @@
 
     \begin{description}
       \item[\Rule{PSubs}] Trivial using the induction hypothesis.
-      \item[\Rule{PInter}] By using the induction hypothesis we get
-      $\env {\Gamma_1'',e,t} (\varpi) \leq t_1$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$
-      with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$ and
-      $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$. By taking $n'=\max (n_1,n_2)$,
+      \item[\Rule{PInter}] By using the induction hypothesis we get:
+      \begin{align*}
+        &\env {\Gamma_1'',e,t} (\varpi) \leq t_1\\
+        &\env {\Gamma_2'',e,t} (\varpi) \leq t_2\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+      \end{align*}
+      
+      By taking $n'=\max (n_1,n_2)$,
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi) \leq t_1 \land t_2 = t'$.
       \item[\Rule{PTypeof}] By using the outer induction hypothesis we get
@@ -288,10 +293,14 @@
       (by definition), thus we can conclude directly.
       \item[\Rule{PEps}] Trivial.
        
-      \item[\Rule{PAppR}] By using the induction hypothesis we get
-      $\env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2'$
-      with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$, $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$
-      and $t_2\land t_2' \simeq \Empty$.
+      \item[\Rule{PAppR}] By using the induction hypothesis we get:
+      \begin{align*}
+        &\env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}\\
+        &\env {\Gamma_2'',e,t} (\varpi) \leq t_2'\\
+        & t_2\land t_2' \simeq \Empty\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+      \end{align*}
       
       By taking $n'=\max (n_1,n_2) + 1$,
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \RefineStep {e,t} (\Gamma_1'')$
@@ -319,15 +328,20 @@
 
       It concludes this case.
 
-      \item[\Rule{PAppL}] By using the induction hypothesis we get
-      $\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1$ and $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$
-      with $\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''$ and
-      $\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''$. By taking $n'=\max (n_1,n_2)$,
+      \item[\Rule{PAppL}] By using the induction hypothesis we get:
+      \begin{align*}
+        &\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1\\
+        &\env {\Gamma_2'',e,t} (\varpi) \leq t_2\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+      \end{align*}
+
+      By taking $n'=\max (n_1,n_2)$,
       we have $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$ with $\Gamma'' \leqA \Gamma_1''$ and $\Gamma'' \leqA \Gamma_2''$.
       Thus, by using the monotonicity lemma, we can obtain $\env {\Gamma'',e,t} (\varpi.0) \leq \neg (\arrow {t_1} {\neg t_2}) = t'$.
   
-      \item[\Rule{PPairL}] Trivial using the induction hypothesis and the descriptive definition of $\bpi_1$.
-      \item[\Rule{PPairR}] Trivial using the induction hypothesis and the descriptive definition of $\bpi_2$.
+      \item[\Rule{PPairL}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
+      \item[\Rule{PPairR}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
       \item[\Rule{PFst}] Trivial using the induction hypothesis.
       \item[\Rule{PSnd}] Trivial using the induction hypothesis.
     \end{description}
@@ -385,7 +399,7 @@
     that does not use the rule \Rule{Env} on $e$ (the type of the premise does not matter for the rule \Rule{Abs-},
     even $\Any$ suffices). Thus let's assume $e\not\in\dom\Gamma$.
 
-    Now we analyze the last rule of the derivation (only the cases that differ are shown):
+    Now we analyze the last rule of the derivation (only the cases that are not similar are shown):
     \begin{description}
       \item[\Rule{Abs-}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Abs\Aa}.
       Moreover, by using the induction hypothesis on the premise, we know that $\tyof e \Gamma \neq \varnothing$.
@@ -397,7 +411,42 @@
 
     Now let's prove the second property. We have a rank-0 negated derivation of $\Gamma \evdash e t \Gamma'$.
 
-    TODO
+    \begin{description}
+      \item[\Rule{Base}] Any value of $n_o$ will give $\Refine {e,t} \Gamma \leqA \Gamma$, even $n_o = 0$.
+      \item[\Rule{Path}] We have $\Gamma' = \Gamma_1,(\occ e \varpi:t')$.
+       
+      We proceed the same way as in the previous proof, but this time the induction hypothesis is weaker
+      (we don't have $\tsrep {\tyof e \Gamma} \leq t$ but only $\tyof e \Gamma \leq t$).
+      
+      Thus, we can't prove that $\env {\Gamma'',e,t} (\varpi) \leq t'$ with $\RefineStep {e,t}^{n'} (\Gamma_2) \leqA \Gamma''$
+      for a certain $n'$. Instead, we will prove that
+      $\env {\Gamma'',e,t} (\varpi) \tsand \tyof {\occ e \varpi} {\Gamma''} \leq t'$.
+      It suffices to conclude in the same way as in the previous proof.
+
+      \begin{description}
+        \item[\Rule{PSubs}] Trivial using the induction hypothesis.
+        \item[\Rule{PInter}] Quite similar to the previous proof (the induction hypothesis is weaker, but it works the same way).
+        \item[\Rule{PTypeof}] By using the outer induction hypothesis we get $\tyof {\occ e \varpi} {\Gamma_2} \leq t'$ so it is trivial.
+        \item[\Rule{PEps}] Trivial.
+        \item[\Rule{PAppR}] TODO
+        \item[\Rule{PAppL}] %By using the induction hypothesis we get:
+        %\begin{align*}
+        %  &\env {\Gamma_1'',e,t} (\varpi.1) \tsand \tyof {\occ e {\varpi.1}} {\Gamma_1''} \leq t_1\\
+        %  &\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} \leq t_2\\
+        %  &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        %  &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+        %\end{align*}
+        %
+        TODO
+    
+        \item[\Rule{PPairL}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
+        \item[\Rule{PPairR}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
+        \item[\Rule{PFst}] TODO%Trivial using the induction hypothesis.
+        \item[\Rule{PSnd}] TODO%Trivial using the induction hypothesis.
+      \end{description}
+    \end{description}
   \end{proof}
+
+  TODO: change intertype definition, update paper and proofs (soundness,monotonicity,completeness 1, completeness 2)
 
 \end{document}
