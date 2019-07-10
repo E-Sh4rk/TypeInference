@@ -292,7 +292,7 @@
       \begin{align*}
         &\env {\Gamma_1'',e,t} (\varpi) \leq t_1\\
         &\env {\Gamma_2'',e,t} (\varpi) \leq t_2\\
-        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_1) \leqA \Gamma_1''\\
         &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
       \end{align*}
       
@@ -310,7 +310,7 @@
         &\env {\Gamma_1'',e,t} (\varpi.0) \leq \arrow {t_1} {t_2}\\
         &\env {\Gamma_2'',e,t} (\varpi) \leq t_2'\\
         & t_2\land t_2' \simeq \Empty\\
-        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_1) \leqA \Gamma_1''\\
         &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
       \end{align*}
       
@@ -344,7 +344,7 @@
       \begin{align*}
         &\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1\\
         &\env {\Gamma_2'',e,t} (\varpi) \leq t_2\\
-        &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''\\
+        &\RefineStep {e,t}^{n_1} (\Gamma_1) \leqA \Gamma_1''\\
         &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
       \end{align*}
 
@@ -458,12 +458,28 @@
         \item[\Rule{PInter}] Quite similar to the previous proof (the induction hypothesis is weaker, but it works the same way).
         \item[\Rule{PTypeof}] By using the outer induction hypothesis we get $\tyof {\occ e \varpi} {\Gamma_2} \leq t'$ so it is trivial.
         \item[\Rule{PEps}] Trivial.
-        \item[\Rule{PAppR}] TODO
+        \item[\Rule{PAppR}] By using the induction hypothesis, we get:
+        \begin{align*}
+          &\env {\Gamma_1'',e,t} (\varpi.0) \tsand \tyof {\occ e {\varpi.0}} {\Gamma_1''} \leq \arrow {t_1} {t_2}\\
+          &\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} \leq t_2'\\
+          &t_2 \land t_2' \simeq \Empty\\
+          &\RefineStep {e,t}^{n_1} (\Gamma_1) \leqA \Gamma_1''\\
+          &\RefineStep {e,t}^{n_2} (\Gamma_2) \leqA \Gamma_2''
+        \end{align*}
+
+        Moreover, as $\occ e {\varpi}$ is an application, we can use the lemma above to deduce
+        $\env {\Gamma_2'',e,t} (\varpi) \tsand \tyof {\occ e {\varpi}} {\Gamma_2''} = \env {\Gamma_2'',e,t} (\varpi)$
+        (see definition of $\env {}$).
+        Thus we have $\env {\Gamma_2'',e,t} (\varpi) \leq t_2'$.
+        We also have $\env {\Gamma_1'',e,t} (\varpi.0) \leq \tsrep{\env {\Gamma_1'',e,t} (\varpi.0) \tsand \tyof {\occ e {\varpi.0}} {\Gamma_1''}} \leq \arrow {t_1} {t_2}$.
+
+        Now we can conclude exactly as in the previous proof (by taking $n'=\max (n_1,n_2)$).
+
         \item[\Rule{PAppL}] We know that the left premise is a positive derivation.
         Thus, using the previous completeness theorem, we get:
         \begin{align*}
           &\env {\Gamma_1'',e,t} (\varpi.1) \leq t_1\\
-          &\RefineStep {e,t}^{n_1} (\Gamma_2) \leqA \Gamma_1''
+          &\RefineStep {e,t}^{n_1} (\Gamma_1) \leqA \Gamma_1''
         \end{align*}
 
         By using the induction hypothesis, we also get:
@@ -478,12 +494,14 @@
         Thus we have $\env {\Gamma_2'',e,t} (\varpi) \leq t_2$.
 
         Now we can conclude exactly as in the previous proof (by taking $n'=\max (n_1,n_2)$).
-        \item[\Rule{PPairL}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
-        \item[\Rule{PPairR}] TODO%Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
-        \item[\Rule{PFst}] TODO%Trivial using the induction hypothesis.
-        \item[\Rule{PSnd}] TODO%Trivial using the induction hypothesis.
+        \item[\Rule{PPairL}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_1$.
+        \item[\Rule{PPairR}] Quite straightforward using the induction hypothesis and the descriptive definition of $\bpi_2$.
+        \item[\Rule{PFst}] Quite straightforward using the induction hypothesis.
+        \item[\Rule{PSnd}] Quite straightforward using the induction hypothesis.
       \end{description}
     \end{description}
   \end{proof}
+
+TODO: replace the multiple $\cdots \leqA \Gamma''$ by $\cdots = \Gamma''$.
 
 \end{document}
