@@ -131,7 +131,7 @@
     \item[$e=(e_1,e_2)$] The last rule is \Rule{Pair\Aa}.
     We can conclude immediately by using the induction hypothesis.
 
-    \item[$\ite {e_0} t {e_1} {e_2}$] The last rule is \Rule{Case\Aa}.
+    \item[$e=\ite {e_0} t {e_1} {e_2}$] The last rule is \Rule{Case\Aa}.
     By using the induction hypothesis we get $\Refine {e_0,t} {\Gamma'} \leqA^{e_0} \Refine {e_0,t} \Gamma$.
     We also have $\Gamma' \leqA^{e_1} \Gamma$ (as $e_1$ is a subexpression of $e$).
 
