@@ -359,24 +359,33 @@
   \end{description}
   \end{proof}
 
+  \[
+    \begin{array}{lrcl}
+      \textbf{Simple type} & t_{s} & ::= & b \alt \pair {t_{s}} {t_{s}} \alt t_{s} \vee t_{s} \alt \neg t_{s} \alt \Empty \alt \arrow \Empty \Any\\
+      \textbf{Positive type} & t_+ & ::= & t_{s} \alt t_+ \vee t_+ \alt t_+ \land t_+ \alt \arrow {t_+} {t_+} \alt \arrow {t_+} {\neg t_+}\\
+      \textbf{Positive abstraction type} & t^\lambda_+ & ::= & \arrow {t_+} {t_+} \alt \arrow {t_+} {\neg t_+} \alt t^\lambda_+ \land t^\lambda_+\\
+      \textbf{Positive expression} & e_+ & ::= & c\alt x\alt e_+ e_+\alt\lambda^{t^\lambda_+} x.e_+\alt \pi_j e_+\alt(e_+,e_+)\alt\tcase{e_+}{t_{s}}{e_+}{e_+}
+    \end{array}
+  \]
+
   \begin{corollary}\label{app:completeness}
-    If we restrict our language so that the only functional type that can be used in a test is $\arrow \Empty \Any$
-    and such that there is no negated arrows in the domain of lambda-abstractions,
-    then the algorithmic type system becomes complete
-    (i.e. any expression that can be typed in the declarative type system is also typeable in the algorithmic one)
-    and type schemes can be removed from it (we can use regular types instead).
+    If we restrict the language to $e_+$, the algorithmic type system is complete and type schemes can be removed from it (we can use regular types instead).
+    
+    More precisely:
+    $\forall \Gamma, e_+, t.\ \Gamma \vdash e_+:t \Rightarrow \tyof {e_+} \Gamma \neq \varnothing$
   \end{corollary}
 
   \begin{proof}
-    With such restrictions, the rule \Rule{Abs-} is not needed anymore.
+    With such restrictions, the rule \Rule{Abs-} is not needed anymore
+    because the negative part of functional types (i.e. the $N_i$ part of their DNF) is useless.
 
-    Indeed, when typing an application $e_1 e_2$, the negative part of the type of $e_1$ (i.e. the $N_i$ part of its DNF)
+    Indeed, when typing an application $e_1 e_2$, the negative part of the type of $e_1$ 
     is ignored by the operator $\apply {} {}$.
 
     Moreover, as there is no negated arrows in the domain of lambda-abstractions,
     the negative arrows of the type of $e_2$ can also be ignored.
 
-    Similarly, negative arrows can also be ignored when refining an application ($\worra {} {}$ also ignore the negative part
+    Similarly, negative arrows can be ignored when refining an application ($\worra {} {}$ also ignore the negative part
     of the type of $e_1$).
 
     Finally, as the only functional type that we can test is $\arrow \Empty \Any$, a functional type
