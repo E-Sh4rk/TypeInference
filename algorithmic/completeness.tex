@@ -369,10 +369,10 @@
   \]
 
   \begin{corollary}\label{app:completeness}
-    If we restrict the language to $e_+$, the algorithmic type system is complete and type schemes can be removed from it (we can use regular types instead).
+    If we restrict the language to positive expressions $e_+$, the algorithmic type system is complete and type schemes can be removed from it (we can use regular types instead).
     
     More precisely:
-    $\forall \Gamma, e_+, t.\ \Gamma \vdash e_+:t \Rightarrow \tyof {e_+} \Gamma \neq \varnothing$
+    $\forall \Gamma, e_+, t.\ \Gamma \vdash e_+:t \Rightarrow \tyof {e_+} \Gamma \neq \tsempty$
   \end{corollary}
 
   \begin{proof}
@@ -432,7 +432,7 @@
     Now we analyze the last rule of the derivation (only the cases that are not similar are shown):
     \begin{description}
       \item[\Rule{Abs-}] We know that the derivation of $\tyof e \Gamma$ (if any) ends with the rule \Rule{Abs\Aa}.
-      Moreover, by using the induction hypothesis on the premise, we know that $\tyof e \Gamma \neq \varnothing$.
+      Moreover, by using the induction hypothesis on the premise, we know that $\tyof e \Gamma \neq \tsempty$.
       Thus we have $\tyof e \Gamma \leq \neg (\arrow {t_1} {t_2}) = t$ (because every type $\neg (\arrow {s'} {t'})$
       such that $\neg (\arrow {s'} {t'}) \land \bigwedge_{i\in I} \arrow {s_i} {t_i} \neq \Empty$ is in $\tsint{\tsfun{\arrow {s_i} {t_i}}}$).
     \end{description}
