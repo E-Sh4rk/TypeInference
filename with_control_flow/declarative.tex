@@ -1,0 +1,260 @@
+\documentclass[a4paper]{article}
+
+\usepackage{setup}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Declarative type system}
+\author{}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+  \maketitle
+  
+    \subsection{Full declarative type system}
+
+    \begin{mathpar}
+        \Infer[Env]
+      { }
+      { \tenv, \Gamma \vdash e: \Gamma(e) }
+      { e\in\dom\Gamma }
+  \qquad
+  \Infer[Inter]
+      { \tenv, \Gamma \vdash e:t_1\\\tenv, \Gamma \vdash e:t_2 }
+      { \tenv, \Gamma \vdash e: t_1 \wedge t_2 }
+      { }
+      \qquad
+      \Infer[Subs]
+      { \tenv, \Gamma \vdash e:t\\t\leq t' }
+      { \tenv, \Gamma \vdash e: t' }
+      { }
+      \\
+      \Infer[Const]
+      { }
+      {\tenv, \Gamma\vdash c:\basic{c}}
+      { }
+  \quad
+  \Infer[App]
+      {
+        \tenv, \Gamma \vdash e_1: \arrow {t_1}{t_2}\quad
+        \tenv, \Gamma \vdash e_2: t_1
+      }
+      { \tenv, \Gamma \vdash {e_1}{e_2}: t_2 }
+      { }
+          \\
+          \Infer[Abs+]
+            {{\scriptstyle\forall i\in I}\quad\tenv, \Gamma,x:s_i\vdash e:t_i}
+            {
+            \tenv, \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle \bigwedge_{i\in I}\arrow {s_i} {t_i}
+            }
+            { }
+          \\
+          \Infer[Abs-]
+          {\tenv, \Gamma \vdash \lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
+          {\tenv, \Gamma \vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\neg(t_1\to t_2)  }
+          { ((\wedge_{i\in I}\arrow {s_i} {t_i})\wedge\neg(t_1\to t_2))\not\simeq\Empty }
+%      \Infer[Abs]
+%          {\Gamma,x:s_i\vdash e:t_i\\t\simeq \left(\bigwedge_{i\in I} \arrow {s_i} {t_i}\right)
+%          \land \left(\bigwedge_{j\in J} \neg (\arrow {s'_j} {t'_j})\right)\\t\not\simeq\Empty}
+%          {
+%          \Gamma\vdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:\textstyle t
+%          }
+%          { }
+          \\
+%      \Infer[If]
+%            {\Gamma\vdash e:t_0\\
+%            %t_0\not\leq \neg t \Rightarrow
+%            \Gamma \cvdash + e t e_1:t'\\
+%            %t_0\not\leq t \Rightarrow
+%            \Gamma \cvdash - e t e_2:t'}
+%            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
+%            { }
+%        \Infer[If]
+%            {\Gamma\vdash e:t_0\\
+%            %t_0\not\leq \neg t \Rightarrow
+%            \Gamma \evdash + e t \Gamma^+ \\ \Gamma^+ \vdash e_1:t'\\
+%            %t_0\not\leq t \Rightarrow
+%            \Gamma \evdash - e t \Gamma^- \\ \Gamma^- \vdash e_2:t'}
+%            {\Gamma\vdash \ite {e} t {e_1}{e_2}: t'}
+%            { }
+        \Infer[Case]
+        {\tenv, \Gamma\vdash e:t_0\\
+        \tenv_1 = \cons {(e,t)} \tenv\\
+        %t_0\not\leq \neg t \Rightarrow
+        \Gamma \evdashCF {\tenv_1} \Gamma_1 \\ \tenv_1, \Gamma_1 \vdash e_1:t'\\
+        %t_0\not\leq t \Rightarrow
+        \tenv_2 = \cons {(e,\neg t)} \tenv\\
+        \Gamma \evdashCF {\tenv_2} \Gamma_2 \\ \tenv_2, \Gamma_2 \vdash e_2:t'}
+        {\tenv, \Gamma\vdash \tcase {e} t {e_1}{e_2}: t'}
+        { }
+      \\
+      \Infer[Efq]
+      { }
+      { \tenv, \Gamma, (e:\Empty) \vdash e': t }
+      { }
+      \qquad
+      \Infer[Proj]
+  {\tenv, \Gamma \vdash e:\pair{t_1}{t_2}}
+  {\tenv, \Gamma \vdash \pi_i e:t_i}
+  { }
+  \qquad
+  \Infer[Pair]
+  {\tenv, \Gamma \vdash e_1:t_1 \and \tenv, \Gamma \vdash e_2:t_2}
+  {\tenv, \Gamma \vdash (e_1,e_2):\pair {t_1} {t_2}}
+  { }
+    \end{mathpar}
+
+    \begin{center} \line(1,0){300} \end{center}
+
+    \begin{mathpar}
+%        \Infer[Base]
+%            { \Gamma \vdash e':t' }
+%            { \Gamma \cvdash p e t e':t' }
+%            { }
+%            \qquad
+%        \Infer[Path]
+%            { \pvdash \Gamma p e t \varpi:t_1 \\ \Gamma,(\occ e \varpi:t_1) \cvdash p e t e':t_2 }
+%            { \Gamma \cvdash p e t e':t_2 }
+%            { }
+        \Infer[Base]
+        { }
+        { \Gamma \evdashCF \tenv \Gamma }
+        { }
+        \qquad
+        \Infer[Path]
+        { (e,t)\in\tenv \\ \pvdash {\Gamma'} e t \varpi:t' \\ \Gamma \evdashCF \tenv \Gamma' }
+        { \Gamma \evdashCF \tenv \Gamma',(\occ e \varpi:t') }
+        { }
+    \end{mathpar}
+
+    \begin{center} \line(1,0){300} \end{center}
+
+    \begin{mathpar}
+        \Infer[PSubs]
+        { \pvdash \Gamma e t \varpi:t_1 \\ t_1\leq t_2 }
+        { \pvdash \Gamma e t \varpi:t_2 }
+        { }
+        \qquad
+    \Infer[PInter]
+        { \pvdash \Gamma e t \varpi:t_1 \\ \pvdash \Gamma e t \varpi:t_2 }
+        { \pvdash \Gamma e t \varpi:t_1\land t_2 }
+        { }
+        \qquad
+    \Infer[PTypeof]
+        { \Gamma \vdash \occ e \varpi:t' }
+        { \pvdash \Gamma e t \varpi:t' }
+        { }
+        \\
+    \Infer[PEps]
+        { }
+        { \pvdash \Gamma e t \epsilon:t }
+        { }
+        \qquad
+    \Infer[PAppR]
+        { \pvdash \Gamma e t \varpi.0:\arrow{t_1}{t_2} \\ \pvdash \Gamma e t \varpi:t_2'}
+        { \pvdash \Gamma e t \varpi.1:\neg t_1 }
+        { t_2\land t_2' \simeq \Empty  }
+        \\
+    \Infer[PAppL]
+        { \pvdash \Gamma e t \varpi.1:t_1 \\ \pvdash \Gamma e t \varpi:t_2 }
+        { \pvdash \Gamma e t \varpi.0:\neg (\arrow {t_1} {\neg t_2}) }
+        { }
+        \qquad
+    \Infer[PPairL]
+        { \pvdash \Gamma e t \varpi:\pair{t_1}{t_2} }
+        { \pvdash \Gamma e t \varpi.l:t_1 }
+        { }
+        \\
+    \Infer[PPairR]
+        { \pvdash \Gamma e t \varpi:\pair{t_1}{t_2} }
+        { \pvdash \Gamma e t \varpi.r:t_2 }
+        { }
+        \qquad
+    \Infer[PFst]
+        { \pvdash \Gamma e t \varpi:t' }
+        { \pvdash \Gamma e t \varpi.f:\pair {t'} \Any }
+        { }
+        \qquad
+    \Infer[PSnd]
+        { \pvdash \Gamma e t \varpi:t' }
+        { \pvdash \Gamma e t \varpi.s:\pair \Any {t'} }
+        { }
+        \qquad
+    \end{mathpar}
+    
+    \newpage
+
+    \subsection{Parallel semantics}
+
+    \[
+      \begin{array}{lrcl}
+      \textbf{Expressions} & e & ::= & c\alt x \alt \lambda^{\bigwedge \arrow t t}x.e \alt e e \alt \pi_i e \alt (e,e) \alt \ite e t e e\\
+      \textbf{Values} & v & ::= & c \alt \lambda^{\bigwedge \arrow t t}x.e \alt (v,v)
+      \end{array}
+    \]
+
+    \[
+      \begin{array}{lrcl}
+      \textbf{Context} & C[] & ::= & e [] \alt [] v \alt (e,[]) \alt ([],v)
+      \end{array}
+    \]
+
+    For convenience, we denote $e\xleadsto{e\mapsto e'}e'$ by $e\idleadsto e'$.
+
+    \begin{mathpar}
+      \Infer[Ctx]
+      {e \xleadsto{e_r\mapsto e_r'} e'}
+      {C[e] \xleadsto{e_r\mapsto e_r'} C[e']}
+      {}
+      \qquad
+      \Infer[App]
+      { }
+      {(\lambda^tx.e) v \idleadsto e\subst x v}
+      {}
+      \qquad
+      \Infer[Proj]
+      { }
+      {\pi_i (v_1,v_2) \idleadsto v_i}
+      {}\\
+      \Infer[TestCtx]
+      {e \xleadsto{e_r\mapsto e_r'} e'}
+      {\ite e t {e_1} {e_2} \idleadsto \ite {e\subst{e_r}{e_r'}} t {e_1\subst {e_r} {e_r'}} {e_2\subst {e_r} {e_r'}}}
+      {}\\
+      \Infer[Case]
+      {i \in \{1,2\}\hspace{1cm} (i=1 \Leftrightarrow v \in \valsemantic t)}
+      {\ite v t {e_1} {e_2} \idleadsto e_i}
+      {}
+    \end{mathpar}
+
+    \[\valsemantic t = \{v \alt \vvdash v : t\}\]
+
+    \begin{mathpar}
+      \Infer[Subsum]
+          {\vvdash v:t'\\t'\leq t}
+          {\vvdash v:t}
+          {}
+      \qquad
+      \Infer[Const]
+          { }
+          {\vvdash c:\basic{c}}
+          {}
+      \\
+      \Infer[Abs]
+          {t=(\wedge_{i\in I}\arrow {s_i} {t_i})\land (\wedge_{j\in J} \neg (\arrow {s'_j} {t'_j}))\\t\not\leq \Empty}
+          {\vvdash\lambda^{\wedge_{i\in I}\arrow {s_i} {t_i}}x.e:t}
+          {}
+      \\
+      \end{mathpar}
+
+\end{document}
