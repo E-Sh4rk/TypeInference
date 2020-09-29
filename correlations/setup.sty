@@ -176,3 +176,28 @@
 \newcommand{\tsrep}[1]{\textsf{Repr}(#1)}
 
 \newcommand{\aite}[5]{\ensuremath{\texttt{if}^{#5}\;#1\in#2\;\texttt{then}\;#3\;\texttt{else}\;#4}}
+
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newtheorem{corollary}{Corollary}
+
+\newcommand{\vdashA}{\vdash_{\!\scriptscriptstyle\mathcal{A}}}
+\newcommand{\vdashp}{\vdash^{\texttt{Path}}}
+\newcommand{\pvdash}[3]{\vdashp_{#1,#2,#3}}%\mathcal{P}
+\newcommand{\evdash}[2]{\vdash^{\texttt{Env}}_{#1,#2}}
+
+\DeclareMathSymbol{\qm}{\mathalpha}{operators}{"3F}
+\DeclareMathAlphabet{\mathbbm}{U}{bbold}{m}{n}
+\newcommand{\dyn}{\ensuremath{\mathbbm{\qm}}}
+\newcommand{\Aa}{\ensuremath{_{\scriptscriptstyle\mathcal{A}}}}
+
+\newcommand{\tcase}[4]{\ensuremath{(#1{\in}#2)\,\texttt{\textup{?}}\,#3\,\texttt{\textup{:}}\,#4}}
+
+\newcommand{\bbGamma}{{\mathpalette\makebbGamma\relax}}
+\newcommand{\makebbGamma}[2]{%
+  \raisebox{\depth}{\scalebox{1}[-1]{$\mathsurround=0pt#1\mathbb{L}$}}%
+}

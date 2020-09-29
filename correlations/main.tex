@@ -1,0 +1,96 @@
+% Header
+\documentclass[a4paper]{article}%      autres choix : book, report
+\usepackage[utf8]{inputenc}%           gestion des accents (source)
+\usepackage[T1]{fontenc}%              gestion des accents (PDF)
+\usepackage[francais]{babel}%          gestion du francais
+\usepackage{textcomp}%                 caracteres additionnels
+\usepackage{mathtools,amssymb,amsthm}% packages de l'AMS + mathtools
+\usepackage{lmodern}%                  police de caractere
+\usepackage[top=2cm,left=2cm,right=2cm,bottom=2cm]{geometry}%     gestion des marges
+\usepackage{graphicx}%                 gestion des images
+\usepackage{array}%                    gestion amelioree des tableaux
+\usepackage{calc}%                     syntaxe naturelle pour les calculs
+\usepackage{titlesec}%                 pour les sections
+\usepackage{titletoc}%                 pour la table des matieres
+\usepackage{fancyhdr}%                 pour les en-tetes
+\usepackage{titling}%                  pour le titre
+\usepackage{enumitem}%                 pour les listes numerotees
+\usepackage{hyperref}%                 gestion des hyperliens
+\usepackage{syntax}
+\usepackage{minted}
+\usepackage[parfill]{parskip}
+\usepackage{amsmath}
+\usepackage{fourier}
+\usepackage{heuristica}
+\usepackage[overload]{empheq}
+\usepackage{cleveref} 
+\usemintedstyle{vs}
+
+\hypersetup{pdfstartview=XYZ}%         zoom par defaut
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+\title{\vspace{1.5cm}Occurence Typing}
+\author{Mickael LAURENT}
+\date{\vspace{-5ex}}
+
+\pagenumbering{gobble}
+
+\usepackage{setup}
+
+\begin{document}
+
+    \maketitle
+
+    % \section{Recall: some definitons}
+
+    % \[ \worra t s = \min \{ u \alt \apply t {(\dom t \setminus u)} \leq \neg s \} \]
+
+    % \[ t \simeq \bigvee_{i\in I}\left(\bigwedge_{p\in P_i}(s_p\to t_p)\bigwedge_{n\in N_i}\neg(s_n'\to t_n')\right) \]
+
+    % \begin{eqnarray*}
+    %     \dom{t}    & = & \bigwedge_{i\in I}\bigvee_{p\in P_i}s_p\\[4mm]
+    %     \apply t s & = & \bigvee_{i\in I}\left(\bigvee_{\{Q\subsetneq P_i\alt s\not\leq\bigvee_{q\in Q}s_q\}}\left(\bigwedge_{p\in P_i\setminus Q}t_p\right)\right)\hspace*{1cm}\makebox[0cm][l]{(for $s\leq\dom{t}$)}\\[4mm]
+    %     \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{p\in P_i\alt s\wedge t_p=\Empty\}}\neg s_p \right)\\
+    %     \worra t s & = & \dom t \wedge\bigvee_{i\in I}\left(\bigwedge_{\{P \subseteq P_i\alt s \leq \bigvee_{p \in P} \neg t_p\}} \left(\bigvee_{p \in P} \neg s_p \right)\right)
+    % \end{eqnarray*}
+    % Example of non-optimality of worra (1st version) :
+    % \[ \worra {(\Any \rightarrow \Any) \land (\neg \Bool \rightarrow \neg \True) \land (\neg \Bool \rightarrow \neg \False)} \Bool = \Any \text{ instead of } \Bool \]
+    % \pagebreak
+
+    \section{Declarative system}
+
+    \begin{mathpar}
+        \Infer[Case]
+        {\Gamma\vdash e:t_0\\
+        \Gamma \evdash e t \{\Gamma^1_i\}_{i\in I} \\ \forall i\in I.\ \Gamma^1_i \vdash e_1:t'\\
+        \Gamma \evdash e {\neg t} \{\Gamma^2_j\}_{j\in J} \\ \forall j\in J.\ \Gamma^2_j \vdash e_2:t'}
+        {\Gamma\vdash \tcase {e} t {e_1}{e_2}: t'}
+        { }
+    \\
+        \Infer[Id]
+        { }
+        {\Gamma\evdash e t \{\Gamma\}}
+        { }
+    \qquad
+        \Infer[Comp]
+        {\Gamma\evdash e t \{\Gamma_i\}_{i\in I} \\ \forall i.\ \Gamma_i\evdash e t \bbGamma_i}
+        {\Gamma\evdash e t \bigcup_{i\in I}\bbGamma_i}
+        { }
+    \qquad
+        \Infer[Occ]
+        {\Gamma\vdash e:t' \\ \Gamma\subst{e}{t\wedge t'}\evdash e {t\wedge t'} \bbGamma}
+        {\Gamma\evdash e t \bbGamma}
+        { }
+    \\
+        \Infer[Pair]
+        {\forall i\in I.\ \Gamma\evdash{e_1}{t_i}\bbGamma_1^i \\ \forall i\in I.\ \Gamma\evdash{e_2}{s_i}\bbGamma_2^i}
+        {\Gamma\evdash {(e_1,e_2)} {\bigcup_{i\in I}(t_i,s_i)} \bigcup_{i\in I}\{\Gamma_1\land\Gamma_2\ |\ \Gamma_1\in\bbGamma_1^i, \Gamma_2\in\bbGamma_2^i\}}
+        { }
+    \\
+        \Infer[App]
+        {\Gamma\vdash e_1:\bigcup_{i\in I}t_i \\ \forall i\in I.\ t_i\leq \arrow{\neg s_i}{s_i'} \text{ with } s_i'\land t = \varnothing \\ \forall i\in I.\ \Gamma\evdash{e_1}{t_i}\bbGamma_1^i \\ \forall i\in I.\ \Gamma\evdash{e_2}{s_i}\bbGamma_2^i}
+        {\Gamma\evdash {(e_1\ e_2)} {t} \bigcup_{i\in I}\{\Gamma_1\land\Gamma_2\ |\ \Gamma_1\in\bbGamma_1^i, \Gamma_2\in\bbGamma_2^i\}}
+        { }
+    \end{mathpar}
+
+\end{document}
