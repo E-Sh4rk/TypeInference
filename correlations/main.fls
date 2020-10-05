@@ -341,6 +341,11 @@ INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\heuristica\Heuristica-Regular
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmtt8.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\heuristica\Heuristica-Regular-tlf-t1.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmtt8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmss.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmss.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmss10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmss8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmss8.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\vf\public\heuristica\Heuristica-Regular-tlf-t1.vf
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\heuristica\Heuristica-Regular-tlf-t1--base.tfm
 INPUT C:\Users\micka\AppData\Local\MiKTeX\2.9\pdftex\config\pdftex.map
@@ -385,9 +390,12 @@ INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\fourier\fourier-ml.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\fourier\futri8r.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\vf\public\heuristica\Heuristica-Regular-tlf-t1.vf
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\heuristica\Heuristica-Regular-tlf-t1--base.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\vf\public\fourier\futmi.vf
 INPUT c:\Users\micka\Desktop\TypeInference\correlations\main.aux
 INPUT c:\Users\micka\Desktop\TypeInference\correlations\main.out
 INPUT c:\Users\micka\Desktop\TypeInference\correlations\main.out
+INPUT C:\Users\micka\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb10.pk
+INPUT C:\Users\micka\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb10.pk
 INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-ec.enc
 INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\base\8r.enc
 INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\heuristica\zut_ysltpx.enc
@@ -404,12 +412,16 @@ INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\fourier\fourier-ml.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\fourier\fourier-ml.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\fourier\fourier-ms.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\fourier\fourier-ms.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmss10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmss10.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt10.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt10.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt8.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt8.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\symbols\msbm10.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\symbols\msbm10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\symbols\msbm7.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\symbols\msbm7.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\adobe\utopia\putr8a.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\adobe\utopia\putr8a.pfb
 INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\adobe\utopia\putri8a.pfb
